@@ -1,7 +1,8 @@
-package cat.xojan.fittracker;
+package cat.xojan.fittracker.session;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,9 @@ import com.google.android.gms.fitness.data.Session;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.Utils;
 
 /**
  * Created by Joan on 12/12/2014.
@@ -34,6 +38,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         public TextView mDescription;
         public ImageView mActivity;
         public TextView mSummary;
+        public TextView mIdentifier;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -42,12 +47,13 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
             mDescription = (TextView) itemView.findViewById(R.id.session_description);
             mActivity = (ImageView) itemView.findViewById(R.id.session_activity);
             mSummary = (TextView) itemView.findViewById(R.id.session_summary);
+            mIdentifier = (TextView) itemView.findViewById(R.id.session_identifier);
         }
     }
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SessionAdapter(List<Session> DataSet, Context context) {
+    public SessionAdapter(List<Session> DataSet, FragmentActivity activity) {
         mDataset = DataSet;
-        this.context = context;
+        this.context = activity;
     }
 
     // Create new views (invoked by the layout manager)
@@ -57,14 +63,13 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.session_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
-
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         if (position % 2 != 0)
             holder.mView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
         // - get element from your dataset at this position
@@ -73,6 +78,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mDescription.setText(mDataset.get(position).getDescription());
         holder.mActivity.setImageDrawable(getActivityDrawable(mDataset.get(position).getActivity()));
         holder.mSummary.setText(getActivitySummary(mDataset.get(position)));
+        holder.mIdentifier.setText(mDataset.get(position).getIdentifier());
     }
 
     private String getActivitySummary(Session session) {

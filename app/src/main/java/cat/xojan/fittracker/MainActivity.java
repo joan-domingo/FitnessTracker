@@ -1,68 +1,50 @@
 package cat.xojan.fittracker;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.session.SessionListFragment;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
-    private static Handler handler = null;
-    private static MainActivity instance = null;
-
-    public MainActivity() {
-    }
-
-    public static MainActivity getInstance() {
-        if (instance == null) {
-            instance = new MainActivity();
-        }
-        return instance;
-    }
+    private static Handler handler;
 
     public static Handler getHandler() {
-        return MainActivity.instance.handler;
+        return handler;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mRecyclerView = (RecyclerView) findViewById(R.id.sessions_list);
-        mRecyclerView.setHasFixedSize(false);
 
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        final Context context = this;
-        // specify an adapter
-        handler = new Handler () {
+        handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case Constant.MESSAGE_SESSIONS_READ:
-                        mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), context);
-                        mRecyclerView.setAdapter(mAdapter);
+                        initView();
                         break;
                 }
             }
         };
 
         initControllers(savedInstanceState);
+    }
+
+    private void initView() {
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, new SessionListFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     private void initControllers(Bundle savedInstanceState) {
