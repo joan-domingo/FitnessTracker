@@ -10,4 +10,11 @@ public class Constant {
     public static final int MESSAGE_SESSIONS_READ = 0x0001;
 
     public static final String PARAMETER_SESSION_ID = "sessionId";
+    public static final String CHRONOMETER_FORMAT = "HH:MM:SS";
+
+    public static final String DISTANCE_MEASURE_KM = "Km";
+    public static final String DISTANCE_MEASURE_MILE = "Mi";
+
+    public static final String PACKAGE_SPECIFIC_PART = "cat.xojan.fittracker";
+    public static final String PREFERENCE_MEASURE_UNIT = "cat.xojan.fittracker.preference.measureunit";
 }

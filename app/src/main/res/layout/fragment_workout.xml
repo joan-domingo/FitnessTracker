@@ -18,12 +18,15 @@
             android:dividerPadding="32dp"
             android:layout_alignParentTop="true">
 
-            <TextView
+            <Chronometer
                 android:id="@+id/workout_chronometer"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
                 android:elevation="8dp"
+                android:gravity="center"
+                android:textSize="26sp"
+                android:fontFamily="sans-serif"
                 style="@style/RaisedGrey"/>
 
             <TextView
@@ -32,7 +35,33 @@
                 android:layout_weight="1"
                 android:layout_height="36dp"
                 android:elevation="8dp"
+                android:gravity="center"
+                android:textSize="26sp"
+                android:fontFamily="sans-serif"
                 style="@style/RaisedGrey"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/waiting_gps_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="32dp"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:id="@+id/waiting_gps"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:text="@string/waiting_gps"
+                android:gravity="center"
+                android:elevation="2dp"
+                style="@style/RaisedGrey" />
 
         </LinearLayout>
 
@@ -42,7 +71,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:dividerPadding="32dp"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/workout_button_start"

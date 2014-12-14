@@ -7,7 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 
 import cat.xojan.fittracker.R;
 
@@ -20,7 +24,8 @@ public class WorkoutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_workout, container, false);
 
-        TextView chronoView = (TextView)view.findViewById(R.id.workout_chronometer);
+        GoogleMap map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.workout_map)).getMap();
+        Chronometer chronometer = (Chronometer)view.findViewById(R.id.workout_chronometer);
         TextView distanceView = (TextView)view.findViewById(R.id.workout_distance);
         Button startButton = (Button) view.findViewById(R.id.workout_button_start);
         Button lapButton = (Button) view.findViewById(R.id.workout_button_lap);
@@ -29,12 +34,16 @@ public class WorkoutFragment extends Fragment {
         Button finishButton = (Button) view.findViewById(R.id.workout_button_finish);
 
         //init controllers
-
+        MapController.getInstance().init(map, getActivity(), view);
+        TimeController.getInstance().init(chronometer);
+        DistanceController.getInstance().init(distanceView, getActivity());
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //start button
+                MapController.getInstance().start();
+                TimeController.getInstance().start();
             }
         });
 
@@ -42,6 +51,9 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //lap button
+                MapController.getInstance().lap();
+                TimeController.getInstance().lap();
+                DistanceController.getInstance().lap();
             }
         });
 
@@ -49,6 +61,8 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //pause button
+                MapController.getInstance().pause();
+                TimeController.getInstance().pause();
             }
         });
 
@@ -56,6 +70,8 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //resume button
+                MapController.getInstance().resume();
+                TimeController.getInstance().resume();
             }
         });
 
@@ -63,6 +79,7 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //finish button
+                MapController.getInstance().finish();
             }
         });
 

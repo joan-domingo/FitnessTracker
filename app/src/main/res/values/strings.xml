@@ -9,5 +9,6 @@
     <string name="resume">Resume</string>
     <string name="finish">Finish</string>
     <string name="start">Start</string>
+    <string name="waiting_gps">WAITING FOR GPS</string>
 
 </resources>
