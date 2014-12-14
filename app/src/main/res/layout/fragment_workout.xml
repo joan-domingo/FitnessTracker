@@ -1,9 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/workout_map"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:name="com.google.android.gms.maps.MapFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="32dp"
+            android:layout_alignParentTop="true">
+
+            <TextView
+                android:id="@+id/workout_chronometer"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:elevation="8dp"
+                style="@style/RaisedGrey"/>
+
+            <TextView
+                android:id="@+id/workout_distance"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:elevation="8dp"
+                style="@style/RaisedGrey"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/start_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="32dp"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/workout_button_start"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:stateListAnimator="@anim/anim"
+                android:text="@string/start"
+                android:elevation="8dp"
+                style="@style/RaisedGreen" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lap_pause_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="32dp"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/workout_button_lap"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:stateListAnimator="@anim/anim"
+                android:text="@string/lap"
+                android:elevation="8dp"
+                style="@style/RaisedGreen" />
+
+            <Button
+                android:id="@+id/workout_button_pause"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:stateListAnimator="@anim/anim"
+                android:text="@string/pause"
+                android:elevation="8dp"
+                style="@style/RaisedGrey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/resume_finish_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="32dp"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/workout_button_resume"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:stateListAnimator="@anim/anim"
+                android:text="@string/resume"
+                android:elevation="8dp"
+                style="@style/RaisedGreen" />
+
+            <Button
+                android:id="@+id/workout_button_finish"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:stateListAnimator="@anim/anim"
+                android:text="@string/finish"
+                android:elevation="8dp"
+                style="@style/RaisedRed" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </fragment>

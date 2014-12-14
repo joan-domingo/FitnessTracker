@@ -6,4 +6,6 @@
     <color name="accent">#F44336</color>
     <color name="toolbar_text_color">#ffffff</color>
     <color name="light_grey">#CFD8DC</color>
+    <color name="button_grey">#78909C</color>
+    <color name="button_green">#4CAF50</color>
 </resources>

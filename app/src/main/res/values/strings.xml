@@ -4,5 +4,10 @@
     <string name="app_name">FitnessTracker</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="lap">Lap</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="finish">Finish</string>
+    <string name="start">Start</string>
 
 </resources>

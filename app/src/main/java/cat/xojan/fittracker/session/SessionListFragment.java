@@ -69,6 +69,7 @@ public class SessionListFragment extends Fragment {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .add(android.R.id.content, new WorkoutFragment())
+                        .addToBackStack(null)
                         .commit();
             }
         });
