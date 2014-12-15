@@ -3,6 +3,7 @@ package cat.xojan.fittracker.workout;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +21,20 @@ import cat.xojan.fittracker.R;
  */
 public class WorkoutFragment extends Fragment {
 
+    private static View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_workout, container, false);
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment_workout, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
 
         GoogleMap map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.workout_map)).getMap();
         Chronometer chronometer = (Chronometer)view.findViewById(R.id.workout_chronometer);

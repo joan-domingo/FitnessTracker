@@ -56,7 +56,7 @@ public class SessionListFragment extends Fragment {
                         getActivity().getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.fragment_container, sessionFragment)
-                                .addToBackStack(Constant.TAG_WORKOUT)
+                                .addToBackStack(null)
                                 .commit();
                     }
                 })
@@ -69,7 +69,7 @@ public class SessionListFragment extends Fragment {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, new WorkoutFragment())
-                        .addToBackStack(null)
+                        .addToBackStack(Constant.TAG_WORKOUT)
                         .commit();
             }
         });
