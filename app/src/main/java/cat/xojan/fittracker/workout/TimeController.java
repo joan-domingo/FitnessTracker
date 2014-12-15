@@ -13,10 +13,11 @@ import cat.xojan.fittracker.Constant;
 public class TimeController {
 
     private Chronometer mChronometer;
-    private Long mSessionStart;
-    private Long mSegmentStart;
+    private long mSessionStart;
+    private long mSegmentStart;
 
     private static TimeController instance = null;
+    private long mTimeWhenPaused;
 
     public TimeController() {}
 
@@ -29,7 +30,6 @@ public class TimeController {
 
     public void init(Chronometer chronometer) {
         mChronometer = chronometer;
-        mChronometer.setFormat(Constant.CHRONOMETER_FORMAT);
         mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer cArg) {
@@ -62,10 +62,12 @@ public class TimeController {
     }
 
     public void pause() {
+        mTimeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
         mChronometer.stop();
     }
 
     public void resume() {
+        mChronometer.setBase(SystemClock.elapsedRealtime() + mTimeWhenPaused);
         mChronometer.start();
     }
 }

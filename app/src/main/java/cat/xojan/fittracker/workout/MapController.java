@@ -52,6 +52,7 @@ public class MapController {
     public void init(GoogleMap map, FragmentActivity activity, View view) {
         //init variables
         mLocationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        mFragmentActivity = activity;
         isPaused = false;
         isTracking = false;
         mView = view;
