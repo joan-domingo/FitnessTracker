@@ -72,6 +72,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, final int position) {
         if (position % 2 != 0)
             holder.mView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
+        else
+            holder.mView.setBackgroundColor(context.getResources().getColor(R.color.white));
+
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mName.setText(mDataset.get(position).getName());

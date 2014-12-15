@@ -25,7 +25,7 @@ public class SessionFragment extends Fragment {
         String sessionId = bundle.getString(Constant.PARAMETER_SESSION_ID, "");
 
         TextView identifierView = (TextView) view.findViewById(R.id.session_identifier);
-        identifierView.setText(sessionId.toString());
+        identifierView.setText(sessionId);
 
         return view;
     }

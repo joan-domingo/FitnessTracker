@@ -55,8 +55,8 @@ public class SessionListFragment extends Fragment {
 
                         getActivity().getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(android.R.id.content, sessionFragment)
-                                .addToBackStack(null)
+                                .replace(R.id.fragment_container, sessionFragment)
+                                .addToBackStack(Constant.TAG_WORKOUT)
                                 .commit();
                     }
                 })
@@ -68,7 +68,7 @@ public class SessionListFragment extends Fragment {
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .add(android.R.id.content, new WorkoutFragment())
+                        .replace(R.id.fragment_container, new WorkoutFragment())
                         .addToBackStack(null)
                         .commit();
             }

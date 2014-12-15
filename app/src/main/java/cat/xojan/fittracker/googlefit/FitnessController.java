@@ -102,9 +102,7 @@ public class FitnessController {
                             @Override
                             public void onConnected(Bundle bundle) {
                                 Log.i(Constant.TAG, "Connected!!!");
-                                // Now you can make calls to the Fitness APIs.  What to do?
-                                // Look at some data!!
-                                readLastSessions();
+                                MainActivity.getHandler().sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                             }
 
                             @Override
@@ -151,7 +149,7 @@ public class FitnessController {
                 .build();
     }
 
-    private void readLastSessions() {
+    public void readLastSessions() {
 
         // Set a start and end time for our query, using a start time of 1 week before this moment.
         Calendar cal = Calendar.getInstance();

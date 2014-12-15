@@ -4,9 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
@@ -15,6 +20,8 @@ import cat.xojan.fittracker.session.SessionListFragment;
 public class MainActivity extends ActionBarActivity {
 
     private static Handler handler;
+    private ProgressBar mProgressBar;
+    private boolean areLastSessionRead = false;
 
     public static Handler getHandler() {
         return handler;
@@ -23,14 +30,24 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.loading_spinner);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case Constant.MESSAGE_SESSIONS_READ:
+                        mProgressBar.setVisibility(View.GONE);
                         initView();
                         break;
+                    case Constant.GOOGLE_API_CLIENT_CONNECTED:
+                        if (!areLastSessionRead) {
+                            FitnessController.getInstance().readLastSessions();
+                            areLastSessionRead = true;
+                        }
                 }
             }
         };
@@ -42,8 +59,8 @@ public class MainActivity extends ActionBarActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, new SessionListFragment())
-                .addToBackStack(null)
+                .add(R.id.fragment_container, new SessionListFragment())
+                .addToBackStack(Constant.TAG_SESSION_LIST)
                 .commit();
     }
 
