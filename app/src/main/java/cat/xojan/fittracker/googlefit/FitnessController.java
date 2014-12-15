@@ -3,6 +3,7 @@ package cat.xojan.fittracker.googlefit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,8 +13,10 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 
 import java.util.Calendar;
@@ -24,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.session.SessionListFragment;
+import cat.xojan.fittracker.workout.TimeController;
 
 /**
  * Created by Joan on 12/12/2014.
@@ -179,5 +183,25 @@ public class FitnessController {
 
     public List<Session> getReadSessions() {
         return mReadSessions;
+    }
+
+    public void saveSession() {
+        // Create a session with metadata about the activity.
+        Session session = new Session.Builder()
+                .setName("Session Name ") //TODO
+                .setDescription("Session description ") //TODO
+                .setIdentifier("" + Calendar.getInstance().getTimeInMillis()) //TODO
+                .setActivity(FitnessActivities.RUNNING) //TODO
+                .setStartTime(TimeController.getInstance().getStartTime(), TimeUnit.MILLISECONDS)
+                .setEndTime(TimeController.getInstance().getEndTime(), TimeUnit.MILLISECONDS)
+                .build();
+
+        // Build a session insert request
+        SessionInsertRequest insertRequest = new SessionInsertRequest.Builder()
+                .setSession(session)
+                //TODO.addDataSet(runningDataSet)
+                .build();
+
+        new SessionWriter(mClient).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
     }
 }

@@ -22,8 +22,7 @@ import cat.xojan.fittracker.workout.WorkoutFragment;
  */
 public class SessionListFragment extends Fragment {
 
-    public SessionListFragment() {
-    }
+    public SessionListFragment() {}
 
     @Nullable
     @Override

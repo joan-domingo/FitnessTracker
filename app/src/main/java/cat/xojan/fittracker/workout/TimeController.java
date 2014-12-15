@@ -15,6 +15,7 @@ public class TimeController {
     private Chronometer mChronometer;
     private long mSessionStart;
     private long mSegmentStart;
+    private long mSessionFinish;
 
     private static TimeController instance = null;
     private long mTimeWhenPaused;
@@ -63,11 +64,20 @@ public class TimeController {
 
     public void pause() {
         mTimeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
+        mSessionFinish = Calendar.getInstance().getTimeInMillis();
         mChronometer.stop();
     }
 
     public void resume() {
         mChronometer.setBase(SystemClock.elapsedRealtime() + mTimeWhenPaused);
         mChronometer.start();
+    }
+
+    public long getStartTime() {
+        return mSessionStart;
+    }
+
+    public long getEndTime() {
+        return mSessionFinish;
     }
 }

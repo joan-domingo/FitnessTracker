@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.googlefit.FitnessController;
 
 /**
  * Created by Joan on 14/12/2014.
@@ -92,6 +93,7 @@ public class WorkoutFragment extends Fragment {
             public void onClick(View v) {
                 //finish button
                 MapController.getInstance().finish();
+                FitnessController.getInstance().saveSession();
             }
         });
 
