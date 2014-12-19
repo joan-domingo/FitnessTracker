@@ -62,6 +62,17 @@ public class SessionListFragment extends Fragment {
             }
         };
 
+        if(!FitnessController.getInstance().isConnected())
+            FitnessController.getInstance().init();
+        else {
+            Bundle bundle = this.getArguments();
+            if (bundle != null && bundle.containsKey(Constant.PARAMETER_RELOAD_LIST) && bundle.getBoolean(Constant.PARAMETER_RELOAD_LIST)) {
+                FitnessController.getInstance().readLastSessions();
+            } else {
+                handler.sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
+            }
+        }
+
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
@@ -97,9 +108,6 @@ public class SessionListFragment extends Fragment {
                         .commit();
             }
         });
-
-        if(!FitnessController.getInstance().isConnected())
-            FitnessController.getInstance().init();
 
         return view;
     }

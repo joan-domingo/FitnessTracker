@@ -44,6 +44,7 @@ public class WorkoutFragment extends Fragment {
         Button resumeButton = (Button) view.findViewById(R.id.workout_button_resume);
         Button finishButton = (Button) view.findViewById(R.id.workout_button_finish);
         Button exitButton = (Button) view.findViewById(R.id.workout_button_exit);
+        Button exitGPSButton = (Button) view.findViewById(R.id.workout_button_exit_gps);
 
         //init controllers
         MapController.getInstance().init(map, getActivity(), view);
@@ -96,6 +97,18 @@ public class WorkoutFragment extends Fragment {
         });
 
         exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapController.getInstance().exit();
+                //exit
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SessionListFragment())
+                        .commit();
+            }
+        });
+
+        exitGPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MapController.getInstance().exit();

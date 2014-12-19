@@ -24,8 +24,7 @@ public class ResultFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FitnessController.getInstance().saveSession();
-                goToMain();
+                FitnessController.getInstance().saveSession(getActivity().getSupportFragmentManager());
             }
         });
 

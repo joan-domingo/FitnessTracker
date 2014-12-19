@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.MainActivity;
+import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.session.SessionFragment;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
@@ -192,7 +194,7 @@ public class FitnessController {
         return mReadSessions;
     }
 
-    public void saveSession() {
+    public void saveSession(final FragmentManager supportFragmentManager) {
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
                 .setName("Session Name ") //TODO
@@ -212,7 +214,13 @@ public class FitnessController {
         new SessionWriter(mClient) {
 
             public void onFinishSessionWriting() {
-                SessionListFragment.getHandler().sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Constant.PARAMETER_RELOAD_LIST, true);
+                SessionListFragment sessionListFragment = new SessionListFragment();
+                sessionListFragment.setArguments(bundle);
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, sessionListFragment)
+                        .commit();
             }
 
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);

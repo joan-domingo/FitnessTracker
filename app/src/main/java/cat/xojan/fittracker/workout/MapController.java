@@ -257,6 +257,7 @@ public class MapController {
 
     public void exit() {
         mLocationManager.removeUpdates(mFirstLocationListener);
-        mLocationManager.removeUpdates(mLocationListener);
+        if (mLocationListener != null)
+            mLocationManager.removeUpdates(mLocationListener);
     }
 }
