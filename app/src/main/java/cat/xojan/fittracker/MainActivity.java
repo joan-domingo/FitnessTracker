@@ -117,4 +117,10 @@ public class MainActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
         FitnessController.getInstance().onSaveInstanceState(outState);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        if (getSupportFragmentManager().findFragmentByTag(Constant.TAG_WORKOUT) == null)
+//            super.onBackPressed();
+//    }
 }

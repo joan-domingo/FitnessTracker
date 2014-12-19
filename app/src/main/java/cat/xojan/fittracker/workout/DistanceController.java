@@ -64,4 +64,8 @@ public class DistanceController {
         mSessionDistance = 0;
         updateDistanceView();
     }
+
+    public float getSessionDistance() {
+        return mSegmentDistance;
+    }
 }

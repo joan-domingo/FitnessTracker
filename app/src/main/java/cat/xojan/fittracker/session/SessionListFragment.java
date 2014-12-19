@@ -44,10 +44,13 @@ public class SessionListFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         TextView IdentifierView = (TextView) view.findViewById(R.id.session_identifier);
-                        String sessionId = IdentifierView.getText().toString();
+                        TextView startTime = (TextView) view.findViewById(R.id.session_start_time);
+                        TextView endTime = (TextView) view.findViewById(R.id.session_end_time);
 
                         Bundle bundle = new Bundle();
-                        bundle.putString(Constant.PARAMETER_SESSION_ID, sessionId);
+                        bundle.putString(Constant.PARAMETER_SESSION_ID, IdentifierView.getText().toString());
+                        bundle.putLong(Constant.PARAMETER_START_TIME, Long.valueOf(startTime.getText().toString()));
+                        bundle.putLong(Constant.PARAMETER_END_TIME, Long.valueOf(endTime.getText().toString()));
 
                         SessionFragment sessionFragment = new SessionFragment();
                         sessionFragment.setArguments(bundle);
@@ -68,7 +71,6 @@ public class SessionListFragment extends Fragment {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, new WorkoutFragment())
-                        .addToBackStack(Constant.TAG_WORKOUT)
                         .commit();
             }
         });

@@ -39,6 +39,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         public ImageView mActivity;
         public TextView mSummary;
         public TextView mIdentifier;
+        public TextView mStartTime;
+        public TextView mEndTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -48,6 +50,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
             mActivity = (ImageView) itemView.findViewById(R.id.session_activity);
             mSummary = (TextView) itemView.findViewById(R.id.session_summary);
             mIdentifier = (TextView) itemView.findViewById(R.id.session_identifier);
+            mStartTime = (TextView) itemView.findViewById(R.id.session_start_time);
+            mEndTime = (TextView) itemView.findViewById(R.id.session_end_time);
         }
     }
     // Provide a suitable constructor (depends on the kind of dataset)
@@ -82,6 +86,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mActivity.setImageDrawable(getActivityDrawable(mDataset.get(position).getActivity()));
         holder.mSummary.setText(getActivitySummary(mDataset.get(position)));
         holder.mIdentifier.setText(mDataset.get(position).getIdentifier());
+        holder.mStartTime.setText(String.valueOf(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
+        holder.mEndTime.setText(String.valueOf(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));
     }
 
     private String getActivitySummary(Session session) {

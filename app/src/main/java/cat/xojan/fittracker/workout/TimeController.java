@@ -50,8 +50,7 @@ public class TimeController {
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.start();
 
-        Calendar now = Calendar.getInstance();
-        mSessionStart = mSegmentStart = now.getTimeInMillis();
+        mSessionStart = mSegmentStart = Calendar.getInstance().getTimeInMillis();
     }
 
     public void lap() {

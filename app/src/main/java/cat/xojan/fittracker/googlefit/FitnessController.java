@@ -14,11 +14,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessActivities;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.session.SessionListFragment;
+import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.TimeController;
 
 /**
@@ -173,7 +179,7 @@ public class FitnessController {
 
         new SessionReader(mClient) {
 
-            public void onResult(List<Session> sessions) {
+            public void getSessionList(List<Session> sessions) {
                 mReadSessions = sessions;
                 MainActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
             }
@@ -199,9 +205,82 @@ public class FitnessController {
         // Build a session insert request
         SessionInsertRequest insertRequest = new SessionInsertRequest.Builder()
                 .setSession(session)
-                //TODO.addDataSet(runningDataSet)
+                .addDataSet(insertSpeedDataset())
                 .build();
 
         new SessionWriter(mClient).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
+    }
+
+    private DataSet insertSpeedDataset() {
+
+        // Create a data source
+        DataSource dataSource = new DataSource.Builder()
+                .setAppPackageName(context)
+                .setDataType(DataType.TYPE_SPEED)
+                .setName(Constant.TAG_WORKOUT + " - speed")
+                .setType(DataSource.TYPE_RAW)
+                .build();
+
+        // Create a data set
+        DataSet dataSet = DataSet.create(dataSource);
+
+        // For each data point, specify a start time, end time, and the data value
+        DataPoint dataPoint = dataSet.createDataPoint()
+                .setTimeInterval(TimeController.getInstance().getStartTime(),
+                        TimeController.getInstance().getEndTime(), TimeUnit.MILLISECONDS);
+
+        dataPoint.getValue(Field.FIELD_SPEED).setFloat(insertSpeed());
+
+
+
+        dataSet.add(dataPoint);
+
+        return dataSet;
+    }
+
+    private float insertSpeed() {
+
+        long timeInMillis = TimeController.getInstance().getEndTime() - TimeController.getInstance().getStartTime();
+        long timeInSeconds = timeInMillis / 1000;
+        float distanceInMeters = DistanceController.getInstance().getSessionDistance();
+
+        return distanceInMeters/timeInSeconds;
+    }
+
+    public void readSession(String sessionId, long startTime, long endTime) {
+        // Build a session read request
+        SessionReadRequest readRequest = new SessionReadRequest.Builder()
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                .setSessionId(sessionId)
+                .read(DataType.TYPE_SPEED)
+                .readSessionsFromAllApps()
+                .build();
+
+        new SessionReader(mClient) {
+
+            public void getSessionDataSets(List<DataSet> dataSets) {
+                // Process the data sets for this session
+                for (DataSet dataSet : dataSets) {
+                    dumpDataSet(dataSet);
+                }
+            }
+
+        }.execute(readRequest);
+    }
+
+    private void dumpDataSet(DataSet dataSet) {
+        Log.i(Constant.TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+
+        for (DataPoint dp : dataSet.getDataPoints()) {
+            Log.i(Constant.TAG, "Data point:");
+            Log.i(Constant.TAG, "\tType: " + dp.getDataType().getName());
+            Log.i(Constant.TAG, "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
+            Log.i(Constant.TAG, "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
+            for (Field field : dp.getDataType().getFields()) {
+                Log.i(Constant.TAG, "\tField: " + field.getName() +
+                        " Value: " + dp.getValue(field));
+            }
+        }
     }
 }
