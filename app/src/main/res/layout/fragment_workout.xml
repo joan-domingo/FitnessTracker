@@ -77,13 +77,24 @@
             <Button
                 android:id="@+id/workout_button_start"
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:layout_height="36dp"
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/start"
                 android:elevation="8dp"
                 style="@style/RaisedGreen" />
+
+            <Button
+                android:id="@+id/workout_button_exit"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:stateListAnimator="@anim/anim"
+                android:text="@string/exit"
+                android:elevation="8dp"
+                style="@style/RaisedRed" />
 
         </LinearLayout>
 

@@ -10,5 +10,7 @@
     <string name="finish">Finish</string>
     <string name="start">Start</string>
     <string name="waiting_gps">WAITING FOR GPS</string>
+    <string name="exit">Exit</string>
+    <string name="save">Save</string>
 
 </resources>

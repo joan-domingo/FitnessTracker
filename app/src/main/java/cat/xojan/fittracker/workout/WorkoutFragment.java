@@ -16,10 +16,8 @@ import com.google.android.gms.maps.MapFragment;
 
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.session.SessionListFragment;
 
-/**
- * Created by Joan on 14/12/2014.
- */
 public class WorkoutFragment extends Fragment {
 
     private static View view;
@@ -45,6 +43,7 @@ public class WorkoutFragment extends Fragment {
         Button pauseButton = (Button) view.findViewById(R.id.workout_button_pause);
         Button resumeButton = (Button) view.findViewById(R.id.workout_button_resume);
         Button finishButton = (Button) view.findViewById(R.id.workout_button_finish);
+        Button exitButton = (Button) view.findViewById(R.id.workout_button_exit);
 
         //init controllers
         MapController.getInstance().init(map, getActivity(), view);
@@ -93,7 +92,18 @@ public class WorkoutFragment extends Fragment {
             public void onClick(View v) {
                 //finish button
                 MapController.getInstance().finish();
-                FitnessController.getInstance().saveSession();
+            }
+        });
+
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapController.getInstance().exit();
+                //exit
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SessionListFragment())
+                        .commit();
             }
         });
 

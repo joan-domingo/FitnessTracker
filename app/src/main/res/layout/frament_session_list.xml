@@ -22,7 +22,7 @@
         android:background="@drawable/ripple"
         android:stateListAnimator="@anim/anim"
         android:src="@drawable/ic_plus_white_48dp"
-        android:elevation="1dp" />
+        android:elevation="8dp" />
 
 
 </RelativeLayout>

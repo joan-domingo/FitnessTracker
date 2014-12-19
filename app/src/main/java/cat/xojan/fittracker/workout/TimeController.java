@@ -7,9 +7,6 @@ import java.util.Calendar;
 
 import cat.xojan.fittracker.Constant;
 
-/**
- * Created by Joan on 14/12/2014.
- */
 public class TimeController {
 
     private Chronometer mChronometer;

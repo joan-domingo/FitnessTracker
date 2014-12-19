@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.result.ResultFragment;
 
 /**
  * Created by Joan on 14/12/2014.
@@ -248,6 +249,14 @@ public class MapController {
         mView.findViewById(R.id.resume_finish_bar).setVisibility(View.GONE);
 
         //show results
-        //TODO
+        mFragmentActivity.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new ResultFragment())
+                .commit();
+    }
+
+    public void exit() {
+        mLocationManager.removeUpdates(mFirstLocationListener);
+        mLocationManager.removeUpdates(mLocationListener);
     }
 }
