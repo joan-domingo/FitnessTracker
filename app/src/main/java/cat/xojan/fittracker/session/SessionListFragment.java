@@ -2,6 +2,8 @@ package cat.xojan.fittracker.session;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import cat.xojan.fittracker.Constant;
@@ -17,10 +20,15 @@ import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.workout.WorkoutFragment;
 
-/**
- * Created by Joan on 14/12/2014.
- */
 public class SessionListFragment extends Fragment {
+
+    private static Handler handler;
+    private ProgressBar mProgressBar;
+    private RecyclerView mRecyclerView;
+
+    public static Handler getHandler() {
+        return handler;
+    }
 
     public SessionListFragment() {}
 
@@ -30,14 +38,29 @@ public class SessionListFragment extends Fragment {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
         Context mContext = getActivity().getBaseContext();
 
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.sessions_list);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.sessions_list);
         mRecyclerView.setHasFixedSize(false);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.sessions_loading_spinner);
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case Constant.MESSAGE_SESSIONS_READ:
+                        RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), getActivity());
+                        mRecyclerView.setAdapter(mAdapter);
+                        mProgressBar.setVisibility(View.GONE);
+                        break;
+                    case Constant.GOOGLE_API_CLIENT_CONNECTED:
+                        FitnessController.getInstance().readLastSessions();
+                }
+            }
+        };
 
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
@@ -74,6 +97,9 @@ public class SessionListFragment extends Fragment {
                         .commit();
             }
         });
+
+        if(!FitnessController.getInstance().isConnected())
+            FitnessController.getInstance().init();
 
         return view;
     }

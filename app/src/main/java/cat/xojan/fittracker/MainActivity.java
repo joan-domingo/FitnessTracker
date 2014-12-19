@@ -19,40 +19,12 @@ import cat.xojan.fittracker.session.SessionListFragment;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static Handler handler;
-    private ProgressBar mProgressBar;
-    private boolean areLastSessionRead = false;
-
-    public static Handler getHandler() {
-        return handler;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mProgressBar = (ProgressBar) findViewById(R.id.loading_spinner);
-        mProgressBar.setVisibility(View.VISIBLE);
-
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case Constant.MESSAGE_SESSIONS_READ:
-                        mProgressBar.setVisibility(View.GONE);
-                        initView();
-                        break;
-                    case Constant.GOOGLE_API_CLIENT_CONNECTED:
-                        if (!areLastSessionRead) {
-                            FitnessController.getInstance().readLastSessions();
-                            areLastSessionRead = true;
-                        }
-                }
-            }
-        };
-
         initControllers(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initView();
     }
 
     private void initView() {
@@ -68,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
         //google fit
         FitnessController.getInstance().setVars(this);
         FitnessController.getInstance().setAuthInProgress(savedInstanceState);
-        FitnessController.getInstance().init();
     }
 
 

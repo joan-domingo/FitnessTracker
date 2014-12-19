@@ -36,15 +36,13 @@ import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.TimeController;
 
-/**
- * Created by Joan on 12/12/2014.
- */
 public class FitnessController {
 
     private static FitnessController instance = null;
     private List<Session> mReadSessions;
     private Session mSingleSession;
     private List<DataSet> mSingleSessionDataSets;
+    private boolean isConnected = false;
 
     protected FitnessController() {
     }
@@ -105,7 +103,6 @@ public class FitnessController {
     }
 
     public void init() {
-        // Create the Google API Client
         mClient = new GoogleApiClient.Builder(context)
                 .addApi(Fitness.API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
@@ -115,7 +112,8 @@ public class FitnessController {
                             @Override
                             public void onConnected(Bundle bundle) {
                                 Log.i(Constant.TAG, "Connected!!!");
-                                MainActivity.getHandler().sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+                                isConnected = true;
+                                SessionListFragment.getHandler().sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                             }
 
                             @Override
@@ -184,7 +182,7 @@ public class FitnessController {
 
             public void getSessionList(List<Session> sessions) {
                 mReadSessions = sessions;
-                MainActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
+                SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
             }
 
         }.execute(readRequest);
@@ -211,7 +209,13 @@ public class FitnessController {
                 .addDataSet(insertSpeedDataset())
                 .build();
 
-        new SessionWriter(mClient).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
+        new SessionWriter(mClient) {
+
+            public void onFinishSessionWriting() {
+                SessionListFragment.getHandler().sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+            }
+
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
     }
 
     private DataSet insertSpeedDataset() {
@@ -296,5 +300,9 @@ public class FitnessController {
                         " Value: " + dp.getValue(field));
             }
         }
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 }

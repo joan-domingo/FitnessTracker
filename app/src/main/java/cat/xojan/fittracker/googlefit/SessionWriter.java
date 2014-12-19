@@ -48,4 +48,12 @@ public class SessionWriter extends AsyncTask<SessionInsertRequest, Void, Void> {
         Log.i(Constant.TAG, "Session insert was successful!");
         return null;
     }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        onFinishSessionWriting();
+    }
+
+    public void onFinishSessionWriting() {}
 }
