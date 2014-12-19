@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.MainActivity;
+import cat.xojan.fittracker.session.SessionFragment;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.TimeController;
@@ -42,6 +43,8 @@ public class FitnessController {
 
     private static FitnessController instance = null;
     private List<Session> mReadSessions;
+    private Session mSingleSession;
+    private List<DataSet> mSingleSessionDataSets;
 
     protected FitnessController() {
     }
@@ -258,14 +261,25 @@ public class FitnessController {
 
         new SessionReader(mClient) {
 
-            public void getSessionDataSets(List<DataSet> dataSets) {
+            public void getSessionDataSets(Session session, List<DataSet> dataSets) {
+                mSingleSession = session;
+                mSingleSessionDataSets = dataSets;
                 // Process the data sets for this session
                 for (DataSet dataSet : dataSets) {
                     dumpDataSet(dataSet);
                 }
+                SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
 
         }.execute(readRequest);
+    }
+
+    public Session getSingleSession() {
+        return mSingleSession;
+    }
+
+    public List<DataSet> getSingleSessionDataSets() {
+        return mSingleSessionDataSets;
     }
 
     private void dumpDataSet(DataSet dataSet) {
