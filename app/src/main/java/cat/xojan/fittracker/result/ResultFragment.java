@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,7 +21,9 @@ import java.util.Map;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
+import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.MapController;
+import cat.xojan.fittracker.workout.TimeController;
 
 public class ResultFragment extends Fragment {
 
@@ -37,6 +40,8 @@ public class ResultFragment extends Fragment {
         Button exit = (Button) view.findViewById(R.id.result_button_exit);
         mName = (EditText) view.findViewById(R.id.result_name);
         mDescription = (EditText) view.findViewById(R.id.result_description);
+        TextView totalTime = (TextView) view.findViewById(R.id.result_total_time);
+        TextView totalSpeed = (TextView) view.findViewById(R.id.result_total_speed);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +60,9 @@ public class ResultFragment extends Fragment {
                         .commit();
             }
         });
+
+        totalTime.setText(String.valueOf(TimeController.getInstance().getSessionTotalTime()));
+        totalSpeed.setText(String.valueOf(DistanceController.getInstance().getSessionDistance()/TimeController.getInstance().getSessionTotalTime()/1000));
 
         initMap();
 

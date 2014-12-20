@@ -25,9 +25,6 @@ import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.result.ResultFragment;
 
-/**
- * Created by Joan on 14/12/2014.
- */
 public class MapController {
 
     private LocationManager mLocationManager;
@@ -71,7 +68,7 @@ public class MapController {
         mMap.setPadding(20, 330, 20, 150);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         //get first location
         getFirstLocation();

@@ -1,8 +1,5 @@
 package cat.xojan.fittracker;
 
-/**
- * Created by Joan on 12/12/2014.
- */
 public class Constant {
 
     public static final String TAG = "cat.xojan.fittracker";
@@ -15,7 +12,9 @@ public class Constant {
     public static final String DISTANCE_MEASURE_MILE = "Mi";
 
     public static final String PACKAGE_SPECIFIC_PART = "cat.xojan.fittracker";
-    public static final String PREFERENCE_MEASURE_UNIT = "cat.xojan.fittracker.preference.measureunit";
+
+    public static final String PREFERENCE_MEASURE_UNIT = "unit_measure";
+    public static final String PREFERENCE_FIRST_RUN = "first_run";
 
     public static final String TAG_SESSION_LIST = "fragment_sessions";
     public static final String TAG_WORKOUT = "fragment_workout";
@@ -24,4 +23,6 @@ public class Constant {
     public static final String PARAMETER_START_TIME = "startTime";
     public static final String PARAMETER_END_TIME = "endTime";
     public static final String PARAMETER_RELOAD_LIST = "reloadSessionList";
+
+
 }

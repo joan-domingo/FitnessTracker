@@ -22,5 +22,6 @@
     <string name="choose_activity">Choose Activity</string>
     <string name="hint_name">Insert Workout Name</string>
     <string name="hint_description">Insert Workout Description</string>
+    <string name="choose_unit">Choose Measure Unit</string>
 
 </resources>

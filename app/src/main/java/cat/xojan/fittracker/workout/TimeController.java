@@ -6,6 +6,7 @@ import android.widget.Chronometer;
 import java.util.Calendar;
 
 import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.Utils;
 
 public class TimeController {
 
@@ -75,5 +76,9 @@ public class TimeController {
 
     public long getSessionEndTime() {
         return mSessionFinish;
+    }
+
+    public long getSessionTotalTime() {
+        return mSessionFinish - mSessionStart;
     }
 }

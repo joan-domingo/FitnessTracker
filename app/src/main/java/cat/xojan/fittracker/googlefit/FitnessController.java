@@ -259,9 +259,7 @@ public class FitnessController {
     }
 
     private float insertSpeed() {
-
-        long timeInMillis = TimeController.getInstance().getSessionEndTime() - TimeController.getInstance().getSessionStartTime();
-        long timeInSeconds = timeInMillis / 1000;
+        long timeInSeconds = TimeController.getInstance().getSessionTotalTime() / 1000;
         float distanceInMeters = DistanceController.getInstance().getSessionDistance();
 
         return distanceInMeters/timeInSeconds;
