@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="running">Running</string>
+    <string name="walking">Walking</string>
+    <string name="biking">Biking</string>
+    <string name="swimming">Swimming</string>
+
+
+
     <string name="app_name">FitnessTracker</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -13,11 +20,7 @@
     <string name="exit">Exit</string>
     <string name="save">Save</string>
     <string name="choose_activity">Choose Activity</string>
-
-
-    <string name="running">Running</string>
-    <string name="walking">Walking</string>
-    <string name="biking">Biking</string>
-    <string name="swimming">Swimming</string>
+    <string name="hint_name">Insert Workout Name</string>
+    <string name="hint_description">Insert Workout Description</string>
 
 </resources>

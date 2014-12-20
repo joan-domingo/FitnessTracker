@@ -5,6 +5,40 @@
     android:padding="16dp">
 
     <LinearLayout
+        android:id="@+id/result_name_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/result_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:hint="@string/hint_name"/>
+
+        <EditText
+            android:id="@+id/result_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:hint="@string/hint_description"/>
+
+    </LinearLayout>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/result_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/result_name_description"
+        android:layout_above="@+id/result_button_bar"
+        android:name="com.google.android.gms.maps.MapFragment"/>
+
+    <LinearLayout
         android:id="@+id/result_button_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

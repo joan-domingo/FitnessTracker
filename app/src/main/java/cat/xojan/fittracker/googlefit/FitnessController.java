@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.session.SessionFragment;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
@@ -46,6 +48,8 @@ public class FitnessController {
     private List<DataSet> mSingleSessionDataSets;
     private boolean isConnected = false;
     private String mFitnessActivity;
+    private String mSessionName;
+    private String mSessionDescription;
 
     protected FitnessController() {
     }
@@ -198,12 +202,12 @@ public class FitnessController {
     public void saveSession(final FragmentManager supportFragmentManager) {
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
-                .setName("Session Name ") //TODO
-                .setDescription("Session description ") //TODO
-                .setIdentifier("" + Calendar.getInstance().getTimeInMillis()) //TODO
+                .setName(mSessionName)
+                .setDescription(mSessionDescription)
+                .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":" + TimeController.getInstance().getSessionStartTime())
                 .setActivity(mFitnessActivity)
-                .setStartTime(TimeController.getInstance().getStartTime(), TimeUnit.MILLISECONDS)
-                .setEndTime(TimeController.getInstance().getEndTime(), TimeUnit.MILLISECONDS)
+                .setStartTime(TimeController.getInstance().getSessionStartTime(), TimeUnit.MILLISECONDS)
+                .setEndTime(TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS)
                 .build();
 
         // Build a session insert request
@@ -242,8 +246,8 @@ public class FitnessController {
 
         // For each data point, specify a start time, end time, and the data value
         DataPoint dataPoint = dataSet.createDataPoint()
-                .setTimeInterval(TimeController.getInstance().getStartTime(),
-                        TimeController.getInstance().getEndTime(), TimeUnit.MILLISECONDS);
+                .setTimeInterval(TimeController.getInstance().getSessionStartTime(),
+                        TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
 
         dataPoint.getValue(Field.FIELD_SPEED).setFloat(insertSpeed());
 
@@ -256,7 +260,7 @@ public class FitnessController {
 
     private float insertSpeed() {
 
-        long timeInMillis = TimeController.getInstance().getEndTime() - TimeController.getInstance().getStartTime();
+        long timeInMillis = TimeController.getInstance().getSessionEndTime() - TimeController.getInstance().getSessionStartTime();
         long timeInSeconds = timeInMillis / 1000;
         float distanceInMeters = DistanceController.getInstance().getSessionDistance();
 
@@ -317,5 +321,10 @@ public class FitnessController {
 
     public void setFitnessActivity(String activity) {
         mFitnessActivity = activity;
+    }
+
+    public void setSessionData(String name, String description) {
+        mSessionName = Utils.checkSessionName(name);
+        mSessionDescription = Utils.checkSessionDescription(description);
     }
 }

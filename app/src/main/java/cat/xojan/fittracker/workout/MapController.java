@@ -18,6 +18,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.result.ResultFragment;
@@ -38,8 +41,10 @@ public class MapController {
     private View mView;
     private FragmentActivity mFragmentActivity;
     private int mLapIndex;
+    private List<MarkerOptions> mMarkerList;
 
     private static MapController instance = null;
+    private List<PolylineOptions> mPolylines;
 
     public MapController() {}
 
@@ -58,13 +63,15 @@ public class MapController {
         isTracking = false;
         mView = view;
         mLapIndex = 0;
+        mMarkerList = new ArrayList<>();
+        mPolylines = new ArrayList<>();
 
         //init google map
         mMap = map;
         mMap.setPadding(20, 330, 20, 150);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         //get first location
         getFirstLocation();
@@ -133,7 +140,7 @@ public class MapController {
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         if (isTracking) {
             //create polyline with last location
-            mMap.addPolyline(new PolylineOptions()
+            addMapPolyline(new PolylineOptions()
                     .geodesic(true)
                     .add(oldPosition)
                     .add(currentPosition)
@@ -148,11 +155,16 @@ public class MapController {
         oldPosition = currentPosition;
     }
 
+    private void addMapPolyline(PolylineOptions polylineOptions) {
+        mMap.addPolyline(polylineOptions);
+        mPolylines.add(polylineOptions);
+    }
+
     private void updateMap(Location location) {
         if (isTracking || isPaused) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 0));
         } else {
-            mLocationManager.removeUpdates(mFirstLocationListener);
+            mLocationManager.removeUpdates(mFirstLocationListener);//TODO
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
         }
     }
@@ -171,13 +183,18 @@ public class MapController {
         isTracking = true;
         LatLng position = getCurrentPosition();
         if (position != null) {
-            mMap.addMarker(new MarkerOptions()
+            addMapMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                     .position(position)
                     .title(String.valueOf(mFragmentActivity.getText(R.string.start))));
             mBoundsBuilder.include(position);
             oldPosition = position;
         }
+    }
+
+    private void addMapMarker(MarkerOptions markerOptions) {
+        mMap.addMarker(markerOptions);
+        mMarkerList.add(markerOptions);
     }
 
     private LatLng getCurrentPosition() {
@@ -200,7 +217,7 @@ public class MapController {
         mLapIndex++;
         LatLng position = getCurrentPosition();
         if (position != null) {
-            mMap.addMarker(new MarkerOptions()
+            addMapMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                     .position(position)
                     .title(mFragmentActivity.getText(R.string.lap).toString() + " " + mLapIndex));
@@ -222,7 +239,7 @@ public class MapController {
     private void addFinishMarker() {
         LatLng position = getCurrentPosition();
         if (position != null) {
-            mMap.addMarker(new MarkerOptions()
+            addMapMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                     .position(position)
                     .title(String.valueOf(mFragmentActivity.getText(R.string.finish))));
@@ -259,5 +276,17 @@ public class MapController {
         mLocationManager.removeUpdates(mFirstLocationListener);
         if (mLocationListener != null)
             mLocationManager.removeUpdates(mLocationListener);
+    }
+
+    public LatLngBounds getBounds() {
+        return mBoundsBuilder.build();
+    }
+
+    public List<MarkerOptions> getMarkers() {
+        return mMarkerList;
+    }
+
+    public List<PolylineOptions> getPolylines() {
+        return mPolylines;
     }
 }

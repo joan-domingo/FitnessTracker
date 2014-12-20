@@ -69,11 +69,11 @@ public class TimeController {
         mChronometer.start();
     }
 
-    public long getStartTime() {
+    public long getSessionStartTime() {
         return mSessionStart;
     }
 
-    public long getEndTime() {
+    public long getSessionEndTime() {
         return mSessionFinish;
     }
 }

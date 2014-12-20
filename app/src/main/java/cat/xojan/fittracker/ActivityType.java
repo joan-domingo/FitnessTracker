@@ -1,13 +1,9 @@
 package cat.xojan.fittracker;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.fitness.FitnessActivities;
 
-/**
- * Created by Joan on 20/12/2014.
- */
 public enum ActivityType {
     running(FitnessActivities.RUNNING, R.string.running),
     walking(FitnessActivities.WALKING, R.string.walking),
