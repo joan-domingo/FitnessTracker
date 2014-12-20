@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.Map;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
@@ -41,7 +42,7 @@ public class ResultFragment extends Fragment {
         mName = (EditText) view.findViewById(R.id.result_name);
         mDescription = (EditText) view.findViewById(R.id.result_description);
         TextView totalTime = (TextView) view.findViewById(R.id.result_total_time);
-        TextView totalSpeed = (TextView) view.findViewById(R.id.result_total_speed);
+        TextView totalSpeedView = (TextView) view.findViewById(R.id.result_total_speed);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,8 +62,12 @@ public class ResultFragment extends Fragment {
             }
         });
 
-        totalTime.setText(String.valueOf(TimeController.getInstance().getSessionTotalTime()));
-        totalSpeed.setText(String.valueOf(DistanceController.getInstance().getSessionDistance()/TimeController.getInstance().getSessionTotalTime()/1000));
+        totalTime.setText(String.valueOf(Utils.millisToTime(TimeController.getInstance().getSessionTotalTime())));
+
+        float distance = DistanceController.getInstance().getSessionDistance();
+        long time = TimeController.getInstance().getSessionTotalTime() / 1000;
+        String totalSpeed = Utils.getRightSpeed( (distance / time), getActivity().getBaseContext());
+        totalSpeedView.setText(totalSpeed);
 
         initMap();
 

@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.session;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -85,7 +86,11 @@ public class SessionFragment extends Fragment {
         for (DataSet ds : mDataSets) {
             for (DataPoint dp : ds.getDataPoints()) {
                 for (Field field : dp.getDataType().getFields()) {
-                    ((TextView)view.findViewById(R.id.fragment_session_total_speed)).setText(dp.getValue(field) + " m/s");
+                    if (Field.FIELD_SPEED.equals(field)) {
+                        String speed = Utils.getRightSpeed(dp.getValue(field).asFloat(), getActivity().getBaseContext());
+                        ((TextView)view.findViewById(R.id.fragment_session_total_speed)).setText(speed);
+                    }
+
                 }
             }
         }

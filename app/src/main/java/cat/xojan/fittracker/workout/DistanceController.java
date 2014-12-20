@@ -66,6 +66,6 @@ public class DistanceController {
     }
 
     public float getSessionDistance() {
-        return mSegmentDistance;
+        return mSessionDistance;
     }
 }

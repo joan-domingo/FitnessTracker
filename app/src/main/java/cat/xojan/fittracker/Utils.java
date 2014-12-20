@@ -1,6 +1,9 @@
 package cat.xojan.fittracker;
 
+import android.content.Context;
 import android.text.TextUtils;
+
+import com.google.android.gms.fitness.data.Value;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,5 +39,24 @@ public class Utils {
             return Calendar.getInstance().getTime() + " workout";
         } else
             return description;
+    }
+
+    public static String getRightSpeed(float value, Context context) {
+        String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+
+        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+            return String.format("%.2f", Utils.ms2Mph(value)) + " Mph";
+        } else {
+            return String.format("%.2f", Utils.ms2KmH(value)) + " Km/h";
+        }
+    }
+
+    private static double ms2Mph(float value) {
+        return value * 2.23693629;
+    }
+
+    private static double ms2KmH(float value) {
+        return value * 3.6;
     }
 }
