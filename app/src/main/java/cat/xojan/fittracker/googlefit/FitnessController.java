@@ -6,7 +6,6 @@ import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.text.Editable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -17,7 +16,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.session.SessionFragment;
