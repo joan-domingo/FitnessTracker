@@ -13,7 +13,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -22,6 +24,7 @@ import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 
@@ -324,5 +327,33 @@ public class FitnessController {
     public void setSessionData(String name, String description) {
         mSessionName = Utils.checkSessionName(name);
         mSessionDescription = Utils.checkSessionDescription(description);
+    }
+
+    public void deleteSession(Session session) {
+        //  Create a delete request object, providing a data type and a time interval
+        DataDeleteRequest request = new DataDeleteRequest.Builder()
+                .addSession(session)
+                .deleteAllData()
+                .setTimeInterval(session.getStartTime(TimeUnit.MILLISECONDS),
+                        session.getEndTime(TimeUnit.MILLISECONDS),
+                        TimeUnit.MILLISECONDS)
+                .build();
+
+        // Invoke the History API with the Google API client object and delete request, and then
+        // specify a callback that will check the result.
+        Fitness.HistoryApi.deleteData(mClient, request)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        if (status.isSuccess()) {
+                            Log.i(Constant.TAG, "Successfully deleted data");
+                        } else {
+                            // The deletion will fail if the requesting app tries to delete data
+                            // that it did not insert.
+                            Log.i(Constant.TAG, "Failed to delete data");
+                        }
+                        SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
+                    }
+                });
     }
 }

@@ -23,5 +23,8 @@
     <string name="hint_name">Insert Workout Name</string>
     <string name="hint_description">Insert Workout Description</string>
     <string name="choose_unit">Choose Measure Unit</string>
+    <string name="delete">Delete</string>
+    <string name="delete_session">Do you really want to delete this session?</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

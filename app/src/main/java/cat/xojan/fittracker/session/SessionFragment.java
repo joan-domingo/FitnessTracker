@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.session;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,9 +28,6 @@ import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
 
-/**
- * Created by Joan on 14/12/2014.
- */
 public class SessionFragment extends Fragment {
 
     private static Handler handler;
@@ -46,6 +45,7 @@ public class SessionFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_session, container, false);
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_loading_spinner);
         mSessionView = (LinearLayout) view.findViewById(R.id.fragment_session_container);
+        Button deleteSessionButton = (Button) view.findViewById(R.id.fragment_button_delete_session);
         showProgressBar(true);
         /**
          * session contains:
@@ -68,9 +68,40 @@ public class SessionFragment extends Fragment {
                         mDataSets = FitnessController.getInstance().getSingleSessionDataSets();
                         fillViewContent(view);
                         break;
+                    case Constant.MESSAGE_SESSION_DELETED:
+                        showProgressBar(false);
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constant.PARAMETER_RELOAD_LIST, true);
+                        SessionListFragment sessionListFragment = new SessionListFragment();
+                        sessionListFragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, sessionListFragment)
+                                .commit();
                 }
             }
         };
+
+        deleteSessionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(R.string.delete_session)
+                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                FitnessController.getInstance().deleteSession(mSession);
+                                showProgressBar(true);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                builder.create().show();
+            }
+        });
 
         return view;
     }

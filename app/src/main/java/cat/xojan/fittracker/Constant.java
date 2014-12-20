@@ -7,6 +7,7 @@ public class Constant {
     public static final int MESSAGE_SESSIONS_READ = 0x0001;
     public static final int GOOGLE_API_CLIENT_CONNECTED = 0x0002;
     public static final int MESSAGE_SINGLE_SESSION_READ = 0x1001;
+    public static final int MESSAGE_SESSION_DELETED = 0x1002;
 
     public static final String DISTANCE_MEASURE_KM = "Km";
     public static final String DISTANCE_MEASURE_MILE = "Mi";
@@ -23,6 +24,5 @@ public class Constant {
     public static final String PARAMETER_START_TIME = "startTime";
     public static final String PARAMETER_END_TIME = "endTime";
     public static final String PARAMETER_RELOAD_LIST = "reloadSessionList";
-
 
 }

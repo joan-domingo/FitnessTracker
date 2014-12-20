@@ -29,6 +29,17 @@
                 android:textSize="32sp"
                 android:fontFamily="sans-serif"/>
 
+            <Button
+                android:id="@+id/fragment_button_delete_session"
+                android:layout_height="36dp"
+                android:minWidth="88dp"
+                android:layout_width="wrap_content"
+                android:layout_gravity="end"
+                android:stateListAnimator="@anim/anim"
+                android:text="@string/delete"
+                android:elevation="8dp"
+                style="@style/RaisedGrey" />
+
             <TextView
                 android:id="@+id/fragment_session_date"
                 android:layout_width="match_parent"
@@ -36,7 +47,7 @@
                 android:textSize="16sp"
                 android:fontFamily="sans-serif"
                 android:textStyle="bold"
-                android:gravity="end"/>
+                />
 
             <TextView
                 android:id="@+id/fragment_session_description"
