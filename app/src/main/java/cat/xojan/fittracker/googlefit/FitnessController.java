@@ -45,6 +45,7 @@ public class FitnessController {
     private Session mSingleSession;
     private List<DataSet> mSingleSessionDataSets;
     private boolean isConnected = false;
+    private String mFitnessActivity;
 
     protected FitnessController() {
     }
@@ -200,7 +201,7 @@ public class FitnessController {
                 .setName("Session Name ") //TODO
                 .setDescription("Session description ") //TODO
                 .setIdentifier("" + Calendar.getInstance().getTimeInMillis()) //TODO
-                .setActivity(FitnessActivities.RUNNING) //TODO
+                .setActivity(mFitnessActivity)
                 .setStartTime(TimeController.getInstance().getStartTime(), TimeUnit.MILLISECONDS)
                 .setEndTime(TimeController.getInstance().getEndTime(), TimeUnit.MILLISECONDS)
                 .build();
@@ -312,5 +313,9 @@ public class FitnessController {
 
     public boolean isConnected() {
         return isConnected;
+    }
+
+    public void setFitnessActivity(String activity) {
+        mFitnessActivity = activity;
     }
 }

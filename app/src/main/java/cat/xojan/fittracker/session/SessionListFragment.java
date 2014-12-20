@@ -1,6 +1,8 @@
 package cat.xojan.fittracker.session;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
@@ -102,10 +105,21 @@ public class SessionListFragment extends Fragment {
         newWorkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new WorkoutFragment())
-                        .commit();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.choose_activity)
+                        .setItems(ActivityType.getStringArray(getActivity().getBaseContext()), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String activity = ActivityType.values()[which].getActivity();
+                                FitnessController.getInstance().setFitnessActivity(activity);
+
+                                getActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.fragment_container, new WorkoutFragment())
+                                        .commit();
+                            }
+                });
+                builder.create().show();
             }
         });
 
