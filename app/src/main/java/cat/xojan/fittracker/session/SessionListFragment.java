@@ -68,8 +68,10 @@ public class SessionListFragment extends Fragment {
         if(!FitnessController.getInstance().isConnected())
             FitnessController.getInstance().init();
         else {
-            Bundle bundle = this.getArguments();
-            if (bundle != null && bundle.containsKey(Constant.PARAMETER_RELOAD_LIST) && bundle.getBoolean(Constant.PARAMETER_RELOAD_LIST)) {
+            if (getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                    .getBoolean(Constant.PARAMETER_RELOAD_LIST, false)) {
+                getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                        .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, false).apply();
                 FitnessController.getInstance().readLastSessions();
             } else {
                 handler.sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);

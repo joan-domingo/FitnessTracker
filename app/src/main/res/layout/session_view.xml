@@ -32,8 +32,7 @@
         <ImageView
             android:id="@+id/session_activity"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_walk_black_48dp"/>
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 

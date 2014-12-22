@@ -65,6 +65,7 @@ public class MapController {
 
         //init google map
         mMap = map;
+        mMap.clear();
         mMap.setPadding(20, 330, 20, 150);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);

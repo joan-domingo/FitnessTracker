@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
@@ -199,7 +200,7 @@ public class FitnessController {
         return mReadSessions;
     }
 
-    public void saveSession(final FragmentManager supportFragmentManager) {
+    public void saveSession(final FragmentActivity fragmentActivity) {
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
                 .setName(mSessionName)
@@ -219,12 +220,10 @@ public class FitnessController {
         new SessionWriter(mClient) {
 
             public void onFinishSessionWriting() {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constant.PARAMETER_RELOAD_LIST, true);
-                SessionListFragment sessionListFragment = new SessionListFragment();
-                sessionListFragment.setArguments(bundle);
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, sessionListFragment)
+                fragmentActivity.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                        .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, true).apply();
+                fragmentActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new SessionListFragment())
                         .commit();
             }
 

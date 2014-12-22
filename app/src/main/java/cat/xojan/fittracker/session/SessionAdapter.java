@@ -17,12 +17,10 @@ import com.google.android.gms.fitness.data.Session;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 
-/**
- * Created by Joan on 12/12/2014.
- */
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
 
     private final Context context;
@@ -96,13 +94,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     }
 
     private Drawable getActivityDrawable(String activity) {
-        if (activity.equals(FitnessActivities.RUNNING)) {
-            return context.getDrawable(R.drawable.ic_walk_black_48dp);
-        } else if (activity.equals(FitnessActivities.BIKING)) {
-            return context.getDrawable(R.drawable.ic_bike_black_48dp);
-        } else {
-            return context.getDrawable(R.drawable.ic_bike_black_48dp);
-        }
+        int drawable = ActivityType.getDrawable(activity);
+        return context.getDrawable(drawable);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

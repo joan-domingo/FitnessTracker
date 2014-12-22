@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.session;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,8 @@ import cat.xojan.fittracker.googlefit.FitnessController;
 public class SessionFragment extends Fragment {
 
     private static Handler handler;
+    private Button mDeleteSessionButton;
+
     public static Handler getHandler() {
         return handler;
     }
@@ -45,7 +48,7 @@ public class SessionFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_session, container, false);
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_loading_spinner);
         mSessionView = (LinearLayout) view.findViewById(R.id.fragment_session_container);
-        Button deleteSessionButton = (Button) view.findViewById(R.id.fragment_button_delete_session);
+        mDeleteSessionButton = (Button) view.findViewById(R.id.fragment_button_delete_session);
         showProgressBar(true);
         /**
          * session contains:
@@ -70,19 +73,17 @@ public class SessionFragment extends Fragment {
                         break;
                     case Constant.MESSAGE_SESSION_DELETED:
                         showProgressBar(false);
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(Constant.PARAMETER_RELOAD_LIST, true);
-                        SessionListFragment sessionListFragment = new SessionListFragment();
-                        sessionListFragment.setArguments(bundle);
+                        getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                                .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, true).apply();
                         getActivity().getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.fragment_container, sessionListFragment)
+                                .replace(R.id.fragment_container, new SessionListFragment())
                                 .commit();
                 }
             }
         };
 
-        deleteSessionButton.setOnClickListener(new View.OnClickListener() {
+        mDeleteSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -107,7 +108,12 @@ public class SessionFragment extends Fragment {
     }
 
     private void fillViewContent(View view) {
-        ((TextView)view.findViewById(R.id.fragment_session_name)).setText(mSession.getName());
+        if (mSession.getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART))
+            mDeleteSessionButton.setVisibility(View.VISIBLE);
+        else
+            mDeleteSessionButton.setVisibility(View.GONE);
+
+        ((TextView) view.findViewById(R.id.fragment_session_name)).setText(mSession.getName());
         ((TextView)view.findViewById(R.id.fragment_session_description)).setText(mSession.getDescription());
         ((TextView)view.findViewById(R.id.fragment_session_date)).setText(Utils.millisToDate(mSession.getStartTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_start)).setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));

@@ -48,7 +48,7 @@ public class ResultFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FitnessController.getInstance().setSessionData(mName.getText().toString(), mDescription.getText().toString());
-                FitnessController.getInstance().saveSession(getActivity().getSupportFragmentManager());
+                FitnessController.getInstance().saveSession(getActivity());
             }
         });
 
@@ -76,6 +76,7 @@ public class ResultFragment extends Fragment {
 
     private void initMap() {
         //init google map
+        mMap.clear();
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
