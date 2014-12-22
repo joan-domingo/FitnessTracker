@@ -26,5 +26,7 @@
     <string name="delete">Delete</string>
     <string name="delete_session">Do you really want to delete this session?</string>
     <string name="cancel">Cancel</string>
+    <string name="settings_unit_measure_title">Unit Measure</string>
+    <string name="settings_unit_measure_dialog_title">Select Unit Measure</string>
 
 </resources>

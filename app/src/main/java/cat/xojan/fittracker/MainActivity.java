@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
+import cat.xojan.fittracker.settings.UserSettingFragment;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -55,7 +56,6 @@ public class MainActivity extends ActionBarActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_container, new SessionListFragment())
-                .addToBackStack(Constant.TAG_SESSION_LIST)
                 .commit();
     }
 
@@ -82,7 +82,10 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            getFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, new UserSettingFragment())
+                    .addToBackStack(null)
+                    .commit();
         }
 
         return super.onOptionsItemSelected(item);
@@ -112,9 +115,13 @@ public class MainActivity extends ActionBarActivity {
         FitnessController.getInstance().onSaveInstanceState(outState);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        if (getSupportFragmentManager().findFragmentByTag(Constant.TAG_WORKOUT) == null)
-//            super.onBackPressed();
-//    }
+    @Override
+    public void onBackPressed() {
+
+
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+            getFragmentManager().popBackStack();
+        else
+            super.onBackPressed();
+    }
 }
