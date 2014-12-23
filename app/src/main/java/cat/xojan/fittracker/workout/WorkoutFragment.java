@@ -15,7 +15,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
 
 public class WorkoutFragment extends Fragment {
@@ -93,6 +92,7 @@ public class WorkoutFragment extends Fragment {
             public void onClick(View v) {
                 //finish button
                 MapController.getInstance().finish();
+                TimeController.getInstance().finish();
             }
         });
 

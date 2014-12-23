@@ -81,4 +81,8 @@ public class TimeController {
     public long getSessionTotalTime() {
         return mSessionFinish - mSessionStart;
     }
+
+    public void finish() {
+        mChronometer.setText("00:00");
+    }
 }
