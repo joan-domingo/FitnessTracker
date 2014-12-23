@@ -3,6 +3,7 @@ package cat.xojan.fittracker.result;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +30,23 @@ public class ResultFragment extends Fragment {
     private GoogleMap mMap;
     private EditText mDescription;
     private EditText mName;
+    private static View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_result, container, false);
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment_result, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
 
         mMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.result_map)).getMap();
+
         Button save = (Button) view.findViewById(R.id.result_button_save);
         Button exit = (Button) view.findViewById(R.id.result_button_exit);
         mName = (EditText) view.findViewById(R.id.result_name);
