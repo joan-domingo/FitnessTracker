@@ -26,13 +26,12 @@ public class UserSettingFragment extends PreferenceFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(getResources().getColor(R.color.white));
-
         return view;
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("SETTING_MEASURE_UNIT")) {
+        if (key.equals("SETTING_UNIT_DISTANCE")) {
             String unit = sharedPreferences.getString(key, "");
             getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
                     .edit()

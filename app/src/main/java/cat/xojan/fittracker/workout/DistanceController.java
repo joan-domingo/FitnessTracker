@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.workout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class DistanceController {
         return instance;
     }
 
-    public void init(TextView distanceView, FragmentActivity activity) {
+    public void init(TextView distanceView, Activity activity) {
         mDistanceView = distanceView;
         mContext = activity;
 

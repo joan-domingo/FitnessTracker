@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class SessionListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         Context mContext = getActivity().getBaseContext();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.sessions_list);
@@ -55,7 +57,7 @@ public class SessionListFragment extends Fragment {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case Constant.MESSAGE_SESSIONS_READ:
-                        RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), getActivity());
+                        RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), getActivity().getBaseContext());
                         mRecyclerView.setAdapter(mAdapter);
                         mProgressBar.setVisibility(View.GONE);
                         break;

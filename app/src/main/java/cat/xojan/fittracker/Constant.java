@@ -17,9 +17,6 @@ public class Constant {
     public static final String PREFERENCE_MEASURE_UNIT = "unit_measure";
     public static final String PREFERENCE_FIRST_RUN = "first_run";
 
-    public static final String TAG_SESSION_LIST = "fragment_sessions";
-    public static final String TAG_WORKOUT = "fragment_workout";
-
     public static final String PARAMETER_SESSION_ID = "sessionId";
     public static final String PARAMETER_START_TIME = "startTime";
     public static final String PARAMETER_END_TIME = "endTime";

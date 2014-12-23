@@ -80,12 +80,16 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, new UserSettingFragment())
-                    .addToBackStack(null)
-                    .commit();
+        switch (id) {
+            case R.id.action_settings:
+                getFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, new UserSettingFragment())
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case android.R.id.home:
+                getSupportFragmentManager().popBackStack();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -117,11 +121,9 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-
-
-        if (getFragmentManager().getBackStackEntryCount() > 0)
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
             getFragmentManager().popBackStack();
-        else
+        } else
             super.onBackPressed();
     }
 }

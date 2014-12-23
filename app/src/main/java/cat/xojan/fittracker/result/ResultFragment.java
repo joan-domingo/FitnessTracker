@@ -16,8 +16,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.Map;
-
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;

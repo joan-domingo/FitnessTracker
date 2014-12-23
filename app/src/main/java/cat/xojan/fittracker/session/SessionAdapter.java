@@ -2,7 +2,6 @@ package cat.xojan.fittracker.session;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.Session;
 
 import java.util.List;
@@ -53,9 +51,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         }
     }
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SessionAdapter(List<Session> DataSet, FragmentActivity activity) {
+    public SessionAdapter(List<Session> DataSet, Context context) {
         mDataset = DataSet;
-        this.context = activity;
+        this.context = context;
     }
 
     // Create new views (invoked by the layout manager)

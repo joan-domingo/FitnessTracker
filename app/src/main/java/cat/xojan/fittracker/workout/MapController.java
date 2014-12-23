@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.workout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;

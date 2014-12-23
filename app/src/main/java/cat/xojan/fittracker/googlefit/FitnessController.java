@@ -236,7 +236,7 @@ public class FitnessController {
         DataSource dataSource = new DataSource.Builder()
                 .setAppPackageName(context)
                 .setDataType(DataType.TYPE_SPEED)
-                .setName(Constant.TAG_WORKOUT + " - speed")
+                .setName("speed")
                 .setType(DataSource.TYPE_RAW)
                 .build();
 
