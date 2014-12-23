@@ -29,5 +29,15 @@
     <string name="settings_unit_measure_title">Distance Unit</string>
     <string name="settings_unit_measure_dialog_title">Select Distance Unit</string>
     <string name="unit_preferences">Unit Preferences</string>
+    <string name="start_time">Start Time:</string>
+    <string name="finish_time">Finish Time:</string>
+    <string name="total_time">Workout Time:</string>
+    <string name="date">Workout Date:</string>
+    <string name="pace">Avg Pace:</string>
+    <string name="speed">Avg Speed:</string>
+    <string name="mph">Mph</string>
+    <string name="kph">Km/h</string>
+    <string name="pmi">/mi</string>
+    <string name="pkm">/km</string>
 
 </resources>

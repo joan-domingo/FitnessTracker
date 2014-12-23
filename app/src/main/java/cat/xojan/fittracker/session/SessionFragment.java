@@ -128,8 +128,12 @@ public class SessionFragment extends Fragment {
             for (DataPoint dp : ds.getDataPoints()) {
                 for (Field field : dp.getDataType().getFields()) {
                     if (Field.FIELD_SPEED.equals(field)) {
+
                         String speed = Utils.getRightSpeed(dp.getValue(field).asFloat(), getActivity().getBaseContext());
                         ((TextView)view.findViewById(R.id.fragment_session_total_speed)).setText(speed);
+
+                        String pace = Utils.getRightPace(dp.getValue(field).asFloat(), getActivity().getBaseContext());
+                        ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(pace);
                     }
 
                 }
