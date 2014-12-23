@@ -87,8 +87,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     }
 
     private String getActivitySummary(Session session) {
-        long timeResult = session.getEndTime(TimeUnit.MILLISECONDS) - session.getStartTime(TimeUnit.MILLISECONDS);
-        return Utils.millisToTime(timeResult);
+        return Utils.getTimeDifference(session.getEndTime(TimeUnit.MILLISECONDS),
+                session.getStartTime(TimeUnit.MILLISECONDS));
     }
 
     private Drawable getActivityDrawable(String activity) {

@@ -23,7 +23,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
-                android:elevation="8dp"
                 android:gravity="center"
                 android:textSize="26sp"
                 android:fontFamily="sans-serif"
@@ -34,7 +33,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
-                android:elevation="8dp"
                 android:gravity="center"
                 android:textSize="26sp"
                 android:fontFamily="sans-serif"
@@ -60,7 +58,6 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/waiting_gps"
                 android:gravity="center"
-                android:elevation="2dp"
                 style="@style/RaisedGrey" />
 
             <Button
@@ -71,7 +68,6 @@
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/exit"
-                android:elevation="8dp"
                 style="@style/RaisedRed" />
 
         </LinearLayout>
@@ -93,7 +89,6 @@
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/start"
-                android:elevation="8dp"
                 style="@style/RaisedGreen" />
 
             <Button
@@ -104,7 +99,6 @@
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/exit"
-                android:elevation="8dp"
                 style="@style/RaisedRed" />
 
         </LinearLayout>
@@ -126,7 +120,6 @@
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/lap"
-                android:elevation="8dp"
                 style="@style/RaisedGreen" />
 
             <Button
@@ -137,7 +130,6 @@
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/pause"
-                android:elevation="8dp"
                 style="@style/RaisedGrey" />
 
         </LinearLayout>
@@ -159,7 +151,6 @@
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/resume"
-                android:elevation="8dp"
                 style="@style/RaisedGreen" />
 
             <Button
@@ -170,7 +161,6 @@
                 android:minWidth="88dp"
                 android:stateListAnimator="@anim/anim"
                 android:text="@string/finish"
-                android:elevation="8dp"
                 style="@style/RaisedRed" />
 
         </LinearLayout>

@@ -53,6 +53,8 @@ public class ResultFragment extends Fragment {
         mDescription = (EditText) view.findViewById(R.id.result_description);
         TextView totalTime = (TextView) view.findViewById(R.id.result_total_time);
         TextView totalSpeedView = (TextView) view.findViewById(R.id.result_total_speed);
+        TextView startTime = (TextView) view.findViewById(R.id.result_start_time);
+        TextView endTime = (TextView) view.findViewById(R.id.result_end_time);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,12 +74,16 @@ public class ResultFragment extends Fragment {
             }
         });
 
-        totalTime.setText(String.valueOf(Utils.millisToTime(TimeController.getInstance().getSessionTotalTime())));
+        totalTime.setText(Utils.getTimeDifference(TimeController.getInstance().getSessionEndTime(),
+                TimeController.getInstance().getSessionStartTime()));
 
         float distance = DistanceController.getInstance().getSessionDistance();
         long time = TimeController.getInstance().getSessionTotalTime() / 1000;
         String totalSpeed = Utils.getRightSpeed( (distance / time), getActivity().getBaseContext());
         totalSpeedView.setText(totalSpeed);
+
+        startTime.setText(Utils.millisToTime(TimeController.getInstance().getSessionStartTime()));
+        endTime.setText(Utils.millisToTime(TimeController.getInstance().getSessionEndTime()));
 
         initMap();
 

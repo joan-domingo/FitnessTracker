@@ -122,7 +122,7 @@ public class SessionFragment extends Fragment {
         ((TextView)view.findViewById(R.id.fragment_session_date)).setText(Utils.millisToDate(mSession.getStartTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_start)).setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_end)).setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
-        ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS)));
+        ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS) , mSession.getStartTime(TimeUnit.MILLISECONDS)));
 
         for (DataSet ds : mDataSets) {
             for (DataPoint dp : ds.getDataPoints()) {

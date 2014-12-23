@@ -2,19 +2,18 @@ package cat.xojan.fittracker;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.fitness.data.Value;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Utils {
     public static String millisToTime(long millis) {
-        long second = (millis / 1000) % 60;
-        long minute = (millis / (1000 * 60)) % 60;
-        long hour = (millis / (1000 * 60 * 60)) % 24;
-
-        return String.format("%02d:%02d:%02d", hour, minute, second);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(new Date(millis));
     }
 
     public static String millisToDate(long startTime) {
@@ -58,5 +57,15 @@ public class Utils {
 
     private static double ms2KmH(float value) {
         return value * 3.6;
+    }
+
+    public static String getTimeDifference(long endTime, long startTime) {
+        long result = endTime - startTime;
+
+        long second = (result / 1000) % 60;
+        long minute = (result / (1000 * 60)) % 60;
+        long hour = (result / (1000 * 60 * 60)) % 24;
+
+        return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 }

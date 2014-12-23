@@ -280,7 +280,7 @@ public class FitnessController {
                 mSingleSessionDataSets = dataSets;
                 // Process the data sets for this session
                 for (DataSet dataSet : dataSets) {
-                    dumpDataSet(dataSet);
+                    //dumpDataSet(dataSet);
                 }
                 SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
