@@ -53,9 +53,7 @@ public class TimeController {
     }
 
     public void lap() {
-        //reset session time
         mSegmentStart = Calendar.getInstance().getTimeInMillis();
-
         //reset chrono
         mChronometer.setBase(SystemClock.elapsedRealtime());
     }
@@ -67,6 +65,7 @@ public class TimeController {
     }
 
     public void resume() {
+        mSegmentStart = Calendar.getInstance().getTimeInMillis();
         mChronometer.setBase(SystemClock.elapsedRealtime() + mTimeWhenPaused);
         mChronometer.start();
     }
@@ -85,5 +84,13 @@ public class TimeController {
 
     public void finish() {
         mChronometer.setText("00:00");
+    }
+
+    public long getSegmentStartTime() {
+        return mSegmentStart;
+    }
+
+    public long getSegmentTime() {
+        return Calendar.getInstance().getTimeInMillis() - mSegmentStart;
     }
 }

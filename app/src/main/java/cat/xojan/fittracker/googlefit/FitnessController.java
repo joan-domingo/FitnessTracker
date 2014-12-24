@@ -6,7 +6,6 @@ import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -51,6 +50,14 @@ public class FitnessController {
     private String mFitnessActivity;
     private String mSessionName;
     private String mSessionDescription;
+    private int mNumSegments;
+    private DataSource mSpeedDataSource;
+    private DataSet mSpeedDataSet;
+    private DataSource mDistanceDataSource;
+    private DataSet mDistanceDataSet;
+    private DataSource mSummaryDataSource;
+    private DataSource mAggregateSpeedDataSource;
+//    private DataSource mAggregateDistanceDataSource;
 
     protected FitnessController() {
     }
@@ -181,8 +188,6 @@ public class FitnessController {
         // Build a session read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                .read(DataType.TYPE_SPEED)
                 .readSessionsFromAllApps()
                 .build();
 
@@ -201,6 +206,22 @@ public class FitnessController {
     }
 
     public void saveSession(final FragmentActivity fragmentActivity) {
+        //summary activity (aggregate)
+        DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
+        summaryDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
+        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) TimeController.getInstance().getSegmentTime());
+        summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
+
+        //summary speed (aggregate)
+        DataPoint summarySpeedDataPoint = DataPoint.create(mAggregateSpeedDataSource);
+        summarySpeedDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
+        summarySpeedDataPoint.getValue(Field.FIELD_AVERAGE).setFloat(insertAggregateSpeed());
+
+        //summary distance (aggregate)
+//        DataPoint summaryDistanceDataPoint = DataPoint.create(mAggregateDistanceDataSource);
+//        summaryDistanceDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
+//        summaryDistanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(DistanceController.getInstance().getSessionDistance());
+
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
                 .setName(mSessionName)
@@ -214,7 +235,11 @@ public class FitnessController {
         // Build a session insert request
         SessionInsertRequest insertRequest = new SessionInsertRequest.Builder()
                 .setSession(session)
-                .addDataSet(insertSpeedDataset())
+                .addAggregateDataPoint(summaryDataPoint)
+                .addAggregateDataPoint(summarySpeedDataPoint)
+                //.addAggregateDataPoint(summaryDistanceDataPoint)
+                .addDataSet(mSpeedDataSet)
+                .addDataSet(mDistanceDataSet)
                 .build();
 
         new SessionWriter(mClient) {
@@ -230,34 +255,7 @@ public class FitnessController {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
     }
 
-    private DataSet insertSpeedDataset() {
-
-        // Create a data source
-        DataSource dataSource = new DataSource.Builder()
-                .setAppPackageName(context)
-                .setDataType(DataType.TYPE_SPEED)
-                .setName("speed")
-                .setType(DataSource.TYPE_RAW)
-                .build();
-
-        // Create a data set
-        DataSet dataSet = DataSet.create(dataSource);
-
-        // For each data point, specify a start time, end time, and the data value
-        DataPoint dataPoint = dataSet.createDataPoint()
-                .setTimeInterval(TimeController.getInstance().getSessionStartTime(),
-                        TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
-
-        dataPoint.getValue(Field.FIELD_SPEED).setFloat(insertSpeed());
-
-
-
-        dataSet.add(dataPoint);
-
-        return dataSet;
-    }
-
-    private float insertSpeed() {
+    private float insertAggregateSpeed() {
         long timeInSeconds = TimeController.getInstance().getSessionTotalTime() / 1000;
         float distanceInMeters = DistanceController.getInstance().getSessionDistance();
 
@@ -269,7 +267,10 @@ public class FitnessController {
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
                 .setSessionId(sessionId)
+                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .read(DataType.AGGREGATE_SPEED_SUMMARY)
                 .read(DataType.TYPE_SPEED)
+                .read(DataType.TYPE_DISTANCE_DELTA)
                 .readSessionsFromAllApps()
                 .build();
 
@@ -280,7 +281,7 @@ public class FitnessController {
                 mSingleSessionDataSets = dataSets;
                 // Process the data sets for this session
                 for (DataSet dataSet : dataSets) {
-                    //dumpDataSet(dataSet);
+                    dumpDataSet(dataSet);
                 }
                 SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
@@ -351,5 +352,74 @@ public class FitnessController {
                         SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
                     }
                 });
+    }
+
+    public void saveSegment() {
+        long endTimeSegment = Calendar.getInstance().getTimeInMillis();
+        long startTimeSegment = TimeController.getInstance().getSegmentStartTime();
+
+        //segment
+        mNumSegments++;
+
+        //speed
+        DataPoint speedDataPoint = DataPoint.create(mSpeedDataSource);
+        speedDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
+        speedDataPoint.getValue(Field.FIELD_SPEED).setFloat(insertSegmentSpeed());
+        mSpeedDataSet.add(speedDataPoint);
+
+        //distance
+        DataPoint distanceDataPoint = DataPoint.create(mDistanceDataSource);
+        distanceDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
+        distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(DistanceController.getInstance().getSegmentDistance());
+        mDistanceDataSet.add(distanceDataPoint);
+    }
+
+    private float insertSegmentSpeed() {
+        long timeInSeconds = TimeController.getInstance().getSegmentTime() / 1000;
+        float distanceInMeters = DistanceController.getInstance().getSegmentDistance();
+
+        return distanceInMeters/timeInSeconds;
+    }
+
+    public void start() {
+        //segments
+        mNumSegments = 0;
+
+        //speed
+        mSpeedDataSource = new DataSource.Builder()
+                .setAppPackageName(context)
+                .setDataType(DataType.TYPE_SPEED)
+                .setType(DataSource.TYPE_RAW)
+                .build();
+        mSpeedDataSet = DataSet.create(mSpeedDataSource);
+
+        //distance
+        mDistanceDataSource = new DataSource.Builder()
+                .setAppPackageName(context)
+                .setDataType(DataType.TYPE_DISTANCE_DELTA)
+                .setType(DataSource.TYPE_RAW)
+                .build();
+        mDistanceDataSet = DataSet.create(mDistanceDataSource);
+
+        //session summary
+        mSummaryDataSource = new DataSource.Builder()
+                .setAppPackageName(context)
+                .setDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .setType(DataSource.TYPE_RAW)
+                .build();
+
+        //speed summary
+        mAggregateSpeedDataSource = new DataSource.Builder()
+                .setAppPackageName(context)
+                .setDataType(DataType.AGGREGATE_SPEED_SUMMARY)
+                .setType(DataSource.TYPE_RAW)
+                .build();
+
+        //distance summary
+//        mAggregateDistanceDataSource = new DataSource.Builder()
+//                .setAppPackageName(context)
+//                .setDataType(DataType.AGGREGATE_DISTANCE_DELTA)
+//                .setType(DataSource.TYPE_RAW)
+//                .build();
     }
 }

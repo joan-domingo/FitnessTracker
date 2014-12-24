@@ -139,7 +139,6 @@ public class SessionFragment extends Fragment {
                                 mSession.getStartTime(TimeUnit.MILLISECONDS), mSession.getEndTime(TimeUnit.MILLISECONDS));
                         ((TextView) view.findViewById(R.id.fragment_session_total_distance)).setText(distance);
                     }
-
                 }
             }
         }

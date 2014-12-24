@@ -61,12 +61,19 @@ public class DistanceController {
         updateDistanceView();
     }
 
-    public void lap() {
-        mSessionDistance = 0;
-        updateDistanceView();
-    }
-
     public float getSessionDistance() {
         return mSessionDistance;
+    }
+
+    public float getSegmentDistance() {
+        return mSegmentDistance;
+    }
+
+    public void lap() {
+        mSegmentDistance = 0;
+    }
+
+    public void resume() {
+        mSegmentDistance = 0;
     }
 }

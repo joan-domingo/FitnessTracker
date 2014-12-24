@@ -2,9 +2,6 @@ package cat.xojan.fittracker;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
-
-import com.google.android.gms.fitness.data.Value;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

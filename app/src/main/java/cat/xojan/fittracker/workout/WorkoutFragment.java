@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
 
 public class WorkoutFragment extends Fragment {
@@ -56,6 +57,7 @@ public class WorkoutFragment extends Fragment {
                 //start button
                 MapController.getInstance().start();
                 TimeController.getInstance().start();
+                FitnessController.getInstance().start();
             }
         });
 
@@ -64,6 +66,7 @@ public class WorkoutFragment extends Fragment {
             public void onClick(View v) {
                 //lap button
                 MapController.getInstance().lap();
+                FitnessController.getInstance().saveSegment();
                 TimeController.getInstance().lap();
                 DistanceController.getInstance().lap();
             }
@@ -75,6 +78,7 @@ public class WorkoutFragment extends Fragment {
                 //pause button
                 MapController.getInstance().pause();
                 TimeController.getInstance().pause();
+                FitnessController.getInstance().saveSegment();
             }
         });
 
@@ -84,6 +88,7 @@ public class WorkoutFragment extends Fragment {
                 //resume button
                 MapController.getInstance().resume();
                 TimeController.getInstance().resume();
+                DistanceController.getInstance().resume();
             }
         });
 
