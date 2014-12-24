@@ -39,5 +39,8 @@
     <string name="kph">Km/h</string>
     <string name="pmi">/mi</string>
     <string name="pkm">/km</string>
+    <string name="total_distance">Workout Distance</string>
+    <string name="mi">Mi</string>
+    <string name="km">Km</string>
 
 </resources>

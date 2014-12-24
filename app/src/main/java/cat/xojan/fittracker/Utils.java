@@ -78,7 +78,6 @@ public class Utils {
         } else {
             return Utils.speedToPaceInKm(value) + " " + context.getString(R.string.pkm);
         }
-
     }
 
     private static String speedToPaceInKm(float value) {
@@ -101,5 +100,21 @@ public class Utils {
         long hour = (secPerKm * 60 * 60) % 24;
 
         return String.format("%02d:%02d:%02d", hour, minute, second);
+    }
+
+    public static String getRightDistance(float value, Context context, long startTime, long endTime) {
+        long totalTime = endTime - startTime;
+        double distance = (value / 1000) * totalTime;
+
+        String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+
+        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+            distance = distance / 1609.344;
+            return String.format("%.2f", distance) + " " + context.getString(R.string.mi);
+        } else {
+            distance = distance / 1000;
+            return String.format("%.2f", distance) + " " + context.getString(R.string.km);
+        }
     }
 }
