@@ -18,6 +18,7 @@ public class TimeController {
 
     private static TimeController instance = null;
     private long mTimeWhenPaused;
+    private long mSegmentEnd;
 
     public TimeController() {}
 
@@ -52,7 +53,11 @@ public class TimeController {
         mSessionStart = mSegmentStart = Calendar.getInstance().getTimeInMillis();
     }
 
-    public void lap() {
+    public void lapFinish() {
+        mSegmentEnd = Calendar.getInstance().getTimeInMillis();
+    }
+
+    public void lapStart() {
         mSegmentStart = Calendar.getInstance().getTimeInMillis();
         //reset chrono
         mChronometer.setBase(SystemClock.elapsedRealtime());
@@ -60,7 +65,7 @@ public class TimeController {
 
     public void pause() {
         mTimeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
-        mSessionFinish = Calendar.getInstance().getTimeInMillis();
+        mSegmentEnd = mSessionFinish = Calendar.getInstance().getTimeInMillis();
         mChronometer.stop();
     }
 
@@ -92,5 +97,9 @@ public class TimeController {
 
     public long getSegmentTime() {
         return Calendar.getInstance().getTimeInMillis() - mSegmentStart;
+    }
+
+    public long getSegmentEndTime() {
+        return mSegmentEnd;
     }
 }

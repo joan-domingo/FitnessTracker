@@ -44,10 +44,10 @@ public class DistanceController {
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
-            String miles = String.format("%.2f", mSessionDistance /  1609.344);
+            String miles = String.format("%.2f", mSegmentDistance /  1609.344);
             mDistanceView.setText(miles + " " + Constant.DISTANCE_MEASURE_MILE);
         } else {
-            String km = String.format("%.2f", mSessionDistance / 1000);
+            String km = String.format("%.2f", mSegmentDistance / 1000);
             mDistanceView.setText(km + " " + Constant.DISTANCE_MEASURE_KM);
         }
     }

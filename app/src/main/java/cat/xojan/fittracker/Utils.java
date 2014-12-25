@@ -66,6 +66,14 @@ public class Utils {
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
+    public static String getTimeDifference(long result) {
+        long second = (result / 1000) % 60;
+        long minute = (result / (1000 * 60)) % 60;
+        long hour = (result / (1000 * 60 * 60)) % 24;
+
+        return String.format("%02d:%02d:%02d", hour, minute, second);
+    }
+
     public static String getRightPace(float value, Context context) {
         String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
@@ -99,10 +107,8 @@ public class Utils {
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
-    public static String getRightDistance(float value, Context context, long startTime, long endTime) {
-        long totalTime = endTime - startTime;
-        double distance = (value / 1000) * totalTime;
-
+    public static String getRightDistance(float value, Context context) {
+        double distance = value;
         String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 

@@ -24,6 +24,7 @@ import java.util.List;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.result.ResultFragment;
 
 public class MapController {
@@ -150,6 +151,7 @@ public class MapController {
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
+            FitnessController.getInstance().storeLocation(location);
         }
         oldPosition = currentPosition;
     }

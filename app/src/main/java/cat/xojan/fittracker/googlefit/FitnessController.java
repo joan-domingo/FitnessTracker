@@ -3,6 +3,7 @@ package cat.xojan.fittracker.googlefit;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -57,7 +58,8 @@ public class FitnessController {
     private DataSet mDistanceDataSet;
     private DataSource mSummaryDataSource;
     private DataSource mAggregateSpeedDataSource;
-//    private DataSource mAggregateDistanceDataSource;
+    private DataSource mLocationDataSource;
+    private DataSet mLocationDataSet;
 
     protected FitnessController() {
     }
@@ -209,18 +211,12 @@ public class FitnessController {
         //summary activity (aggregate)
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
         summaryDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
-        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) TimeController.getInstance().getSegmentTime());
         summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
 
         //summary speed (aggregate)
         DataPoint summarySpeedDataPoint = DataPoint.create(mAggregateSpeedDataSource);
         summarySpeedDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
         summarySpeedDataPoint.getValue(Field.FIELD_AVERAGE).setFloat(insertAggregateSpeed());
-
-        //summary distance (aggregate)
-//        DataPoint summaryDistanceDataPoint = DataPoint.create(mAggregateDistanceDataSource);
-//        summaryDistanceDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
-//        summaryDistanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(DistanceController.getInstance().getSessionDistance());
 
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
@@ -237,7 +233,6 @@ public class FitnessController {
                 .setSession(session)
                 .addAggregateDataPoint(summaryDataPoint)
                 .addAggregateDataPoint(summarySpeedDataPoint)
-                //.addAggregateDataPoint(summaryDistanceDataPoint)
                 .addDataSet(mSpeedDataSet)
                 .addDataSet(mDistanceDataSet)
                 .build();
@@ -271,6 +266,7 @@ public class FitnessController {
                 .read(DataType.AGGREGATE_SPEED_SUMMARY)
                 .read(DataType.TYPE_SPEED)
                 .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.TYPE_LOCATION_SAMPLE)
                 .readSessionsFromAllApps()
                 .build();
 
@@ -355,7 +351,7 @@ public class FitnessController {
     }
 
     public void saveSegment() {
-        long endTimeSegment = Calendar.getInstance().getTimeInMillis();
+        long endTimeSegment = TimeController.getInstance().getSegmentEndTime();
         long startTimeSegment = TimeController.getInstance().getSegmentStartTime();
 
         //segment
@@ -415,11 +411,24 @@ public class FitnessController {
                 .setType(DataSource.TYPE_RAW)
                 .build();
 
-        //distance summary
-//        mAggregateDistanceDataSource = new DataSource.Builder()
-//                .setAppPackageName(context)
-//                .setDataType(DataType.AGGREGATE_DISTANCE_DELTA)
-//                .setType(DataSource.TYPE_RAW)
-//                .build();
+        //location
+        mLocationDataSource = new DataSource.Builder()
+                .setAppPackageName(context)
+                .setDataType(DataType.TYPE_LOCATION_SAMPLE)
+                .setType(DataSource.TYPE_RAW)
+                .build();
+        mLocationDataSet = DataSet.create(mLocationDataSource);
+    }
+
+    public void storeLocation(Location location) {
+        long time = Calendar.getInstance().getTimeInMillis();
+        //distance
+        DataPoint locationDataPoint = DataPoint.create(mDistanceDataSource);
+        locationDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
+        locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) location.getLatitude());
+        locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) location.getLongitude());
+        locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
+        locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
+        mLocationDataSet.add(locationDataPoint);
     }
 }
