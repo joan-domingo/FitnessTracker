@@ -76,6 +76,7 @@ public class SessionListFragment extends Fragment {
                         .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, false).apply();
                 FitnessController.getInstance().readLastSessions();
             } else {
+                //TODO
                 handler.sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
             }
         }

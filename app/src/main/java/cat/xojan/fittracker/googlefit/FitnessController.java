@@ -235,6 +235,7 @@ public class FitnessController {
                 .addAggregateDataPoint(summarySpeedDataPoint)
                 .addDataSet(mSpeedDataSet)
                 .addDataSet(mDistanceDataSet)
+                .addDataSet(mLocationDataSet)
                 .build();
 
         new SessionWriter(mClient) {
@@ -276,9 +277,9 @@ public class FitnessController {
                 mSingleSession = session;
                 mSingleSessionDataSets = dataSets;
                 // Process the data sets for this session
-                for (DataSet dataSet : dataSets) {
+                /*for (DataSet dataSet : dataSets) {
                     dumpDataSet(dataSet);
-                }
+                }*/
                 SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
 
@@ -423,7 +424,7 @@ public class FitnessController {
     public void storeLocation(Location location) {
         long time = Calendar.getInstance().getTimeInMillis();
         //distance
-        DataPoint locationDataPoint = DataPoint.create(mDistanceDataSource);
+        DataPoint locationDataPoint = DataPoint.create(mLocationDataSource);
         locationDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
         locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) location.getLatitude());
         locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) location.getLongitude());

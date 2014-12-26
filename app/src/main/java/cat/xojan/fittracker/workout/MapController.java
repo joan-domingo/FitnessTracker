@@ -139,6 +139,8 @@ public class MapController {
     private void updateTrack(Location location) {
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         if (isTracking) {
+            FitnessController.getInstance().storeLocation(location);
+
             //create polyline with last location
             addMapPolyline(new PolylineOptions()
                     .geodesic(true)
@@ -151,7 +153,6 @@ public class MapController {
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
-            FitnessController.getInstance().storeLocation(location);
         }
         oldPosition = currentPosition;
     }

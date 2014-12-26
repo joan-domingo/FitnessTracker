@@ -66,10 +66,10 @@ public class Utils {
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
-    public static String getTimeDifference(long result) {
-        long second = (result / 1000) % 60;
-        long minute = (result / (1000 * 60)) % 60;
-        long hour = (result / (1000 * 60 * 60)) % 24;
+    public static String secondsToTime(long result) {
+        long second = result % 60;
+        long minute = (result / (60)) % 60;
+        long hour = (result / (60 * 60)) % 24;
 
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
@@ -79,21 +79,17 @@ public class Utils {
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
-            return Utils.speedToPaceInMi(value) + " " + context.getString(R.string.pmi);
+            return Utils.speedToPaceInMi(value) + context.getString(R.string.pmi);
         } else {
-            return Utils.speedToPaceInKm(value) + " " + context.getString(R.string.pkm);
+            return Utils.speedToPaceInKm(value) + context.getString(R.string.pkm);
         }
     }
 
     private static String speedToPaceInKm(float value) {
-        float secPerMeter = 1 / value;
-        long secPerKm = (long) (secPerMeter * 1000);
+        float kmPerSecond = value / 1000;
+        float secPerKm = 1 / kmPerSecond;
 
-        long second = secPerKm % 60;
-        long minute = (secPerKm * 60) % 60;
-        long hour = (secPerKm * 60 * 60) % 24;
-
-        return String.format("%02d:%02d:%02d", hour, minute, second);
+        return secondsToTime((long) secPerKm);
     }
 
     private static String speedToPaceInMi(float value) {

@@ -71,6 +71,7 @@ public class DistanceController {
 
     public void lap() {
         mSegmentDistance = 0;
+        updateDistanceView();
     }
 
     public void resume() {

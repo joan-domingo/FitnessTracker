@@ -3,12 +3,14 @@ package cat.xojan.fittracker.session;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,12 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.data.Value;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +42,7 @@ import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.workout.MapController;
 
 public class SessionFragment extends Fragment {
 
@@ -42,6 +51,7 @@ public class SessionFragment extends Fragment {
     private int mNumSegments;
     private List<DataPoint> mDistanceDataPoints;
     private List<DataPoint> mSpeedDataPoints;
+    private List<DataPoint> mLocationDataPoints;
 
     public static Handler getHandler() {
         return handler;
@@ -51,10 +61,21 @@ public class SessionFragment extends Fragment {
     private Session mSession;
     private List<DataSet> mDataSets;
 
+    private static View view;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_session, container, false);
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment_session, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
 
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -148,15 +169,60 @@ public class SessionFragment extends Fragment {
                 }
             } else if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
                 mDistanceDataPoints = ds.getDataPoints();
-
             } else if (ds.getDataType().equals(DataType.TYPE_SPEED)) {
                 mSpeedDataPoints = ds.getDataPoints();
+            } else if (ds.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
+                mLocationDataPoints = ds.getDataPoints();
             }
         }
 
+        float totalDistance = 0;
+        for (DataPoint dp : mDistanceDataPoints) {
+            totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
+        }
+        ((TextView)view.findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, getActivity()));
+
+        if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
+            fillMap();
+        } else {
+            //TODO
+        }
         fillIntervalTable(view);
 
         showProgressBar(false);
+    }
+
+    private void fillMap() {
+        final GoogleMap map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.fragment_session_map)).getMap();
+        map.clear();
+        map.setMyLocationEnabled(false);
+        map.getUiSettings().setZoomControlsEnabled(false);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
+
+        LatLng oldPosition = null;
+        final LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+
+        for (DataPoint dp : mLocationDataPoints) {
+            LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
+            boundsBuilder.include(currentPosition);
+            if (oldPosition != null) {
+                //create polyline with last location
+                map.addPolyline(new PolylineOptions()
+                        .geodesic(true)
+                        .add(oldPosition)
+                        .add(currentPosition)
+                        .width(4)
+                        .color(Color.BLACK));
+            }
+            oldPosition = currentPosition;
+        }
+
+        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5));
+            }
+        });
     }
 
     private void fillIntervalTable(View view) {
@@ -170,7 +236,7 @@ public class SessionFragment extends Fragment {
             TableRow tableRow = new TableRow(getActivity());
 
             TextView title = new TextView(getActivity());
-            title.setText("Interval " + (i + 1));
+            title.setText(getText(R.string.interval) + " " + (i + 1));
             tableRow.addView(title);
 
             TextView startTime = new TextView(getActivity());

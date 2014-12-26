@@ -22,4 +22,5 @@ public class Constant {
     public static final String PARAMETER_END_TIME = "endTime";
     public static final String PARAMETER_RELOAD_LIST = "reloadSessionList";
 
+    public static final String SESSION_LIST_FRAGMENT_TAG = "session_list_Fragment";
 }
