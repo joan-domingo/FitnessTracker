@@ -61,5 +61,6 @@
     <string name="from">FROM:</string>
     <string name="to">TO:</string>
     <string name="workout">workout</string>
+    <string name="action_delete">Delete</string>
 
 </resources>

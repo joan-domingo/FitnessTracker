@@ -2,7 +2,6 @@ package cat.xojan.fittracker.workout;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -10,9 +9,6 @@ import com.google.maps.android.SphericalUtil;
 
 import cat.xojan.fittracker.Constant;
 
-/**
- * Created by Joan on 14/12/2014.
- */
 public class DistanceController {
 
     private TextView mDistanceView;

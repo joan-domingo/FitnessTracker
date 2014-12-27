@@ -32,37 +32,19 @@
                 android:fontFamily="sans-serif"
                 android:layout_gravity="end"/>
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/fragment_session_name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/fragment_session_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="32sp"
-                    android:fontFamily="sans-serif"
-                    android:layout_toStartOf="@+id/fragment_button_delete_session" />
-
-                <Button
-                    android:id="@+id/fragment_button_delete_session"
-                    android:layout_height="36dp"
-                    android:minWidth="88dp"
-                    android:layout_width="wrap_content"
-                    android:stateListAnimator="@anim/anim"
-                    android:text="@string/delete"
-                    style="@style/RaisedGrey"
-                    android:layout_alignParentEnd="true" />
-
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:textSize="32sp"
+                android:fontFamily="sans-serif"/>
 
             <TextView
                 android:id="@+id/fragment_session_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:fontFamily="sans-serif"
-                android:layout_toStartOf="@+id/fragment_session_date" />
+                android:fontFamily="sans-serif" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.InflateException;
@@ -44,15 +45,16 @@ import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.settings.UserSettingFragment;
 
 public class SessionFragment extends Fragment {
 
     private static Handler handler;
-    private Button mDeleteSessionButton;
     private int mNumSegments;
     private List<DataPoint> mDistanceDataPoints;
     private List<DataPoint> mSpeedDataPoints;
     private List<DataPoint> mLocationDataPoints;
+    private MenuItem mDeleteButton;
 
     public static Handler getHandler() {
         return handler;
@@ -82,7 +84,6 @@ public class SessionFragment extends Fragment {
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_loading_spinner);
         mSessionView = (LinearLayout) view.findViewById(R.id.fragment_session_container);
-        mDeleteSessionButton = (Button) view.findViewById(R.id.fragment_button_delete_session);
         showProgressBar(true);
         /**
          * session contains:
@@ -102,6 +103,9 @@ public class SessionFragment extends Fragment {
                 switch (msg.what) {
                     case Constant.MESSAGE_SINGLE_SESSION_READ:
                         mSession = FitnessController.getInstance().getSingleSession();
+                        if (mSession.getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART))
+                            mDeleteButton.setVisible(true);
+
                         mDataSets = FitnessController.getInstance().getSingleSessionDataSets();
                         fillViewContent(view);
                         break;
@@ -117,35 +121,10 @@ public class SessionFragment extends Fragment {
             }
         };
 
-        mDeleteSessionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.delete_session)
-                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                FitnessController.getInstance().deleteSession(mSession);
-                                showProgressBar(true);
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                // Create the AlertDialog object and return it
-                builder.create().show();
-            }
-        });
-
         return view;
     }
 
     private void fillViewContent(View view) {
-        if (mSession.getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART))
-            mDeleteSessionButton.setVisibility(View.VISIBLE);
-        else
-            mDeleteSessionButton.setVisibility(View.GONE);
 
         ((TextView) view.findViewById(R.id.fragment_session_name)).setText(mSession.getName());
         ((TextView)view.findViewById(R.id.fragment_session_description)).setText(mSession.getDescription());
@@ -279,120 +258,56 @@ public class SessionFragment extends Fragment {
             TableLayout intervalTable = new TableLayout(getActivity());
             TableRow headersRow = new TableRow(getActivity());
 
-            TextView timeHeader = new TextView(getActivity());
-            timeHeader.setText(getText(R.string.time));
-            timeHeader.setPadding(8, 0, 8, 0);
-            timeHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(timeHeader);
-
-            TextView distanceHeader = new TextView(getActivity());
-            distanceHeader.setText(getText(R.string.distance));
-            distanceHeader.setPadding(8, 0, 8, 0);
-            distanceHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(distanceHeader);
-
-            TextView paceHeader = new TextView(getActivity());
-            paceHeader.setText(getText(R.string.pace));
-            paceHeader.setPadding(8, 0, 8, 0);
-            paceHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(paceHeader);
-
-            TextView speedHeader = new TextView(getActivity());
-            speedHeader.setText(getText(R.string.speed));
-            speedHeader.setPadding(8, 0, 8, 0);
-            speedHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(speedHeader);
-
-            TextView startTimeHeader = new TextView(getActivity());
-            startTimeHeader.setText(getText(R.string.start));
-            startTimeHeader.setPadding(8, 0, 8, 0);
-            startTimeHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(startTimeHeader);
-
-            TextView endTimeHeader = new TextView(getActivity());
-            endTimeHeader.setText(getText(R.string.end));
-            endTimeHeader.setPadding(8, 0, 8, 0);
-            endTimeHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(endTimeHeader);
-
-            TextView elevationGainHeader = new TextView(getActivity());
-            elevationGainHeader.setText(getText(R.string.elevation_gain));
-            elevationGainHeader.setPadding(8, 0 , 8, 0);
-            elevationGainHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(elevationGainHeader);
-
-            TextView elevationLossHeader = new TextView(getActivity());
-            elevationLossHeader.setText(getText(R.string.elevation_loss));
-            elevationLossHeader.setPadding(8, 0 , 8, 0);
-            elevationLossHeader.setGravity(Gravity.CENTER);
-            headersRow.addView(elevationLossHeader);
+            headersRow.addView(createHeader(getActivity(), getText(R.string.time)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.distance)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.pace)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.speed)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.start)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.end)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.elevation_gain)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.elevation_loss)));
+            headersRow.addView(createHeader(getActivity(), getText(R.string.time)));
 
             intervalTable.addView(headersRow);
 
             //3 - values
             TableRow valuesRow = new TableRow(getActivity());
 
-            TextView timeValue = new TextView(getActivity());
-            timeValue.setText(Utils.getTimeDifference(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
-                    mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS)));
-            timeValue.setPadding(8, 0, 8, 0);
-            timeValue.setGravity(Gravity.CENTER);
-            timeValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(timeValue);
-
-            TextView distanceValue = new TextView(getActivity());
-            distanceValue.setText(Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), getActivity()));
-            distanceValue.setPadding(8, 0, 8, 0);
-            distanceValue.setGravity(Gravity.CENTER);
-            distanceValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(distanceValue);
-
-            TextView paceValue = new TextView(getActivity());
-            paceValue.setText(Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity()));
-            paceValue.setPadding(8, 0, 8, 0);
-            paceValue.setGravity(Gravity.CENTER);
-            paceValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(paceValue);
-
-            TextView speedValue = new TextView(getActivity());
-            speedValue.setText(Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity()));
-            speedValue.setPadding(8, 0, 8, 0);
-            speedValue.setGravity(Gravity.CENTER);
-            speedValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(speedValue);
-
-            TextView startTimeValue = new TextView(getActivity());
-            startTimeValue.setText(Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS)));
-            startTimeValue.setPadding(8, 0, 8, 0);
-            startTimeValue.setGravity(Gravity.CENTER);
-            startTimeValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(startTimeValue);
-
-            TextView endTimeValue = new TextView(getActivity());
-            endTimeValue.setText(Utils.millisToTime(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)));
-            endTimeValue.setPadding(8, 0 , 8, 0);
-            endTimeValue.setGravity(Gravity.CENTER);
-            endTimeValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(endTimeValue);
-
-            TextView elevationGainValue = new TextView(getActivity());
-            elevationGainValue.setText(getSegmentElevationGain(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS), mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)));
-            elevationGainValue.setPadding(8, 0 , 8, 0);
-            elevationGainValue.setGravity(Gravity.CENTER);
-            elevationGainValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(elevationGainValue);
-
-            TextView elevationLossValue = new TextView(getActivity());
-            elevationLossValue.setText(getSegmentElevationLoss(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS), mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)));
-            elevationLossValue.setPadding(8, 0 , 8, 0);
-            elevationLossValue.setGravity(Gravity.CENTER);
-            elevationLossValue.setTypeface(Typeface.DEFAULT_BOLD);
-            valuesRow.addView(elevationLossValue);
+            valuesRow.addView(createValue(getActivity(), Utils.getTimeDifference(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
+                    mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), getActivity())));
+            valuesRow.addView(createValue(getActivity(), Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity())));
+            valuesRow.addView(createValue(getActivity(), Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity())));
+            valuesRow.addView(createValue(getActivity(), Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), Utils.millisToTime(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), getSegmentElevationGain(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
+                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), getSegmentElevationLoss(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
+                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
 
             intervalTable.addView(valuesRow);
 
             intervalView.addView(intervalTable);
         }
+    }
+
+    private View createValue(Context context, String text) {
+        TextView textView = new TextView(context);
+        textView.setText(text);
+        textView.setPadding(8, 0, 8, 0);
+        textView.setGravity(Gravity.CENTER);
+        textView.setTypeface(Typeface.DEFAULT_BOLD);
+
+        return textView;
+    }
+
+    private View createHeader(Context context, CharSequence text) {
+        TextView textView = new TextView(context);
+        textView.setText(text);
+        textView.setPadding(8, 0, 8, 0);
+        textView.setGravity(Gravity.CENTER);
+
+        return textView;
     }
 
     private String getSegmentElevationLoss(long startTime, long endTime) {
@@ -454,9 +369,36 @@ public class SessionFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        MenuItem item = menu.findItem(R.id.action_settings);
-        item.setVisible(false);
+        MenuItem settings = menu.findItem(R.id.action_settings);
+        settings.setVisible(false);
+        mDeleteButton = menu.findItem(R.id.action_delete);
+        mDeleteButton.setVisible(false);
+    }
 
-        menu.clear();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_delete:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(R.string.delete_session)
+                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                FitnessController.getInstance().deleteSession(mSession);
+                                showProgressBar(true);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                builder.create().show();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
