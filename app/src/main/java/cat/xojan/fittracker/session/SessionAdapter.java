@@ -28,6 +28,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
+
         // each data item is just a string in this case
         public RelativeLayout mView;
         public TextView mName;
@@ -37,14 +38,19 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         public TextView mIdentifier;
         public TextView mStartTime;
         public TextView mEndTime;
+        public TextView mDay;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mView = (RelativeLayout) itemView;
+
             mName = (TextView) itemView.findViewById(R.id.session_name);
             mDescription = (TextView) itemView.findViewById(R.id.session_description);
             mActivity = (ImageView) itemView.findViewById(R.id.session_activity);
             mSummary = (TextView) itemView.findViewById(R.id.session_summary);
+            mDay = (TextView) itemView.findViewById(R.id.session_day);
+
+            // hidden
             mIdentifier = (TextView) itemView.findViewById(R.id.session_identifier);
             mStartTime = (TextView) itemView.findViewById(R.id.session_start_time);
             mEndTime = (TextView) itemView.findViewById(R.id.session_end_time);
@@ -80,15 +86,12 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mName.setText(mDataset.get(position).getName());
         holder.mDescription.setText(mDataset.get(position).getDescription());
         holder.mActivity.setImageDrawable(getActivityDrawable(mDataset.get(position).getActivity()));
-        holder.mSummary.setText(getActivitySummary(mDataset.get(position)));
+        holder.mSummary.setText(Utils.millisToTime(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " - " +
+                Utils.millisToTime(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));
         holder.mIdentifier.setText(mDataset.get(position).getIdentifier());
         holder.mStartTime.setText(String.valueOf(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
         holder.mEndTime.setText(String.valueOf(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));
-    }
-
-    private String getActivitySummary(Session session) {
-        return Utils.getTimeDifference(session.getEndTime(TimeUnit.MILLISECONDS),
-                session.getStartTime(TimeUnit.MILLISECONDS));
+        holder.mDay.setText(Utils.millisToDayComplete(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
     }
 
     private Drawable getActivityDrawable(String activity) {

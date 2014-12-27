@@ -233,6 +233,8 @@ public class FitnessController {
                 .addDataSet(mLocationDataSet)
                 .build();
 
+        //TODO: crash when no data points
+
         new SessionWriter(mClient) {
 
             public void onFinishSessionWriting() {
@@ -311,7 +313,7 @@ public class FitnessController {
 
     public void setSessionData(String name, String description) {
         mSessionName = Utils.checkSessionName(name);
-        mSessionDescription = Utils.checkSessionDescription(description);
+        mSessionDescription = Utils.checkSessionDescription(description, context);
     }
 
     public void deleteSession(Session session) {
@@ -422,5 +424,9 @@ public class FitnessController {
         locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
         locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
         mLocationDataSet.add(locationDataPoint);
+    }
+
+    public String getFitnessActivity() {
+        return mFitnessActivity;
     }
 }

@@ -1,8 +1,9 @@
 package cat.xojan.fittracker.workout;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,8 +20,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
@@ -44,6 +47,7 @@ public class MapController {
 
     private static MapController instance = null;
     private List<PolylineOptions> mPolylines;
+    private Location mFistLocation;
 
     public MapController() {}
 
@@ -83,6 +87,7 @@ public class MapController {
             @Override
             public void onLocationChanged(Location location) {
                 Log.i(Constant.TAG, "Got First Location");
+                mFistLocation = location;
                 updateMap(location);
                 showStartButton();
                 getLocationUpdates();
@@ -290,5 +295,21 @@ public class MapController {
 
     public List<PolylineOptions> getPolylines() {
         return mPolylines;
+    }
+
+    public String getCityName() {
+        String cityName = null;
+        Geocoder gcd = new Geocoder(mFragmentActivity.getBaseContext(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(mFistLocation.getLatitude(),
+                    mFistLocation.getLongitude(), 1);
+            if (addresses.size() > 0)
+                System.out.println(addresses.get(0).getLocality());
+            cityName = addresses.get(0).getLocality();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cityName;
     }
 }

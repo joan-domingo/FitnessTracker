@@ -60,5 +60,6 @@
     <string name="workouts">WORKOUTS</string>
     <string name="from">FROM:</string>
     <string name="to">TO:</string>
+    <string name="workout">workout</string>
 
 </resources>

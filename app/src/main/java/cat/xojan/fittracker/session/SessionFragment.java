@@ -452,9 +452,11 @@ public class SessionFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_settings);
-        item.setEnabled(false);
-        item.setVisible(false);
         super.onPrepareOptionsMenu(menu);
+
+        MenuItem item = menu.findItem(R.id.action_settings);
+        item.setVisible(false);
+
+        menu.clear();
     }
 }

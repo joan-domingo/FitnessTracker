@@ -7,6 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.workout.MapController;
+
 public class Utils {
     public static String millisToTime(long millis) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -25,14 +28,20 @@ public class Utils {
             return name;
     }
 
-    private static String millisToDay(long timeInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("E");
+    public static String millisToDay(long timeInMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
         return sdf.format(timeInMillis);
     }
 
-    public static String checkSessionDescription(String description) {
+    public static String millisToDayComplete(long timeInMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE dd");
+        return sdf.format(timeInMillis);
+    }
+
+    public static String checkSessionDescription(String description, Context context) {
         if (TextUtils.isEmpty(description)) {
-            return Calendar.getInstance().getTime() + " workout";
+            String cityName = MapController.getInstance().getCityName() != null ? " @ " + MapController.getInstance().getCityName() : "";
+            return FitnessController.getInstance().getFitnessActivity() + " " + context.getText(R.string.workout) + cityName;
         } else
             return description;
     }
