@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.InflateException;
@@ -19,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
@@ -45,7 +43,6 @@ import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
-import cat.xojan.fittracker.settings.UserSettingFragment;
 
 public class SessionFragment extends Fragment {
 
@@ -111,7 +108,7 @@ public class SessionFragment extends Fragment {
                         break;
                     case Constant.MESSAGE_SESSION_DELETED:
                         showProgressBar(false);
-                        getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                        getActivity().getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                                 .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, true).apply();
                         getActivity().getSupportFragmentManager()
                                 .beginTransaction()

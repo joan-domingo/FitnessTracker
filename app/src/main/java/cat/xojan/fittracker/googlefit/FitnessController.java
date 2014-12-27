@@ -237,7 +237,7 @@ public class FitnessController {
         new SessionWriter(mClient) {
 
             public void onFinishSessionWriting() {
-                fragmentActivity.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                fragmentActivity.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                         .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, true).apply();
                 fragmentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new SessionListFragment())

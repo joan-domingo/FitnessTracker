@@ -21,20 +21,20 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         initControllers(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+        if (getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getBoolean(Constant.PREFERENCE_FIRST_RUN, true))
             showSettingsDialog();
         initView();
     }
 
     private void showSettingsDialog() {
-        String[] unitArray = {Constant.DISTANCE_MEASURE_KM, Constant.DISTANCE_MEASURE_MILE};
+        String[] unitArray = {getText(R.string.kilometres_metres).toString(), getText(R.string.miles_feet).toString()};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_unit)
                 .setItems(unitArray, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String unit = which == 0 ? Constant.DISTANCE_MEASURE_KM : Constant.DISTANCE_MEASURE_MILE;
-                        getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                        getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                                 .edit()
                                 .putBoolean(Constant.PREFERENCE_FIRST_RUN, false)
                                 .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)

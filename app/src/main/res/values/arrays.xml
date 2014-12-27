@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="measure_unit_entries">
-        <item>Kilometres</item>
-        <item>Miles</item>
+        <item>Kilometers/Meters</item>
+        <item>Miles/Feet</item>
     </string-array>
     <string-array name="measure_unit_entries_values">
         <item>Km</item>

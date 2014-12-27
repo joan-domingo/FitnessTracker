@@ -31,13 +31,7 @@ public class UserSettingFragment extends PreferenceFragment
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("SETTING_UNIT_DISTANCE")) {
-            String unit = sharedPreferences.getString(key, "");
-            getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
-                    .edit()
-                    .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)
-                    .apply();
-        }
+        
     }
 
     @Override

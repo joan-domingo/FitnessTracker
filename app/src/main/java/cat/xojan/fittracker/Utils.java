@@ -47,7 +47,7 @@ public class Utils {
     }
 
     public static String getRightSpeed(float value, Context context) {
-        String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
@@ -84,7 +84,7 @@ public class Utils {
     }
 
     public static String getRightPace(float value, Context context) {
-        String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
@@ -110,7 +110,7 @@ public class Utils {
 
     public static String getRightDistance(float value, Context context) {
         double distance = value;
-        String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
@@ -123,7 +123,7 @@ public class Utils {
     }
 
     public static String getRightElevation(float elevation, Context context) {
-        String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {

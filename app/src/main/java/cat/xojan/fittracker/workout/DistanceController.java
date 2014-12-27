@@ -36,7 +36,7 @@ public class DistanceController {
     }
 
     private void updateDistanceView() {
-        String measureUnit = mContext.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+        String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
