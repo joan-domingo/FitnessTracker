@@ -93,14 +93,10 @@ public class Utils {
     }
 
     private static String speedToPaceInMi(float value) {
-        float secPerMeter = 1 / value;
-        long secPerKm = (long) (secPerMeter * 1609.344);
+        double milesPerSecond = value / 1609.344;
+        double secondsPerMile = 1 / milesPerSecond;
 
-        long second = secPerKm % 60;
-        long minute = (secPerKm * 60) % 60;
-        long hour = (secPerKm * 60 * 60) % 24;
-
-        return String.format("%02d:%02d:%02d", hour, minute, second);
+        return secondsToTime((long) secondsPerMile);
     }
 
     public static String getRightDistance(float value, Context context) {
@@ -114,6 +110,18 @@ public class Utils {
         } else {
             distance = distance / 1000;
             return String.format("%.2f", distance) + " " + context.getString(R.string.km);
+        }
+    }
+
+    public static String getRightElevation(float elevation, Context context) {
+        String measureUnit = context.getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
+                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+
+        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+            double feet = elevation * 3.2808399;
+            return String.format("%.2f", feet) + " " + context.getString(R.string.feet);
+        } else {
+            return String.format("%.2f", elevation) + " " + context.getString(R.string.meters);
         }
     }
 }

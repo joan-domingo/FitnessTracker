@@ -29,6 +29,7 @@ import com.google.android.gms.fitness.request.SessionReadRequest;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -177,16 +178,7 @@ public class FitnessController {
                 .build();
     }
 
-    public void readLastSessions() {
-
-        // Set a start and end time for our query, using a start time of 1 week before this moment.
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -10);
-        long startTime = cal.getTimeInMillis();
-
+    public void readLastSessions(long startTime, long endTime) {
         // Build a session read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
@@ -196,6 +188,7 @@ public class FitnessController {
         new SessionReader(mClient) {
 
             public void getSessionList(List<Session> sessions) {
+                Collections.reverse(sessions);
                 mReadSessions = sessions;
                 SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
             }

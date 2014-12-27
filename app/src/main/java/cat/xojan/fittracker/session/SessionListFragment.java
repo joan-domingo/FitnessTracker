@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,13 +15,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.workout.WorkoutFragment;
 
@@ -29,6 +35,8 @@ public class SessionListFragment extends Fragment {
     private static Handler handler;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
+    private Calendar mStartDate;
+    private Calendar mEndDate;
 
     public static Handler getHandler() {
         return handler;
@@ -62,7 +70,7 @@ public class SessionListFragment extends Fragment {
                         mProgressBar.setVisibility(View.GONE);
                         break;
                     case Constant.GOOGLE_API_CLIENT_CONNECTED:
-                        FitnessController.getInstance().readLastSessions();
+                        FitnessController.getInstance().readLastSessions(mStartDate.getTimeInMillis(), mEndDate.getTimeInMillis());
                 }
             }
         };
@@ -74,7 +82,7 @@ public class SessionListFragment extends Fragment {
                     .getBoolean(Constant.PARAMETER_RELOAD_LIST, false)) {
                 getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
                         .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, false).apply();
-                FitnessController.getInstance().readLastSessions();
+                FitnessController.getInstance().readLastSessions(mStartDate.getTimeInMillis(), mEndDate.getTimeInMillis());
             } else {
                 //TODO
                 handler.sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
@@ -125,6 +133,57 @@ public class SessionListFragment extends Fragment {
                             }
                 });
                 builder.create().show();
+            }
+        });
+
+        final Button dateEndButton = (Button) view.findViewById(R.id.date_range_end);
+        mEndDate = Calendar.getInstance();
+        dateEndButton.setText(Utils.millisToDate(mEndDate.getTimeInMillis()));
+        dateEndButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment() {
+
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        // Do something with the date chosen by the user
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, day);
+                        mEndDate = calendar;
+                        dateEndButton.setText(Utils.millisToDate(mEndDate.getTimeInMillis()));
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+                    }
+                };
+                Bundle bundle = new Bundle();
+                bundle.putLong(Constant.PARAMETER_DATE, mEndDate.getTimeInMillis());
+                newFragment.setArguments(bundle);
+                newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+            }
+        });
+
+        final Button dateStartButton = (Button) view.findViewById(R.id.date_range_start);
+        mStartDate = Calendar.getInstance();
+        mStartDate.add(Calendar.MONTH, -1);
+        dateStartButton.setText(Utils.millisToDate(mStartDate.getTimeInMillis()));
+        dateStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment() {
+
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        // Do something with the date chosen by the user
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, day);
+                        mStartDate = calendar;
+                        dateStartButton.setText(Utils.millisToDate(mStartDate.getTimeInMillis()));
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+                    }
+                };
+                Bundle bundle = new Bundle();
+                bundle.putLong(Constant.PARAMETER_DATE, mStartDate.getTimeInMillis());
+                newFragment.setArguments(bundle);
+                newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
             }
         });
 

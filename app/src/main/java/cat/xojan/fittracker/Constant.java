@@ -21,6 +21,8 @@ public class Constant {
     public static final String PARAMETER_START_TIME = "startTime";
     public static final String PARAMETER_END_TIME = "endTime";
     public static final String PARAMETER_RELOAD_LIST = "reloadSessionList";
+    public static final String PARAMETER_DATE = "date";
 
     public static final String SESSION_LIST_FRAGMENT_TAG = "session_list_Fragment";
+
 }

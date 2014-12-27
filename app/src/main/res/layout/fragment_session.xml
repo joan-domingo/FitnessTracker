@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <ProgressBar
         android:id="@+id/fragment_loading_spinner"
@@ -21,6 +21,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fragment_session_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_gravity="end"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -46,35 +56,19 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/fragment_session_description"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/fragment_session_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif"
-                    android:layout_toStartOf="@+id/fragment_session_date" />
-
-                <TextView
-                    android:id="@+id/fragment_session_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif"
-                    android:layout_alignParentEnd="true"/>
-
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif"
+                android:layout_toStartOf="@+id/fragment_session_date" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="8dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -146,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="8dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -162,7 +156,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
-                    android:text="@string/pace"
+                    android:text="@string/total_elevation_gain"
                     android:gravity="center"
                     android:fontFamily="sans-serif"/>
 
@@ -171,7 +165,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
-                    android:text="@string/speed"
+                    android:text="@string/total_elevation_loss"
                     android:gravity="center"
                     android:fontFamily="sans-serif"/>
 
@@ -191,6 +185,59 @@
                     android:gravity="center"
                     android:textStyle="bold"
                     android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:id="@+id/fragment_session_total_elevation_gain"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:id="@+id/fragment_session_total_elevation_loss"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="@string/average_pace"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="@string/average_speed"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/fragment_session_total_pace"
@@ -218,13 +265,21 @@
                 android:id="@+id/fragment_session_map"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_marginTop="8dp"
                 android:name="com.google.android.gms.maps.MapFragment"/>
 
-            <LinearLayout
-                android:id="@+id/fragment_session_intervals"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/fragment_session_intervals"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp" />
+
+            </HorizontalScrollView>
 
         </LinearLayout>
 

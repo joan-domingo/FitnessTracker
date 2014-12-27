@@ -10,13 +10,79 @@
         android:visibility="gone"
         android:layout_centerInParent="true" />
 
+    <LinearLayout
+        android:id="@+id/date_range"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/start_date"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/end_date"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="32dp">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/date_range_start"
+                    android:layout_width="88dp"
+                    android:layout_height="36dp"
+                    android:layout_centerInParent="true"
+                    android:stateListAnimator="@anim/anim"
+                    style="@style/RaisedRed"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/date_range_end"
+                    android:layout_width="88dp"
+                    android:layout_height="36dp"
+                    android:layout_centerInParent="true"
+                    android:stateListAnimator="@anim/anim"
+                    style="@style/RaisedRed"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sessions_list"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp" />
+        android:layout_below="@+id/date_range"/>
 
     <ImageButton
         android:id="@+id/fab_add"
