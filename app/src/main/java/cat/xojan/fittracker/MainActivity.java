@@ -45,7 +45,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initView() {
-
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_container, new SessionListFragment())

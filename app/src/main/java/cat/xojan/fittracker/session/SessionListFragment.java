@@ -48,6 +48,10 @@ public class SessionListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.sessions_loading_spinner);
+        mProgressBar.setVisibility(View.VISIBLE);
+
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         Context mContext = getActivity().getBaseContext();
 
@@ -57,37 +61,29 @@ public class SessionListFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mProgressBar = (ProgressBar) view.findViewById(R.id.sessions_loading_spinner);
-        mProgressBar.setVisibility(View.VISIBLE);
 
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case Constant.MESSAGE_SESSIONS_READ:
-                        RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), getActivity().getBaseContext());
-                        mRecyclerView.setAdapter(mAdapter);
-                        mProgressBar.setVisibility(View.GONE);
-                        break;
                     case Constant.GOOGLE_API_CLIENT_CONNECTED:
-                        FitnessController.getInstance().readLastSessions(mStartDate.getTimeInMillis(), mEndDate.getTimeInMillis());
+                        if (getActivity() != null) {
+                            FitnessController.getInstance().readLastSessions(mStartDate.getTimeInMillis(), mEndDate.getTimeInMillis());
+                            break;
+                        }
+                    case Constant.MESSAGE_SESSIONS_READ:
+                        if (getActivity() != null) {
+                            RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), getActivity().getBaseContext());
+                            mRecyclerView.setAdapter(mAdapter);
+                            mProgressBar.setVisibility(View.GONE);
+                        }
+                        break;
+
                 }
             }
         };
 
-        if(!FitnessController.getInstance().isConnected())
-            FitnessController.getInstance().init();
-        else {
-            if (getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
-                    .getBoolean(Constant.PARAMETER_RELOAD_LIST, false)) {
-                getActivity().getSharedPreferences(Constant.PACKAGE_SPECIFIC_PART, Context.MODE_PRIVATE)
-                        .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, false).apply();
-                FitnessController.getInstance().readLastSessions(mStartDate.getTimeInMillis(), mEndDate.getTimeInMillis());
-            } else {
-                //TODO
-                handler.sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
-            }
-        }
+        FitnessController.getInstance().init();
 
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
@@ -128,7 +124,7 @@ public class SessionListFragment extends Fragment {
 
                                 getActivity().getSupportFragmentManager()
                                         .beginTransaction()
-                                        .replace(R.id.fragment_container, new WorkoutFragment())
+                                        .replace(R.id.fragment_container, new WorkoutFragment(), "workoutFragment")
                                         .commit();
                             }
                 });

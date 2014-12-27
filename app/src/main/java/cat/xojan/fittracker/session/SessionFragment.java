@@ -14,6 +14,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -75,7 +77,7 @@ public class SessionFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
-
+        setHasOptionsMenu(true);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_loading_spinner);
@@ -446,5 +448,13 @@ public class SessionFragment extends Fragment {
             mProgressBar.setVisibility(View.GONE);
             mSessionView.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_settings);
+        item.setEnabled(false);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 }

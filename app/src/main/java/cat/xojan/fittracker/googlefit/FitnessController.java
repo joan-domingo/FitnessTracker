@@ -48,7 +48,6 @@ public class FitnessController {
     private List<Session> mReadSessions;
     private Session mSingleSession;
     private List<DataSet> mSingleSessionDataSets;
-    private boolean isConnected = false;
     private String mFitnessActivity;
     private String mSessionName;
     private String mSessionDescription;
@@ -121,6 +120,10 @@ public class FitnessController {
     }
 
     public void init() {
+        if (mClient != null && mClient.isConnected()) {
+            SessionListFragment.getHandler().sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+            return;
+        }
         mClient = new GoogleApiClient.Builder(context)
                 .addApi(Fitness.API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
@@ -130,7 +133,6 @@ public class FitnessController {
                             @Override
                             public void onConnected(Bundle bundle) {
                                 Log.i(Constant.TAG, "Connected!!!");
-                                isConnected = true;
                                 SessionListFragment.getHandler().sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                             }
 
@@ -301,10 +303,6 @@ public class FitnessController {
                         " Value: " + dp.getValue(field));
             }
         }
-    }
-
-    public boolean isConnected() {
-        return isConnected;
     }
 
     public void setFitnessActivity(String activity) {

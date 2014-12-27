@@ -16,62 +16,55 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/start_date"
-                android:gravity="center"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/end_date"
-                android:gravity="center"/>
-
-        </LinearLayout>
+            android:text="@string/workouts"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:dividerPadding="32dp">
+            android:layout_gravity="center" >
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/from"/>
 
-                <Button
-                    android:id="@+id/date_range_start"
-                    android:layout_width="88dp"
-                    android:layout_height="36dp"
-                    android:layout_centerInParent="true"
-                    android:stateListAnimator="@anim/anim"
-                    style="@style/RaisedRed"/>
+            <TextView
+                android:layout_width="12dp"
+                android:layout_height="wrap_content"/>
 
-            </RelativeLayout>
+            <Button
+                android:id="@+id/date_range_start"
+                android:layout_width="88dp"
+                android:layout_height="36dp"
+                android:stateListAnimator="@anim/anim"
+                style="@style/RaisedRed"/>
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="12dp"
+                android:layout_height="wrap_content"/>
 
-                <Button
-                    android:id="@+id/date_range_end"
-                    android:layout_width="88dp"
-                    android:layout_height="36dp"
-                    android:layout_centerInParent="true"
-                    android:stateListAnimator="@anim/anim"
-                    style="@style/RaisedRed"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/to"/>
 
-            </RelativeLayout>
+            <TextView
+                android:layout_width="12dp"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/date_range_end"
+                android:layout_width="88dp"
+                android:layout_height="36dp"
+                android:stateListAnimator="@anim/anim"
+                style="@style/RaisedRed"/>
 
         </LinearLayout>
 
