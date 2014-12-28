@@ -7,7 +7,6 @@ import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
-import java.sql.Time;
 import java.util.Calendar;
 
 import cat.xojan.fittracker.Utils;
@@ -19,6 +18,8 @@ public class SpeedController {
     private TextView mPaceView;
     private Context mContext;
     private long mOldTime;
+    private double mMaxSpeed;
+    private double mMinSpeed;
 
     public static SpeedController getInstance() {
         if(instance == null) {
@@ -34,6 +35,9 @@ public class SpeedController {
 
         mPaceView.setText("00:00:00");
         mSpeedView.setText(Utils.getRightSpeed(0f, mContext));
+
+        mMaxSpeed = 0;
+        mMinSpeed = 100000;
     }
 
     public void setStartTime() {
@@ -49,6 +53,9 @@ public class SpeedController {
 
         if (timeInSeconds > 0 && distanceInMeters > 0) {
             double speed = distanceInMeters / timeInSeconds;
+
+            mMaxSpeed = speed > mMaxSpeed ? speed : mMaxSpeed;
+            mMinSpeed = speed < mMinSpeed ? speed : mMinSpeed;
 
             mSpeedView.setText(Utils.getRightSpeed((float) speed, mContext));
             mPaceView.setText(Utils.getRightPace((float) speed, mContext));
