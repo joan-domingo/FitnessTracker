@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.result.ResultFragment;
 
@@ -332,5 +333,12 @@ public class MapController {
             e.printStackTrace();
         }
         return cityName;
+    }
+
+    public void addKmMarker(String unitCounter) {
+        addMapMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                .position(getCurrentPosition())
+                .title(unitCounter));
     }
 }
