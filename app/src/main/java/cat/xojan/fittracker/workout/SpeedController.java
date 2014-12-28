@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.workout;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ public class SpeedController {
     private long mOldTime;
     private double mMaxSpeed;
     private double mMinSpeed;
+    private Handler mInactivityHandler;
+    private Runnable mInactivityRunnable;
 
     public static SpeedController getInstance() {
         if(instance == null) {
@@ -38,6 +41,8 @@ public class SpeedController {
 
         mMaxSpeed = 0;
         mMinSpeed = 100000;
+
+        mInactivityHandler = new Handler();
     }
 
     public void setStartTime() {
@@ -59,8 +64,23 @@ public class SpeedController {
 
             mSpeedView.setText(Utils.getRightSpeed((float) speed, mContext));
             mPaceView.setText(Utils.getRightPace((float) speed, mContext));
+        } else {
+            mSpeedView.setText(Utils.getRightSpeed(0f, mContext));
+            mPaceView.setText(Utils.getRightPace(0f, mContext));
         }
 
         mOldTime = currentTime;
+
+        //inactivity counter 10s
+        final LatLng position = currentPosition;
+        mInactivityHandler.removeCallbacks(mInactivityRunnable);
+        mInactivityRunnable = new Runnable() {
+            @Override
+            public void run() {
+                //Do something after
+                updateSpeed(position, position);
+            }
+        };
+        mInactivityHandler.postDelayed(mInactivityRunnable, 10000);
     }
 }

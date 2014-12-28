@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,7 +46,7 @@ public class ResultFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
-
+        setHasOptionsMenu(true);
         mMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.result_map)).getMap();
 
         Button save = (Button) view.findViewById(R.id.result_button_save);
@@ -112,5 +114,12 @@ public class ResultFragment extends Fragment {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(MapController.getInstance().getBounds(), 40));
             }
         });
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        menu.clear();
     }
 }

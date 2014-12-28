@@ -109,14 +109,20 @@ public class Utils {
         float kmPerSecond = value / 1000;
         float secPerKm = 1 / kmPerSecond;
 
-        return secondsToTime((long) secPerKm);
+        if (value == 0)
+            return secondsToTime((long) 0.00);
+        else
+            return secondsToTime((long) secPerKm);
     }
 
     private static String speedToPaceInMi(float value) {
         double milesPerSecond = value / 1609.344;
         double secondsPerMile = 1 / milesPerSecond;
 
-        return secondsToTime((long) secondsPerMile);
+        if (value == 0)
+            return secondsToTime((long) 0.00);
+        else
+            return secondsToTime((long) secondsPerMile);
     }
 
     public static String getRightDistance(float value, Context context) {

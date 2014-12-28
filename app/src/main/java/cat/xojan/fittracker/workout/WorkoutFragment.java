@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,6 +36,7 @@ public class WorkoutFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
+        setHasOptionsMenu(true);
 
         GoogleMap map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.workout_map)).getMap();
         Chronometer chronometer = (Chronometer)view.findViewById(R.id.workout_chronometer);
@@ -134,5 +137,12 @@ public class WorkoutFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        menu.clear();
     }
 }

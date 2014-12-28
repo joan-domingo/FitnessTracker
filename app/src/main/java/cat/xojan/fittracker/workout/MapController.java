@@ -135,12 +135,12 @@ public class MapController {
 
             @Override
             public void onProviderEnabled(String provider) {
-
+                resume();
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-
+                pause();
             }
         });
     }
