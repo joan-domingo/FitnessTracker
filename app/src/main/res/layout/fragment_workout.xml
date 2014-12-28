@@ -9,34 +9,121 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="16dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            style="@style/RaisedGrey">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:dividerPadding="32dp"
-            android:layout_alignParentTop="true">
+            android:dividerPadding="32dp">
 
-            <Chronometer
-                android:id="@+id/workout_chronometer"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="36dp"
-                android:gravity="center"
-                android:textSize="26sp"
-                android:fontFamily="sans-serif"
-                style="@style/RaisedGrey"/>
+                <Chronometer
+                    android:id="@+id/workout_chronometer"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="32sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
 
-            <TextView
-                android:id="@+id/workout_distance"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="36dp"
-                android:gravity="center"
-                android:textSize="26sp"
-                android:fontFamily="sans-serif"
-                style="@style/RaisedGrey"/>
+                <TextView
+                    android:id="@+id/workout_distance"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="32sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:dividerPadding="32dp">
+
+                <TextView
+                    android:id="@+id/workout_pace"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:id="@+id/workout_speed"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:id="@+id/workout_elevation_gain"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:dividerPadding="32dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/pace"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/speed"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/elevation_gain"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

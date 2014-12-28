@@ -48,6 +48,7 @@ public class MapController {
     private static MapController instance = null;
     private List<PolylineOptions> mPolylines;
     private Location mFistLocation;
+    private double oldAltitude;
 
     public MapController() {}
 
@@ -88,9 +89,11 @@ public class MapController {
             public void onLocationChanged(Location location) {
                 Log.i(Constant.TAG, "Got First Location");
                 mFistLocation = location;
+                oldPosition = new LatLng(location.getLatitude(), location.getLongitude());
                 updateMap(location);
                 showStartButton();
                 getLocationUpdates();
+                SpeedController.getInstance().setStartTime();
             }
 
             @Override
@@ -117,7 +120,7 @@ public class MapController {
 
     private void getLocationUpdates() {
         mLocationManager.removeUpdates(mFirstLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, mLocationListener = new LocationListener() {
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 5, mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 updateTrack(location);
@@ -143,6 +146,7 @@ public class MapController {
 
     private void updateTrack(Location location) {
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+        double currentAltitude = location.getAltitude();
         if (isTracking) {
             FitnessController.getInstance().storeLocation(location);
 
@@ -155,11 +159,15 @@ public class MapController {
                     .color(Color.BLACK));
 
             DistanceController.getInstance().updateDistance(oldPosition, currentPosition);
+            ElevationController.getInstance().updateElevationGain(oldAltitude, currentAltitude);
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
         }
+        SpeedController.getInstance().updateSpeed(oldPosition, currentPosition);
+
         oldPosition = currentPosition;
+        oldAltitude = currentAltitude;
     }
 
     private void addMapPolyline(PolylineOptions polylineOptions) {
@@ -196,7 +204,20 @@ public class MapController {
                     .title(String.valueOf(mFragmentActivity.getText(R.string.start))));
             mBoundsBuilder.include(position);
             oldPosition = position;
+            oldAltitude = getCurrentAltitude();
         }
+    }
+
+    private double getCurrentAltitude() {
+        double currentAltitude = 0;
+        boolean isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (!isGPSEnabled) {
+            //TODO: gps not enabled
+        } else {
+            Location currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            currentAltitude = currentLocation.getAltitude();
+        }
+        return currentAltitude;
     }
 
     private void addMapMarker(MarkerOptions markerOptions) {

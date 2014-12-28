@@ -46,6 +46,11 @@ public class Utils {
             return description;
     }
 
+    /**
+     * @param value metres/second
+     * @param context activity context
+     * @return string
+     */
     public static String getRightSpeed(float value, Context context) {
         String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
@@ -83,6 +88,12 @@ public class Utils {
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
+    /**
+     * speed to pace converter
+     * @param value speed (m/s)
+     * @param context activity context
+     * @return string
+     */
     public static String getRightPace(float value, Context context) {
         String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");

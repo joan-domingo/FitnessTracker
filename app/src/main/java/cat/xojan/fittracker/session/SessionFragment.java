@@ -263,7 +263,6 @@ public class SessionFragment extends Fragment {
             headersRow.addView(createHeader(getActivity(), getText(R.string.end)));
             headersRow.addView(createHeader(getActivity(), getText(R.string.elevation_gain)));
             headersRow.addView(createHeader(getActivity(), getText(R.string.elevation_loss)));
-            headersRow.addView(createHeader(getActivity(), getText(R.string.time)));
 
             intervalTable.addView(headersRow);
 

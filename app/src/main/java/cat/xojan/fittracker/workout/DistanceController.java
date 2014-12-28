@@ -71,6 +71,7 @@ public class DistanceController {
     }
 
     public void resume() {
-        mSegmentDistance = 0;
+//        mSegmentDistance = 0;
+//        updateDistanceView();
     }
 }
