@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,9 @@ public class SessionListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
+
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.my_awesome_toolbar);
+        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.sessions_loading_spinner);
         mProgressBar.setVisibility(View.VISIBLE);

@@ -49,8 +49,8 @@
     <string name="meters">m</string>
     <string name="time">Time</string>
     <string name="distance">Distance</string>
-    <string name="pace">Pace</string>
-    <string name="speed">Speed</string>
+    <string name="pace">Avg Pace</string>
+    <string name="speed">Avg Speed</string>
     <string name="end">End</string>
     <string name="elevation_gain">Elevation Gain</string>
     <string name="elevation_loss">Elevation Loss</string>
@@ -64,5 +64,7 @@
     <string name="action_delete">Delete</string>
     <string name="kilometres_metres">Kilometers/Meters</string>
     <string name="miles_feet">Miles/Feet</string>
+    <string name="session_name">Name:</string>
+    <string name="session_description">Description:</string>
 
 </resources>

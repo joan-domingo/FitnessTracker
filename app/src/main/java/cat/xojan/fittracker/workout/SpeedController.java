@@ -18,11 +18,8 @@ public class SpeedController {
     private TextView mSpeedView;
     private TextView mPaceView;
     private Context mContext;
-    private long mOldTime;
     private double mMaxSpeed;
     private double mMinSpeed;
-    private Handler mInactivityHandler;
-    private Runnable mInactivityRunnable;
 
     public static SpeedController getInstance() {
         if(instance == null) {
@@ -41,20 +38,13 @@ public class SpeedController {
 
         mMaxSpeed = 0;
         mMinSpeed = 100000;
-
-        mInactivityHandler = new Handler();
     }
 
-    public void setStartTime() {
-        mOldTime = Calendar.getInstance().getTimeInMillis();
-    }
-
-    public void updateSpeed(LatLng oldPosition, LatLng currentPosition) {
-        long currentTime = Calendar.getInstance().getTimeInMillis();
-        long timeInMillis = currentTime - mOldTime;
+    public void updateSpeed() {
+        long timeInMillis = TimeController.getInstance().getSegmentTime();
         long timeInSeconds = timeInMillis / 1000;
 
-        double distanceInMeters = SphericalUtil.computeDistanceBetween(oldPosition, currentPosition); //return meters
+        double distanceInMeters = DistanceController.getInstance().getSegmentDistance(); //return meters
 
         if (timeInSeconds > 0 && distanceInMeters > 0) {
             double speed = distanceInMeters / timeInSeconds;
@@ -68,19 +58,9 @@ public class SpeedController {
             mSpeedView.setText(Utils.getRightSpeed(0f, mContext));
             mPaceView.setText(Utils.getRightPace(0f, mContext));
         }
+    }
 
-        mOldTime = currentTime;
-
-        //inactivity counter 10s
-        final LatLng position = currentPosition;
-        mInactivityHandler.removeCallbacks(mInactivityRunnable);
-        mInactivityRunnable = new Runnable() {
-            @Override
-            public void run() {
-                //Do something after
-                updateSpeed(position, position);
-            }
-        };
-        mInactivityHandler.postDelayed(mInactivityRunnable, 10000);
+    public void reset() {
+        updateSpeed();
     }
 }

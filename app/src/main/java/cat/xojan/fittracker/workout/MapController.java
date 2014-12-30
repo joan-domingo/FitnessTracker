@@ -94,7 +94,6 @@ public class MapController {
                 updateMap(location);
                 showStartButton();
                 getLocationUpdates();
-                SpeedController.getInstance().setStartTime();
             }
 
             @Override
@@ -161,11 +160,11 @@ public class MapController {
 
             DistanceController.getInstance().updateDistance(oldPosition, currentPosition);
             ElevationController.getInstance().updateElevationGain(oldAltitude, currentAltitude);
+            SpeedController.getInstance().updateSpeed();
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
         }
-        SpeedController.getInstance().updateSpeed(oldPosition, currentPosition);
 
         oldPosition = currentPosition;
         oldAltitude = currentAltitude;

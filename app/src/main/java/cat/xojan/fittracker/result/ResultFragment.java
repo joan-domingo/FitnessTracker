@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,16 +49,13 @@ public class ResultFragment extends Fragment {
         /* map is already there, just return view as it is */
         }
         setHasOptionsMenu(true);
+        showProgressBar(true);
         mMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.result_map)).getMap();
 
         Button save = (Button) view.findViewById(R.id.result_button_save);
         Button exit = (Button) view.findViewById(R.id.result_button_exit);
         mName = (EditText) view.findViewById(R.id.result_name);
         mDescription = (EditText) view.findViewById(R.id.result_description);
-        TextView totalTime = (TextView) view.findViewById(R.id.result_total_time);
-        TextView totalSpeedView = (TextView) view.findViewById(R.id.result_total_speed);
-        TextView startTime = (TextView) view.findViewById(R.id.result_start_time);
-        TextView endTime = (TextView) view.findViewById(R.id.result_end_time);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,20 +75,19 @@ public class ResultFragment extends Fragment {
             }
         });
 
-        totalTime.setText(Utils.getTimeDifference(TimeController.getInstance().getSessionEndTime(),
-                TimeController.getInstance().getSessionStartTime()));
-
-        float distance = DistanceController.getInstance().getSessionDistance();
-        long time = TimeController.getInstance().getSessionTotalTime() / 1000;
-        String totalSpeed = Utils.getRightSpeed( (distance / time), getActivity().getBaseContext());
-        totalSpeedView.setText(totalSpeed);
-
-        startTime.setText(Utils.millisToTime(TimeController.getInstance().getSessionStartTime()));
-        endTime.setText(Utils.millisToTime(TimeController.getInstance().getSessionEndTime()));
-
         initMap();
 
         return view;
+    }
+
+    private void showProgressBar(boolean b) {
+        if (b) {
+            ((ProgressBar) view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.VISIBLE);
+            ((RelativeLayout) view.findViewById(R.id.fragment_result_content)).setVisibility(View.GONE);
+        } else {
+            ((RelativeLayout) view.findViewById(R.id.fragment_result_content)).setVisibility(View.VISIBLE);
+            ((ProgressBar) view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.GONE);
+        }
     }
 
     private void initMap() {
@@ -112,6 +110,7 @@ public class ResultFragment extends Fragment {
             @Override
             public void onMapLoaded() {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(MapController.getInstance().getBounds(), 40));
+                showProgressBar(false);
             }
         });
     }

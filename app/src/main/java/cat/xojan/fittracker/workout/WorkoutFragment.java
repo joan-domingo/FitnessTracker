@@ -3,6 +3,8 @@ package cat.xojan.fittracker.workout;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +38,9 @@ public class WorkoutFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
+
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_workout_toolbar);
+        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
 
         GoogleMap map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.workout_map)).getMap();
@@ -80,7 +85,7 @@ public class WorkoutFragment extends Fragment {
                 TimeController.getInstance().lapStart();
                 DistanceController.getInstance().lap();
                 ElevationController.getInstance().lap();
-                //SpeedController.getInstance().lap();
+                SpeedController.getInstance().reset();
             }
         });
 
@@ -100,6 +105,7 @@ public class WorkoutFragment extends Fragment {
                 //resume button
                 MapController.getInstance().resume();
                 TimeController.getInstance().resume();
+                SpeedController.getInstance().reset();
             }
         });
 
