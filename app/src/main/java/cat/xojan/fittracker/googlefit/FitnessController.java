@@ -26,8 +26,10 @@ import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
+import com.google.android.gms.fitness.result.SessionReadResult;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +59,7 @@ public class FitnessController {
     private DataSource mAggregateSpeedDataSource;
     private DataSource mLocationDataSource;
     private DataSet mLocationDataSet;
+    private List<Float> mDistanceSessions;
 
     protected FitnessController() {
     }
@@ -181,18 +184,37 @@ public class FitnessController {
         // Build a session read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_DISTANCE_DELTA)
                 .readSessionsFromAllApps()
                 .build();
 
         new SessionReader(mClient) {
 
-            public void getSessionList(List<Session> sessions) {
+            public void getSessionList(SessionReadResult sessionReadResult) {
+                List<Session> sessions = sessionReadResult.getSessions();
                 Collections.reverse(sessions);
                 mReadSessions = sessions;
+                mDistanceSessions = getSessionsDistance(sessionReadResult);
                 SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
             }
 
         }.execute(readRequest);
+    }
+
+    private List<Float> getSessionsDistance(SessionReadResult sessionReadResult) {
+        List<Float> sessionDistance = new ArrayList<>(sessionReadResult.getSessions().size());
+
+        for (Session s : sessionReadResult.getSessions()) {
+            float distance = 0;
+            for (DataSet ds : sessionReadResult.getDataSet(s, DataType.TYPE_DISTANCE_DELTA)) {
+                for (DataPoint dp : ds.getDataPoints()) {
+                    distance = distance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
+                }
+            }
+            sessionDistance.add(distance);
+        }
+        Collections.reverse(sessionDistance);
+        return sessionDistance;
     }
 
     public List<Session> getReadSessions() {
@@ -418,5 +440,9 @@ public class FitnessController {
 
     public String getFitnessActivity() {
         return mFitnessActivity;
+    }
+
+    public List<Float> getDistances() {
+        return mDistanceSessions;
     }
 }

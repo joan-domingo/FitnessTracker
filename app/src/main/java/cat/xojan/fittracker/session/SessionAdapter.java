@@ -23,6 +23,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
     private final Context context;
     private final List<Session> mDataset;
+    private final List<Float> mDistance;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -57,9 +58,10 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         }
     }
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SessionAdapter(List<Session> DataSet, Context context) {
+    public SessionAdapter(List<Session> DataSet, List<Float> distances, Context context) {
         mDataset = DataSet;
         this.context = context;
+        mDistance = distances;
     }
 
     // Create new views (invoked by the layout manager)
@@ -86,8 +88,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mName.setText(mDataset.get(position).getName());
         holder.mDescription.setText(mDataset.get(position).getDescription());
         holder.mActivity.setImageDrawable(getActivityDrawable(mDataset.get(position).getActivity()));
-        holder.mSummary.setText(Utils.millisToTime(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " - " +
-                Utils.millisToTime(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));
+        holder.mSummary.setText(Utils.getTimeDifference(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS),
+                mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " - " + Utils.getRightDistance(mDistance.get(position), context));
         holder.mIdentifier.setText(mDataset.get(position).getIdentifier());
         holder.mStartTime.setText(String.valueOf(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
         holder.mEndTime.setText(String.valueOf(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));

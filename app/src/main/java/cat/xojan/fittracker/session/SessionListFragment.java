@@ -77,7 +77,8 @@ public class SessionListFragment extends Fragment {
                         }
                     case Constant.MESSAGE_SESSIONS_READ:
                         if (getActivity() != null) {
-                            RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(), getActivity().getBaseContext());
+                            RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(),
+                                    FitnessController.getInstance().getDistances(), getActivity().getBaseContext());
                             mRecyclerView.setAdapter(mAdapter);
                             mProgressBar.setVisibility(View.GONE);
                         }
