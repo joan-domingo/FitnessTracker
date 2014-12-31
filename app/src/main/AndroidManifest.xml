@@ -30,7 +30,6 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -39,6 +38,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".settings.PreferenceActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

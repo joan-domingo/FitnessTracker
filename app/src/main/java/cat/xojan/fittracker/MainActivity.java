@@ -6,13 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
-import cat.xojan.fittracker.settings.UserSettingFragment;
+import cat.xojan.fittracker.settings.PreferenceActivity;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -80,10 +79,8 @@ public class MainActivity extends ActionBarActivity {
 
         switch (id) {
             case R.id.action_settings:
-                getFragmentManager().beginTransaction()
-                        .add(R.id.fragment_container, new UserSettingFragment())
-                        .addToBackStack(null)
-                        .commit();
+                Intent intent = new Intent(this, PreferenceActivity.class);
+                startActivity(intent);
                 break;
             case android.R.id.home:
                 getSupportFragmentManager().popBackStack();
@@ -115,13 +112,5 @@ public class MainActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         FitnessController.getInstance().onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
-        } else
-            super.onBackPressed();
     }
 }

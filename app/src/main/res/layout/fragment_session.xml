@@ -12,7 +12,7 @@
         android:minHeight="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:titleTextAppearance="@color/white"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark"/>
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <View
         android:id="@+id/toolbar_shadow"

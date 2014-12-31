@@ -1,16 +1,15 @@
 package cat.xojan.fittracker.settings;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 
 public class UserSettingFragment extends PreferenceFragment
@@ -30,7 +29,6 @@ public class UserSettingFragment extends PreferenceFragment
         view.setBackgroundColor(getResources().getColor(R.color.white));
 
         setHasOptionsMenu(true);
-
         return view;
     }
 
@@ -55,6 +53,6 @@ public class UserSettingFragment extends PreferenceFragment
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        menu.clear();
+
     }
 }

@@ -66,5 +66,6 @@
     <string name="miles_feet">Miles/Feet</string>
     <string name="session_name">Name:</string>
     <string name="session_description">Description:</string>
+    <string name="settings">Settings</string>
 
 </resources>
