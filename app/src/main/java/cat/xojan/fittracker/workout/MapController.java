@@ -318,26 +318,14 @@ public class MapController {
         return mPolylines;
     }
 
-    public String getCityName() {
-        String cityName = null;
-        Geocoder gcd = new Geocoder(mFragmentActivity.getBaseContext(), Locale.getDefault());
-        List<Address> addresses;
-        try {
-            addresses = gcd.getFromLocation(mFistLocation.getLatitude(),
-                    mFistLocation.getLongitude(), 1);
-            if (addresses.size() > 0)
-                System.out.println(addresses.get(0).getLocality());
-            cityName = addresses.get(0).getLocality();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return cityName;
-    }
-
     public void addKmMarker(String unitCounter) {
         addMapMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                 .position(getCurrentPosition())
                 .title(unitCounter));
+    }
+
+    public LatLng getLastLocation() {
+        return getCurrentPosition();
     }
 }

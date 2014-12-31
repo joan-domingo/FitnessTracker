@@ -48,8 +48,6 @@ public class FitnessController {
     private Session mSingleSession;
     private List<DataSet> mSingleSessionDataSets;
     private String mFitnessActivity;
-    private String mSessionName;
-    private String mSessionDescription;
     private int mNumSegments;
     private DataSource mSpeedDataSource;
     private DataSet mSpeedDataSet;
@@ -201,7 +199,7 @@ public class FitnessController {
         return mReadSessions;
     }
 
-    public void saveSession(final FragmentActivity fragmentActivity) {
+    public void saveSession(final FragmentActivity fragmentActivity, String name, String description) {
         //summary activity (aggregate)
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
         summaryDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
@@ -214,8 +212,8 @@ public class FitnessController {
 
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
-                .setName(mSessionName)
-                .setDescription(mSessionDescription)
+                .setName(name)
+                .setDescription(description)
                 .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":" + TimeController.getInstance().getSessionStartTime())
                 .setActivity(mFitnessActivity)
                 .setStartTime(TimeController.getInstance().getSessionStartTime(), TimeUnit.MILLISECONDS)
@@ -237,8 +235,6 @@ public class FitnessController {
         new SessionWriter(mClient) {
 
             public void onFinishSessionWriting() {
-                fragmentActivity.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                        .edit().putBoolean(Constant.PARAMETER_RELOAD_LIST, true).apply();
                 fragmentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new SessionListFragment())
                         .commit();
@@ -308,11 +304,6 @@ public class FitnessController {
 
     public void setFitnessActivity(String activity) {
         mFitnessActivity = activity;
-    }
-
-    public void setSessionData(String name, String description) {
-        mSessionName = Utils.checkSessionName(name);
-        mSessionDescription = Utils.checkSessionDescription(description, context);
     }
 
     public void deleteSession(Session session) {

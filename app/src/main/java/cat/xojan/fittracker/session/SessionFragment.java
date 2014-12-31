@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -77,6 +78,8 @@ public class SessionFragment extends Fragment {
         /* map is already there, just return view as it is */
         }
         setHasOptionsMenu(true);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_session_toolbar);
+        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_loading_spinner);

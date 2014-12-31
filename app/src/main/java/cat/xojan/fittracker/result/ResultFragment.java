@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.result;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,12 +22,16 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.sql.Time;
+
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
+import cat.xojan.fittracker.workout.ElevationController;
 import cat.xojan.fittracker.workout.MapController;
+import cat.xojan.fittracker.workout.SpeedController;
 import cat.xojan.fittracker.workout.TimeController;
 
 public class ResultFragment extends Fragment {
@@ -60,8 +65,7 @@ public class ResultFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FitnessController.getInstance().setSessionData(mName.getText().toString(), mDescription.getText().toString());
-                FitnessController.getInstance().saveSession(getActivity());
+                FitnessController.getInstance().saveSession(getActivity(), mName.getText().toString(), mDescription.getText().toString());
             }
         });
 
@@ -76,8 +80,31 @@ public class ResultFragment extends Fragment {
         });
 
         initMap();
+        setContent();
+
+        new LocationReader(getActivity()) {
+
+            public void onResult(String cityName) {
+                mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
+                mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " " + getText(R.string.workout) + " @ " + cityName);
+                showProgressBar(false);
+            }
+
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MapController.getInstance().getLastLocation());
 
         return view;
+    }
+
+    private void setContent() {
+        ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.millisToTime(TimeController.getInstance().getSessionTotalTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(TimeController.getInstance().getSegmentStartTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(TimeController.getInstance().getSegmentEndTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_distance)).setText(Utils.getRightDistance(DistanceController.getInstance().getSessionDistance(), getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_elevation_gain)).setText(Utils.getRightElevation(ElevationController.getInstance().getTotalElevationGain(), getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_elevation_loss)).setText(Utils.getRightElevation(ElevationController.getInstance().getTotalElevationLoss(), getActivity()));
+        float speed = DistanceController.getInstance().getSessionDistance() / (TimeController.getInstance().getSessionTotalTime() / 1000);
+        ((TextView) view.findViewById(R.id.fragment_result_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
     }
 
     private void showProgressBar(boolean b) {
@@ -110,7 +137,6 @@ public class ResultFragment extends Fragment {
             @Override
             public void onMapLoaded() {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(MapController.getInstance().getBounds(), 40));
-                showProgressBar(false);
             }
         });
     }

@@ -53,7 +53,11 @@ public class ElevationController {
         mView.setText(Utils.getRightElevation((float) mSegmentElevationGain, mContext));
     }
 
-    public void resume() {
+    public float getTotalElevationGain() {
+        return (float) mSessionElevationGain;
+    }
 
+    public float getTotalElevationLoss() {
+        return (float) mSessionElevationLoss;
     }
 }
