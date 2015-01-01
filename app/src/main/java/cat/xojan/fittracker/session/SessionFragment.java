@@ -36,6 +36,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -241,10 +242,6 @@ public class SessionFragment extends Fragment {
         LinearLayout intervalView = (LinearLayout) view.findViewById(R.id.fragment_session_intervals);
         intervalView.removeAllViews();
 
-        if (mNumSegments < 2) {
-            return;
-        }
-
         for (int i = 0; i < mNumSegments; i++) {
             //1 - interval title
             TextView title = new TextView(getActivity());
@@ -286,8 +283,83 @@ public class SessionFragment extends Fragment {
 
             intervalTable.addView(valuesRow);
 
+            //4 - km intervals
+            LatLng oldPosition = null;
+            double distance = 0;
+            int unitCounter = 1;
+            long startTime = 0;
+            float elevationGain = 0;
+            float elevationLoss = 0;
+            float oldAltitude = 0;
+            String measureUnit = getActivity().getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                    .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+
+            for (DataPoint dp : mLocationDataPoints) {
+                if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
+                        dp.getEndTime(TimeUnit.MILLISECONDS) <= mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)) {
+                    float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
+                    LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
+                    if (startTime == 0)
+                        startTime = dp.getStartTime(TimeUnit.MILLISECONDS);
+                    if (oldPosition != null) {
+                        distance = distance + SphericalUtil.computeDistanceBetween(oldPosition, currentPosition);
+                        float elevation = currentAltitude - oldAltitude;
+                        if (elevation >= 0) {
+                            elevationGain = elevationGain + elevation;
+                        } else {
+                            elevationLoss = elevationLoss + (-elevation);
+                        }
+
+                        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+                            double miles = distance / 1609.344;
+                            if (miles >= unitCounter) {
+                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_MILE, startTime, dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
+                                unitCounter++;
+                                startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
+                                elevationGain = elevationLoss = 0;
+                            }
+                        } else {
+                            double kms = distance / 1000;
+                            if (kms >= unitCounter) {
+                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_KM, startTime, dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
+                                unitCounter++;
+                                startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
+                                elevationGain = elevationLoss = 0;
+                            }
+                        }
+                    }
+                    oldPosition = currentPosition;
+                    oldAltitude = currentAltitude;
+                }
+            }
+
             intervalView.addView(intervalTable);
         }
+    }
+
+    private void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, float elevationGain, float elevationLoss) {
+        long timeInMillis = endTime - startTime;
+        long timeInSeconds = timeInMillis / 1000;
+
+        String measureUnit = getActivity().getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+        double speed;
+        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+            speed = 1609.344 / timeInSeconds;
+        } else {
+            speed = 1000 / timeInSeconds;
+        }
+
+        TableRow row = new TableRow(getActivity());
+        row.addView(createValue(getActivity(), Utils.getTimeDifference(endTime, startTime)));
+        row.addView(createValue(getActivity(), String.valueOf(unitCounter)));
+        row.addView(createValue(getActivity(), Utils.getRightPace((float) speed, getActivity())));
+        row.addView(createValue(getActivity(), Utils.getRightSpeed((float) speed, getActivity())));
+        row.addView(createValue(getActivity(), Utils.millisToTime(startTime)));
+        row.addView(createValue(getActivity(), Utils.millisToTime(endTime)));
+        row.addView(createValue(getActivity(), Utils.getRightElevation(elevationGain, getActivity())));
+        row.addView(createValue(getActivity(), Utils.getRightElevation(elevationLoss, getActivity())));
+        intervalTable.addView(row);
     }
 
     private View createValue(Context context, String text) {
@@ -295,7 +367,7 @@ public class SessionFragment extends Fragment {
         textView.setText(text);
         textView.setPadding(8, 0, 8, 0);
         textView.setGravity(Gravity.CENTER);
-        textView.setTypeface(Typeface.DEFAULT_BOLD);
+//        textView.setTypeface(Typeface.DEFAULT_BOLD);
 
         return textView;
     }
@@ -305,6 +377,7 @@ public class SessionFragment extends Fragment {
         textView.setText(text);
         textView.setPadding(8, 0, 8, 0);
         textView.setGravity(Gravity.CENTER);
+        textView.setTypeface(Typeface.DEFAULT_BOLD);
 
         return textView;
     }
