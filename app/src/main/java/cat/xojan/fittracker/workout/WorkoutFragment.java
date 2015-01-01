@@ -69,9 +69,9 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //start button
-                MapController.getInstance().start();
                 TimeController.getInstance().start();
                 FitnessController.getInstance().start();
+                MapController.getInstance().start();
             }
         });
 

@@ -42,9 +42,7 @@ public class LocationReader extends AsyncTask<LatLng, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if (s != null) {
             onResult(s);
-        }
     }
 
     public void onResult(String cityName) {

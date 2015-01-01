@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -85,8 +86,13 @@ public class ResultFragment extends Fragment {
         new LocationReader(getActivity()) {
 
             public void onResult(String cityName) {
-                mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
-                mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " " + getText(R.string.workout) + " @ " + cityName);
+                if (!TextUtils.isEmpty(cityName)) {
+                    mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
+                    mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " " + getText(R.string.workout) + " @ " + cityName);
+                } else {
+                    mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
+                    mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " " + getText(R.string.workout));
+                }
                 showProgressBar(false);
             }
 
@@ -109,11 +115,11 @@ public class ResultFragment extends Fragment {
 
     private void showProgressBar(boolean b) {
         if (b) {
-            ((ProgressBar) view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.VISIBLE);
-            ((RelativeLayout) view.findViewById(R.id.fragment_result_content)).setVisibility(View.GONE);
+            (view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.VISIBLE);
+            (view.findViewById(R.id.fragment_result_content)).setVisibility(View.GONE);
         } else {
-            ((RelativeLayout) view.findViewById(R.id.fragment_result_content)).setVisibility(View.VISIBLE);
-            ((ProgressBar) view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.GONE);
+            (view.findViewById(R.id.fragment_result_content)).setVisibility(View.VISIBLE);
+            (view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.GONE);
         }
     }
 

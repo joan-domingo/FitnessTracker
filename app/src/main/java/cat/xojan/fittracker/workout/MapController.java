@@ -2,8 +2,6 @@ package cat.xojan.fittracker.workout;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,14 +18,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.result.ResultFragment;
 
@@ -204,6 +199,7 @@ public class MapController {
             oldPosition = position;
             oldAltitude = getCurrentAltitude();
         }
+        FitnessController.getInstance().storeLocation(getCurrentLocation());
     }
 
     private double getCurrentAltitude() {
@@ -260,6 +256,11 @@ public class MapController {
         mView.findViewById(R.id.lap_pause_bar).setVisibility(View.GONE);
 
         addFinishMarker();
+        FitnessController.getInstance().storeLocation(getCurrentLocation());
+    }
+
+    private Location getCurrentLocation() {
+        return mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
     private void addFinishMarker() {
