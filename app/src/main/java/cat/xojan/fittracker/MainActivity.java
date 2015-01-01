@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,9 +13,12 @@ import android.view.MenuItem;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.settings.PreferenceActivity;
+import cat.xojan.fittracker.workout.WorkoutFragment;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private SessionListFragment mSessionListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,23 +26,50 @@ public class MainActivity extends ActionBarActivity {
         initControllers(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mSessionListFragment = new SessionListFragment();
+
         if (getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getBoolean(Constant.PREFERENCE_FIRST_RUN, true))
+                .getBoolean(Constant.PREFERENCE_FIRST_RUN, true)) {
             showSettingsDialog();
+        }
         initView();
     }
 
     private void showSettingsDialog() {
-        String[] unitArray = {getText(R.string.kilometres_metres).toString(), getText(R.string.miles_feet).toString()};
+        String[] unitArray = getResources().getStringArray(R.array.measure_unit_entries);
+        final String[] unitArrayValues = getResources().getStringArray(R.array.measure_unit_entries_values);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_unit)
                 .setItems(unitArray, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        String unit = which == 0 ? Constant.DISTANCE_MEASURE_KM : Constant.DISTANCE_MEASURE_MILE;
+                        String unit = unitArrayValues[which];
+                        getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                                .edit()
+                                .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)
+                                .commit();
+                        showDateFormatDialog();
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void showDateFormatDialog() {
+        String[] dateFormatEntries = getResources().getStringArray(R.array.date_format_entries);
+        final String[] dateFormatEntriesValues = getResources().getStringArray(R.array.date_format_entries_values);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.select_date_format)
+                .setItems(dateFormatEntries, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String dateFormat = dateFormatEntriesValues[which];
                         getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                                 .edit()
                                 .putBoolean(Constant.PREFERENCE_FIRST_RUN, false)
-                                .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)
+                                .putString(Constant.PREFERENCE_DATE_FORMAT, dateFormat)
+                                .commit();
+
+                        getSupportFragmentManager().beginTransaction()
+                                .detach(mSessionListFragment)
+                                .attach(mSessionListFragment)
                                 .commit();
                     }
                 });
@@ -48,7 +79,7 @@ public class MainActivity extends ActionBarActivity {
     private void initView() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_container, new SessionListFragment())
+                .add(R.id.fragment_container, mSessionListFragment)
                 .commit();
     }
 
@@ -112,5 +143,17 @@ public class MainActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         FitnessController.getInstance().onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment workoutFragment = getSupportFragmentManager().findFragmentByTag(Constant.WORKOUT_FRAGMENT_TAG);
+        Fragment resultFragment = getSupportFragmentManager().findFragmentByTag(Constant.RESULT_FRAGMENT_TAG);
+
+        if (workoutFragment != null || resultFragment != null) {
+            //nothing to do
+        } else {
+            super.onBackPressed();
+        }
     }
 }

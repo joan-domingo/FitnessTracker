@@ -48,7 +48,6 @@ public class MapController {
 
     private static MapController instance = null;
     private List<PolylineOptions> mPolylines;
-    private Location mFistLocation;
     private double oldAltitude;
 
     public MapController() {}
@@ -89,7 +88,6 @@ public class MapController {
             @Override
             public void onLocationChanged(Location location) {
                 Log.i(Constant.TAG, "Got First Location");
-                mFistLocation = location;
                 oldPosition = new LatLng(location.getLatitude(), location.getLongitude());
                 updateMap(location);
                 showStartButton();
@@ -120,7 +118,7 @@ public class MapController {
 
     private void getLocationUpdates() {
         mLocationManager.removeUpdates(mFirstLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 5, mLocationListener = new LocationListener() {
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 updateTrack(location);
@@ -296,7 +294,7 @@ public class MapController {
         //show results
         mFragmentActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, new ResultFragment())
+                .replace(R.id.fragment_container, new ResultFragment(), Constant.RESULT_FRAGMENT_TAG)
                 .commit();
     }
 

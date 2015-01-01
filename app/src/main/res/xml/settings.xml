@@ -11,6 +11,14 @@
             android:entries="@array/measure_unit_entries"
             android:entryValues="@array/measure_unit_entries_values" />
 
+        <ListPreference
+            android:key="date_format"
+            android:title="@string/date_format"
+            android:summary="@string/select_date_format"
+            android:dialogTitle="@string/select_date_format"
+            android:entries="@array/date_format_entries"
+            android:entryValues="@array/date_format_entries_values"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

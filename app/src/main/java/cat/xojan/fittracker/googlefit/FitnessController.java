@@ -213,7 +213,6 @@ public class FitnessController {
             }
             sessionDistance.add(distance);
         }
-        Collections.reverse(sessionDistance);
         return sessionDistance;
     }
 

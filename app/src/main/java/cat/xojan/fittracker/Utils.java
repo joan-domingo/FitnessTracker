@@ -16,11 +16,6 @@ public class Utils {
         return sdf.format(new Date(millis));
     }
 
-    public static String millisToDate(long startTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-        return sdf.format(startTime);
-    }
-
     public static String millisToDay(long timeInMillis) {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
         return sdf.format(timeInMillis);
@@ -133,6 +128,22 @@ public class Utils {
             return String.format("%.2f", feet) + " " + context.getString(R.string.feet);
         } else {
             return String.format("%.2f", elevation) + " " + context.getString(R.string.meters);
+        }
+    }
+
+    public static String getRightDate(long dateInMillis, Context context) {
+        String dateFormat = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getString(Constant.PREFERENCE_DATE_FORMAT, "");
+
+        if (dateFormat.equals(Constant.DATE_FORMAT_DMY)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            return sdf.format(dateInMillis);
+        } else if (dateFormat.equals(Constant.DATE_FORMAT_MDY)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+            return sdf.format(dateInMillis);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(dateInMillis);
         }
     }
 }

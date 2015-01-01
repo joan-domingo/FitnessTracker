@@ -38,6 +38,8 @@ public class SessionListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private Calendar mStartDate;
     private Calendar mEndDate;
+    private Button mDateEndButton;
+    private Button mDateStartButton;
 
     public static Handler getHandler() {
         return handler;
@@ -129,7 +131,7 @@ public class SessionListFragment extends Fragment {
 
                                 getActivity().getSupportFragmentManager()
                                         .beginTransaction()
-                                        .replace(R.id.fragment_container, new WorkoutFragment(), "workoutFragment")
+                                        .replace(R.id.fragment_container, new WorkoutFragment(), Constant.WORKOUT_FRAGMENT_TAG)
                                         .commit();
                             }
                 });
@@ -137,10 +139,23 @@ public class SessionListFragment extends Fragment {
             }
         });
 
-        final Button dateEndButton = (Button) view.findViewById(R.id.date_range_end);
+        mDateEndButton = (Button) view.findViewById(R.id.date_range_end);
         mEndDate = Calendar.getInstance();
-        dateEndButton.setText(Utils.millisToDate(mEndDate.getTimeInMillis()));
-        dateEndButton.setOnClickListener(new View.OnClickListener() {
+
+
+        mDateStartButton = (Button) view.findViewById(R.id.date_range_start);
+        mStartDate = Calendar.getInstance();
+        mStartDate.add(Calendar.MONTH, -1);
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mDateEndButton.setText(Utils.getRightDate(mEndDate.getTimeInMillis(), getActivity()));
+        mDateEndButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DialogFragment newFragment = new DatePickerFragment() {
@@ -150,7 +165,7 @@ public class SessionListFragment extends Fragment {
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, month, day);
                         mEndDate = calendar;
-                        dateEndButton.setText(Utils.millisToDate(mEndDate.getTimeInMillis()));
+                        mDateEndButton.setText(Utils.getRightDate(mEndDate.getTimeInMillis(), getActivity()));
                         mProgressBar.setVisibility(View.VISIBLE);
                         handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                     }
@@ -162,11 +177,8 @@ public class SessionListFragment extends Fragment {
             }
         });
 
-        final Button dateStartButton = (Button) view.findViewById(R.id.date_range_start);
-        mStartDate = Calendar.getInstance();
-        mStartDate.add(Calendar.MONTH, -1);
-        dateStartButton.setText(Utils.millisToDate(mStartDate.getTimeInMillis()));
-        dateStartButton.setOnClickListener(new View.OnClickListener() {
+        mDateStartButton.setText(Utils.getRightDate(mStartDate.getTimeInMillis(), getActivity()));
+        mDateStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DialogFragment newFragment = new DatePickerFragment() {
@@ -176,7 +188,7 @@ public class SessionListFragment extends Fragment {
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, month, day);
                         mStartDate = calendar;
-                        dateStartButton.setText(Utils.millisToDate(mStartDate.getTimeInMillis()));
+                        mDateStartButton.setText(Utils.getRightDate(mStartDate.getTimeInMillis(), getActivity()));
                         mProgressBar.setVisibility(View.VISIBLE);
                         handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                     }
@@ -188,6 +200,5 @@ public class SessionListFragment extends Fragment {
             }
         });
 
-        return view;
     }
 }

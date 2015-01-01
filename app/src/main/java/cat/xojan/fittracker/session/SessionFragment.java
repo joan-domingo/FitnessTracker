@@ -128,7 +128,7 @@ public class SessionFragment extends Fragment {
 
         ((TextView) view.findViewById(R.id.fragment_session_name)).setText(mSession.getName());
         ((TextView)view.findViewById(R.id.fragment_session_description)).setText(mSession.getDescription());
-        ((TextView)view.findViewById(R.id.fragment_session_date)).setText(Utils.millisToDate(mSession.getStartTime(TimeUnit.MILLISECONDS)));
+        ((TextView)view.findViewById(R.id.fragment_session_date)).setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), getActivity()));
         ((TextView)view.findViewById(R.id.fragment_session_start)).setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_end)).setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS), mSession.getStartTime(TimeUnit.MILLISECONDS)));
