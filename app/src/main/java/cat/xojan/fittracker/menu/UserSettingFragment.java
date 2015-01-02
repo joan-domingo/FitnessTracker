@@ -1,10 +1,8 @@
-package cat.xojan.fittracker.settings;
+package cat.xojan.fittracker.menu;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;

@@ -11,9 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.menu.AttributionFragment;
 import cat.xojan.fittracker.session.SessionListFragment;
-import cat.xojan.fittracker.settings.PreferenceActivity;
-import cat.xojan.fittracker.workout.WorkoutFragment;
+import cat.xojan.fittracker.menu.PreferenceActivity;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -115,6 +115,12 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case android.R.id.home:
                 getSupportFragmentManager().popBackStack();
+                break;
+            case R.id.action_attributions:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new AttributionFragment())
+                        .addToBackStack(null)
+                        .commit();
                 break;
         }
 

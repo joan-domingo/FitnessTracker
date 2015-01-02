@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.settings;
+package cat.xojan.fittracker.menu;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;

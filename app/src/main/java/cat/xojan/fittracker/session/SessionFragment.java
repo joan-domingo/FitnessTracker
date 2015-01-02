@@ -451,6 +451,8 @@ public class SessionFragment extends Fragment {
         settings.setVisible(false);
         mDeleteButton = menu.findItem(R.id.action_delete);
         mDeleteButton.setVisible(false);
+        MenuItem attributions = menu.findItem(R.id.action_attributions);
+        attributions.setVisible(false);
     }
 
     @Override
