@@ -78,7 +78,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:paddingRight="8dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/session_day"
@@ -86,6 +87,11 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:fontFamily="sans-serif"/>
+
+        <ImageView
+            android:id="@+id/app_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

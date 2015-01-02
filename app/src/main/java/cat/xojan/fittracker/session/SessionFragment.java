@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -266,24 +267,7 @@ public class SessionFragment extends Fragment {
 
             intervalTable.addView(headersRow);
 
-            //3 - values
-            TableRow valuesRow = new TableRow(getActivity());
-
-            valuesRow.addView(createValue(getActivity(), Utils.getTimeDifference(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
-                    mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(getActivity(), Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), getActivity())));
-            valuesRow.addView(createValue(getActivity(), Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity())));
-            valuesRow.addView(createValue(getActivity(), Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity())));
-            valuesRow.addView(createValue(getActivity(), Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(getActivity(), Utils.millisToTime(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(getActivity(), getSegmentElevationGain(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
-                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(getActivity(), getSegmentElevationLoss(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
-                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
-
-            intervalTable.addView(valuesRow);
-
-            //4 - km intervals
+            //3 - km intervals
             LatLng oldPosition = null;
             double distance = 0;
             int unitCounter = 1;
@@ -313,7 +297,8 @@ public class SessionFragment extends Fragment {
                         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
                             double miles = distance / 1609.344;
                             if (miles >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_MILE, startTime, dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
+                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_MILE, startTime,
+                                        dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
                                 elevationGain = elevationLoss = 0;
@@ -321,7 +306,8 @@ public class SessionFragment extends Fragment {
                         } else {
                             double kms = distance / 1000;
                             if (kms >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_KM, startTime, dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
+                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_KM, startTime,
+                                        dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
                                 elevationGain = elevationLoss = 0;
@@ -333,6 +319,25 @@ public class SessionFragment extends Fragment {
                 }
             }
 
+            //4 - values
+            TableRow valuesRow = new TableRow(getActivity());
+
+            valuesRow.addView(createValue(getActivity(), Utils.getTimeDifference(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
+                    mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), getActivity())));
+            valuesRow.addView(createValue(getActivity(), Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity())));
+            valuesRow.addView(createValue(getActivity(), Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), getActivity())));
+            valuesRow.addView(createValue(getActivity(), Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), Utils.millisToTime(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), getSegmentElevationGain(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
+                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(getActivity(), getSegmentElevationLoss(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
+                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
+
+            valuesRow.setBackgroundColor(getResources().getColor(R.color.grey));
+            intervalTable.addView(valuesRow);
+
+            //5 add table to view
             intervalView.addView(intervalTable);
         }
     }
@@ -365,7 +370,7 @@ public class SessionFragment extends Fragment {
     private View createValue(Context context, String text) {
         TextView textView = new TextView(context);
         textView.setText(text);
-        textView.setPadding(8, 0, 8, 0);
+        textView.setPadding(10, 2, 10, 2);
         textView.setGravity(Gravity.CENTER);
 //        textView.setTypeface(Typeface.DEFAULT_BOLD);
 
@@ -375,7 +380,7 @@ public class SessionFragment extends Fragment {
     private View createHeader(Context context, CharSequence text) {
         TextView textView = new TextView(context);
         textView.setText(text);
-        textView.setPadding(8, 0, 8, 0);
+        textView.setPadding(10, 2, 10, 2);
         textView.setGravity(Gravity.CENTER);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
 
@@ -389,7 +394,7 @@ public class SessionFragment extends Fragment {
 
         for (DataPoint dp : mLocationDataPoints) {
             if (dp.getStartTime(TimeUnit.MILLISECONDS) >= startTime && dp.getEndTime(TimeUnit.MILLISECONDS) <= endTime) {
-                float currentAltitude = -dp.getValue(Field.FIELD_ALTITUDE).asFloat();
+                float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
                 if (firsTime) {
                     firsTime = false;
                 } else {
@@ -411,7 +416,7 @@ public class SessionFragment extends Fragment {
 
         for (DataPoint dp : mLocationDataPoints) {
             if (dp.getStartTime(TimeUnit.MILLISECONDS) >= startTime && dp.getEndTime(TimeUnit.MILLISECONDS) <= endTime) {
-                float currentAltitude = -dp.getValue(Field.FIELD_ALTITUDE).asFloat();
+                float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
                 if (firsTime) {
                     firsTime = false;
                 } else {

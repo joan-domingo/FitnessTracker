@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.session;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.ActivityType;
+import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.Utils;
 
@@ -40,6 +42,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         public TextView mStartTime;
         public TextView mEndTime;
         public TextView mDay;
+        public ImageView mIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -50,6 +53,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
             mActivity = (ImageView) itemView.findViewById(R.id.session_activity);
             mSummary = (TextView) itemView.findViewById(R.id.session_summary);
             mDay = (TextView) itemView.findViewById(R.id.session_day);
+            mIcon = (ImageView) itemView.findViewById(R.id.app_icon);
 
             // hidden
             mIdentifier = (TextView) itemView.findViewById(R.id.session_identifier);
@@ -94,6 +98,16 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mStartTime.setText(String.valueOf(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
         holder.mEndTime.setText(String.valueOf(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));
         holder.mDay.setText(Utils.millisToDayComplete(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
+
+        if (mDataset.get(position).getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART)) {
+            holder.mIcon.setImageResource(R.drawable.ic_launcher);
+        } else {
+            try {
+                PackageManager pkgManager = context.getPackageManager();
+                Drawable appIcon = pkgManager.getApplicationIcon(mDataset.get(position).getAppPackageName());
+                holder.mIcon.setImageDrawable(appIcon);
+            } catch (PackageManager.NameNotFoundException e) {}
+        }
     }
 
     private Drawable getActivityDrawable(String activity) {

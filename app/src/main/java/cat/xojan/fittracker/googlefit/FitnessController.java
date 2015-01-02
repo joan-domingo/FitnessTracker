@@ -37,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.Utils;
 import cat.xojan.fittracker.session.SessionFragment;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
@@ -60,6 +59,15 @@ public class FitnessController {
     private DataSource mLocationDataSource;
     private DataSet mLocationDataSet;
     private List<Float> mDistanceSessions;
+    private Calendar mSessionListStartDate = getStartDate();
+    private Calendar mSessionListEndDate = Calendar.getInstance();
+
+    private Calendar getStartDate() {
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.MONTH, -1);
+
+        return date;
+    }
 
     protected FitnessController() {
     }
@@ -180,10 +188,10 @@ public class FitnessController {
                 .build();
     }
 
-    public void readLastSessions(long startTime, long endTime) {
+    public void readLastSessions() {
         // Build a session read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
                 .read(DataType.TYPE_DISTANCE_DELTA)
                 .readSessionsFromAllApps()
                 .build();
@@ -443,5 +451,21 @@ public class FitnessController {
 
     public List<Float> getDistances() {
         return mDistanceSessions;
+    }
+
+    public long getEndTime() {
+        return mSessionListEndDate.getTimeInMillis();
+    }
+
+    public void setEndTime(Calendar calendar) {
+        mSessionListEndDate = calendar;
+    }
+
+    public long getStartTime() {
+        return mSessionListStartDate.getTimeInMillis();
+    }
+
+    public void setStartTime(Calendar calendar) {
+        mSessionListStartDate = calendar;
     }
 }

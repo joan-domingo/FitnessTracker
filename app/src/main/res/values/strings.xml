@@ -42,7 +42,7 @@
     <string name="total_distance">WORKOUT DISTANCE</string>
     <string name="mi">mi</string>
     <string name="km">km</string>
-    <string name="interval">INTERVAL</string>
+    <string name="interval">Interval</string>
     <string name="total_elevation_gain">ELEVATION GAIN</string>
     <string name="total_elevation_loss">ELEVATION LOSS</string>
     <string name="feet">ft</string>

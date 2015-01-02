@@ -36,8 +36,6 @@ public class SessionListFragment extends Fragment {
     private static Handler handler;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
-    private Calendar mStartDate;
-    private Calendar mEndDate;
     private Button mDateEndButton;
     private Button mDateStartButton;
 
@@ -74,7 +72,7 @@ public class SessionListFragment extends Fragment {
                 switch (msg.what) {
                     case Constant.GOOGLE_API_CLIENT_CONNECTED:
                         if (getActivity() != null) {
-                            FitnessController.getInstance().readLastSessions(mStartDate.getTimeInMillis(), mEndDate.getTimeInMillis());
+                            FitnessController.getInstance().readLastSessions();
                             break;
                         }
                     case Constant.MESSAGE_SESSIONS_READ:
@@ -140,12 +138,7 @@ public class SessionListFragment extends Fragment {
         });
 
         mDateEndButton = (Button) view.findViewById(R.id.date_range_end);
-        mEndDate = Calendar.getInstance();
-
-
         mDateStartButton = (Button) view.findViewById(R.id.date_range_start);
-        mStartDate = Calendar.getInstance();
-        mStartDate.add(Calendar.MONTH, -1);
 
         return view;
     }
@@ -154,7 +147,7 @@ public class SessionListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mDateEndButton.setText(Utils.getRightDate(mEndDate.getTimeInMillis(), getActivity()));
+        mDateEndButton.setText(Utils.getRightDate(FitnessController.getInstance().getEndTime(), getActivity()));
         mDateEndButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,20 +157,20 @@ public class SessionListFragment extends Fragment {
                         // Do something with the date chosen by the user
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, month, day);
-                        mEndDate = calendar;
-                        mDateEndButton.setText(Utils.getRightDate(mEndDate.getTimeInMillis(), getActivity()));
+                        FitnessController.getInstance().setEndTime(calendar);
+                        mDateEndButton.setText(Utils.getRightDate(FitnessController.getInstance().getEndTime(), getActivity()));
                         mProgressBar.setVisibility(View.VISIBLE);
                         handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                     }
                 };
                 Bundle bundle = new Bundle();
-                bundle.putLong(Constant.PARAMETER_DATE, mEndDate.getTimeInMillis());
+                bundle.putLong(Constant.PARAMETER_DATE, FitnessController.getInstance().getEndTime());
                 newFragment.setArguments(bundle);
                 newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
             }
         });
 
-        mDateStartButton.setText(Utils.getRightDate(mStartDate.getTimeInMillis(), getActivity()));
+        mDateStartButton.setText(Utils.getRightDate(FitnessController.getInstance().getStartTime(), getActivity()));
         mDateStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,14 +180,14 @@ public class SessionListFragment extends Fragment {
                         // Do something with the date chosen by the user
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, month, day);
-                        mStartDate = calendar;
-                        mDateStartButton.setText(Utils.getRightDate(mStartDate.getTimeInMillis(), getActivity()));
+                        FitnessController.getInstance().setStartTime(calendar);
+                        mDateStartButton.setText(Utils.getRightDate(FitnessController.getInstance().getStartTime(), getActivity()));
                         mProgressBar.setVisibility(View.VISIBLE);
                         handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                     }
                 };
                 Bundle bundle = new Bundle();
-                bundle.putLong(Constant.PARAMETER_DATE, mStartDate.getTimeInMillis());
+                bundle.putLong(Constant.PARAMETER_DATE, FitnessController.getInstance().getStartTime());
                 newFragment.setArguments(bundle);
                 newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
             }
