@@ -259,11 +259,10 @@ public class FitnessController {
                 .addDataSet(mLocationDataSet)
                 .build();
 
-        //TODO: crash when no data points
-
         new SessionWriter(mClient) {
 
             public void onFinishSessionWriting() {
+                setEndTime(Calendar.getInstance());
                 fragmentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new SessionListFragment())
                         .commit();
@@ -467,5 +466,21 @@ public class FitnessController {
 
     public void setStartTime(Calendar calendar) {
         mSessionListStartDate = calendar;
+    }
+
+    public int getNumSegments() {
+        return mNumSegments;
+    }
+
+    public List<DataPoint> getLocationDataPoints() {
+        return mLocationDataSet.getDataPoints();
+    }
+
+    public List<DataPoint> getDistanceDataPoints() {
+        return mDistanceDataSet.getDataPoints();
+    }
+
+    public List<DataPoint> getSpeedDataPoints() {
+        return mSpeedDataSet.getDataPoints();
     }
 }

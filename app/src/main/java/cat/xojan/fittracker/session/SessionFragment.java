@@ -383,6 +383,7 @@ public class SessionFragment extends Fragment {
         textView.setPadding(10, 2, 10, 2);
         textView.setGravity(Gravity.CENTER);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTypeface(Typeface.DEFAULT_BOLD);
 
         return textView;
     }
