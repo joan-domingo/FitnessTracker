@@ -134,6 +134,10 @@ public class SessionFragment extends Fragment {
         ((TextView)view.findViewById(R.id.fragment_session_start)).setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_end)).setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS), mSession.getStartTime(TimeUnit.MILLISECONDS)));
+        ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, getActivity()));
+        ((TextView)view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(0, getActivity()));
+        ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(0, getActivity()));
 
         mNumSegments = 0;
         mDistanceDataPoints = null;
