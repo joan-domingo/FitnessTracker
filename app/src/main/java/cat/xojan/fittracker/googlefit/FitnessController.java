@@ -314,7 +314,7 @@ public class FitnessController {
         return mSingleSessionDataSets;
     }
 
-    private void dumpDataSet(DataSet dataSet) {
+    public void dumpDataSet(DataSet dataSet) {
         Log.i(Constant.TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 

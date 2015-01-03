@@ -160,10 +160,12 @@ public class SessionFragment extends Fragment {
                 }
             } else if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
                 mDistanceDataPoints = ds.getDataPoints();
+//                FitnessController.getInstance().dumpDataSet(ds);
             } else if (ds.getDataType().equals(DataType.TYPE_SPEED)) {
                 mSpeedDataPoints = ds.getDataPoints();
             } else if (ds.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
                 mLocationDataPoints = ds.getDataPoints();
+                //FitnessController.getInstance().dumpDataSet(ds);
             }
         }
 
@@ -284,11 +286,11 @@ public class SessionFragment extends Fragment {
 
             for (DataPoint dp : mLocationDataPoints) {
                 if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
-                        dp.getEndTime(TimeUnit.MILLISECONDS) <= mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)) {
+                        dp.getStartTime(TimeUnit.MILLISECONDS) <= mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)) {
+
                     float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
                     LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
-                    if (startTime == 0)
-                        startTime = dp.getStartTime(TimeUnit.MILLISECONDS);
+
                     if (oldPosition != null) {
                         distance = distance + SphericalUtil.computeDistanceBetween(oldPosition, currentPosition);
                         float elevation = currentAltitude - oldAltitude;
@@ -301,7 +303,7 @@ public class SessionFragment extends Fragment {
                         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
                             double miles = distance / 1609.344;
                             if (miles >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_MILE, startTime,
+                                addRow(intervalTable, unitCounter + " " + getText(R.string.mi), startTime,
                                         dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
@@ -310,13 +312,15 @@ public class SessionFragment extends Fragment {
                         } else {
                             double kms = distance / 1000;
                             if (kms >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + Constant.DISTANCE_MEASURE_KM, startTime,
+                                addRow(intervalTable, unitCounter + " " + getText(R.string.km), startTime,
                                         dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
                                 elevationGain = elevationLoss = 0;
                             }
                         }
+                    } else {
+                        startTime = dp.getStartTime(TimeUnit.MILLISECONDS);
                     }
                     oldPosition = currentPosition;
                     oldAltitude = currentAltitude;
@@ -347,16 +351,16 @@ public class SessionFragment extends Fragment {
     }
 
     private void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, float elevationGain, float elevationLoss) {
-        long timeInMillis = endTime - startTime;
-        long timeInSeconds = timeInMillis / 1000;
+        float seconds = endTime - startTime;
+        seconds = seconds / 1000;
 
         String measureUnit = getActivity().getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
         double speed;
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
-            speed = 1609.344 / timeInSeconds;
+            speed = 1609.344 / seconds;
         } else {
-            speed = 1000 / timeInSeconds;
+            speed = 1000 / seconds;
         }
 
         TableRow row = new TableRow(getActivity());
