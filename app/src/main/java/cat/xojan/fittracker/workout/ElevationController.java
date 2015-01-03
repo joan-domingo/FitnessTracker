@@ -37,7 +37,7 @@ public class ElevationController {
     }
 
     public void updateElevationGain(double oldAltitude, double currentAltitude) {
-        double altitudeResult = oldAltitude - currentAltitude;
+        double altitudeResult = currentAltitude - oldAltitude;
         if (altitudeResult >= 0) {
             mSessionElevationGain = mSessionElevationGain + altitudeResult;
             mSegmentElevationGain = mSegmentElevationGain + altitudeResult;

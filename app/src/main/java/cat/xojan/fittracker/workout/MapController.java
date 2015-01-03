@@ -73,6 +73,9 @@ public class MapController {
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
+        //init buttons
+        mView.findViewById(R.id.waiting_gps_bar).setVisibility(View.VISIBLE);
+
         //get first location
         getFirstLocation();
     }
