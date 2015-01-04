@@ -44,6 +44,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:layout_toStartOf="@+id/session_date"
+        android:layout_toLeftOf="@+id/session_date"
         android:paddingRight="8dp">
 
         <TextView
@@ -77,6 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:paddingRight="8dp"
         android:paddingTop="8dp"
         android:orientation="vertical">
