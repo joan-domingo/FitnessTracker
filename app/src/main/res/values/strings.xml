@@ -70,5 +70,6 @@
     <string name="date_format">Date Format</string>
     <string name="select_date_format">Select Date Format</string>
     <string name="attributions">Attributions</string>
+    <string name="new_workout">New Workout</string>
 
 </resources>

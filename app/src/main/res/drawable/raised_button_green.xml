@@ -2,7 +2,7 @@
 <item>
     <shape android:shape="rectangle">
         <corners android:radius="2dp" />
-        <solid android:color="@color/accent" />
+        <solid android:color="@color/button_green" />
     </shape>
 </item>
 </shape>

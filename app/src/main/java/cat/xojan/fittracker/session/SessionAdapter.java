@@ -112,7 +112,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
     private Drawable getActivityDrawable(String activity) {
         int drawable = ActivityType.getDrawable(activity);
-        return context.getDrawable(drawable);
+        return context.getResources().getDrawable(drawable);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
