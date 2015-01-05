@@ -115,9 +115,9 @@ public class ResultFragment extends Fragment {
     }
 
     private void setContent() {
-        ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.millisToTime(TimeController.getInstance().getSessionTotalTime()));
-        ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(TimeController.getInstance().getSegmentStartTime()));
-        ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(TimeController.getInstance().getSegmentEndTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.getTimeDifference(TimeController.getInstance().getSessionEndTime(),TimeController.getInstance().getSessionStartTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(TimeController.getInstance().getSessionStartTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(TimeController.getInstance().getSessionEndTime()));
         ((TextView) view.findViewById(R.id.fragment_result_total_distance)).setText(Utils.getRightDistance(DistanceController.getInstance().getSessionDistance(), getActivity()));
         ((TextView) view.findViewById(R.id.fragment_result_total_elevation_gain)).setText(Utils.getRightElevation(ElevationController.getInstance().getTotalElevationGain(), getActivity()));
         ((TextView) view.findViewById(R.id.fragment_result_total_elevation_loss)).setText(Utils.getRightElevation(ElevationController.getInstance().getTotalElevationLoss(), getActivity()));

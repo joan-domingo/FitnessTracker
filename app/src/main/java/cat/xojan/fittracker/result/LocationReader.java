@@ -25,14 +25,13 @@ public class LocationReader extends AsyncTask<LatLng, Void, String> {
             return null;
         }
         String cityName = null;
-        Geocoder gcd = new Geocoder(mFragmentActivity.getBaseContext(), Locale.getDefault());
+        Geocoder gcd = new Geocoder(mFragmentActivity.getBaseContext(), Locale.ENGLISH);
         List<Address> addresses;
         try {
             addresses = gcd.getFromLocation(params[0].latitude,
                     params[0].longitude, 1);
-            if (addresses.size() > 0)
-                System.out.println(addresses.get(0).getLocality());
-            cityName = addresses.get(0).getLocality();
+            if (addresses != null && addresses.size() > 0)
+                cityName = addresses.get(0).getLocality();
         } catch (IOException e) {
             e.printStackTrace();
         }

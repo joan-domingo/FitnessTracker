@@ -54,7 +54,7 @@
                     android:textColor="@color/white"/>
 
                 <TextView
-                    android:layout_width="12dp"
+                    android:layout_width="2dp"
                     android:layout_height="wrap_content"/>
 
                 <Button
@@ -79,7 +79,7 @@
                     android:textColor="@color/white"/>
 
                 <TextView
-                    android:layout_width="12dp"
+                    android:layout_width="2dp"
                     android:layout_height="wrap_content"/>
 
                 <Button

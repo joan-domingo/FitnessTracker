@@ -43,7 +43,6 @@ public class MapController {
 
     private static MapController instance = null;
     private List<PolylineOptions> mPolylines;
-    private double oldAltitude;
 
     public MapController() {}
 
@@ -142,10 +141,7 @@ public class MapController {
 
     private void updateTrack(Location location) {
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-        double currentAltitude = location.getAltitude();
         if (isTracking) {
-            FitnessController.getInstance().storeLocation(location);
-
             //create polyline with last location
             addMapPolyline(new PolylineOptions()
                     .geodesic(true)
@@ -155,15 +151,14 @@ public class MapController {
                     .color(Color.BLACK));
 
             DistanceController.getInstance().updateDistance(oldPosition, currentPosition);
-            ElevationController.getInstance().updateElevationGain(oldAltitude, currentAltitude);
+            ElevationController.getInstance().updateElevationGain(location);
             SpeedController.getInstance().updateSpeed();
+            FitnessController.getInstance().storeLocation(location);
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
         }
-
         oldPosition = currentPosition;
-        oldAltitude = currentAltitude;
     }
 
     private void addMapPolyline(PolylineOptions polylineOptions) {
@@ -200,9 +195,9 @@ public class MapController {
                     .title(String.valueOf(mFragmentActivity.getText(R.string.start))));
             mBoundsBuilder.include(position);
             oldPosition = position;
-            oldAltitude = getCurrentAltitude();
         }
         FitnessController.getInstance().storeLocation(getCurrentLocation());
+        ElevationController.getInstance().setFirstAltitude(getCurrentLocation());
     }
 
     private double getCurrentAltitude() {

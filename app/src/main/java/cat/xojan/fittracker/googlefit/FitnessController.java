@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -115,6 +116,7 @@ public class FitnessController {
         if (requestCode == REQUEST_OAUTH) {
             authInProgress = false;
             if (resultCode == activity.RESULT_OK) {
+                //when an account is connected
                 // Make sure the app is not already connected or attempting to connect
                 if (!mClient.isConnecting() && !mClient.isConnected()) {
                     mClient.connect();

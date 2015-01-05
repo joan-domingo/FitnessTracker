@@ -83,7 +83,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         if (position % 2 != 0)
-            holder.mView.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
+            holder.mView.setBackgroundColor(context.getResources().getColor(R.color.white));
         else
             holder.mView.setBackgroundColor(context.getResources().getColor(R.color.grey));
 
@@ -93,7 +93,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mDescription.setText(mDataset.get(position).getDescription());
         holder.mActivity.setImageDrawable(getActivityDrawable(mDataset.get(position).getActivity()));
         holder.mSummary.setText(Utils.getTimeDifference(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS),
-                mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " - " + Utils.getRightDistance(mDistance.get(position), context));
+                mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " / " + Utils.getRightDistance(mDistance.get(position), context));
         holder.mIdentifier.setText(mDataset.get(position).getIdentifier());
         holder.mStartTime.setText(String.valueOf(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
         holder.mEndTime.setText(String.valueOf(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));

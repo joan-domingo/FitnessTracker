@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.workout.MapController;
@@ -17,12 +18,12 @@ public class Utils {
     }
 
     public static String millisToDay(long timeInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.ENGLISH);
         return sdf.format(timeInMillis);
     }
 
     public static String millisToDayComplete(long timeInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE dd", Locale.ENGLISH);
         return sdf.format(timeInMillis);
     }
 

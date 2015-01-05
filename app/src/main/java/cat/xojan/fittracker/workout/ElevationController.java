@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.workout;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
@@ -10,10 +11,11 @@ public class ElevationController {
 
     private TextView mView;
     private Context mContext;
-    private double mSessionElevationGain;
-    private double mSessionElevationLoss;
-    private double mSegmentElevationGain;
-    private double mSegmentElevationLoss;
+    private float mSessionElevationGain;
+    private float mSessionElevationLoss;
+    private float mSegmentElevationGain;
+    private float mSegmentElevationLoss;
+    private float mOldAltitude;
 
     public ElevationController() {}
 
@@ -32,32 +34,42 @@ public class ElevationController {
 
         mView.setText(Utils.getRightElevation(0f, mContext));
 
-        mSessionElevationGain = mSegmentElevationGain = 0;
-        mSessionElevationLoss = mSegmentElevationLoss = 0;
+        mSessionElevationGain = 0;
+        mSegmentElevationGain = 0;
+        mSessionElevationLoss = 0;
+        mSegmentElevationLoss = 0;
     }
 
-    public void updateElevationGain(double oldAltitude, double currentAltitude) {
-        double altitudeResult = currentAltitude - oldAltitude;
+    public void updateElevationGain(Location location) {
+        float currentAltitude = (float) location.getAltitude();
+        float altitudeResult = currentAltitude - mOldAltitude;
+
         if (altitudeResult >= 0) {
             mSessionElevationGain = mSessionElevationGain + altitudeResult;
             mSegmentElevationGain = mSegmentElevationGain + altitudeResult;
-            mView.setText(Utils.getRightElevation((float) mSegmentElevationGain, mContext));
+            mView.setText(Utils.getRightElevation(mSegmentElevationGain, mContext));
         } else {
             mSessionElevationLoss = mSessionElevationLoss + (-altitudeResult);
             mSegmentElevationLoss = mSegmentElevationLoss + (-altitudeResult);
         }
+        mOldAltitude = currentAltitude;
     }
 
     public void lap() {
-        mSegmentElevationGain = mSegmentElevationLoss = 0;
-        mView.setText(Utils.getRightElevation((float) mSegmentElevationGain, mContext));
+        mSegmentElevationGain = 0;
+        mSegmentElevationLoss = 0;
+        mView.setText(Utils.getRightElevation(mSegmentElevationGain, mContext));
     }
 
     public float getTotalElevationGain() {
-        return (float) mSessionElevationGain;
+        return mSessionElevationGain;
     }
 
     public float getTotalElevationLoss() {
-        return (float) mSessionElevationLoss;
+        return mSessionElevationLoss;
+    }
+
+    public void setFirstAltitude(Location currentLocation) {
+        mOldAltitude = (float) currentLocation.getAltitude();
     }
 }
