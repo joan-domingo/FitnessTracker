@@ -101,10 +101,10 @@ public class ResultFragment extends Fragment {
             public void onResult(String cityName) {
                 if (!TextUtils.isEmpty(cityName)) {
                     mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
-                    mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " " + getText(R.string.workout) + " @ " + cityName);
+                    mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " @ " + cityName);
                 } else {
                     mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
-                    mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " " + getText(R.string.workout));
+                    mDescription.setText(FitnessController.getInstance().getFitnessActivity());
                 }
                 showProgressBar(false);
             }

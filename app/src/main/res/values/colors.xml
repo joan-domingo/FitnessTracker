@@ -10,4 +10,5 @@
     <color name="button_grey">#78909C</color>
     <color name="button_green">#4CAF50</color>
     <color name="black">#000000</color>
+    <color name="dark_gray">#333333</color>
 </resources>

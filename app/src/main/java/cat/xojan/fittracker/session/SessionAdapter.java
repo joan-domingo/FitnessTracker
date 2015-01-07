@@ -82,10 +82,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        if (position % 2 != 0)
-            holder.mView.setBackgroundColor(context.getResources().getColor(R.color.white));
-        else
-            holder.mView.setBackgroundColor(context.getResources().getColor(R.color.grey));
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element

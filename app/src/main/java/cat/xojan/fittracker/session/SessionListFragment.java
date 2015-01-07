@@ -54,12 +54,13 @@ public class SessionListFragment extends Fragment {
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.sessions_loading_spinner);
-        mProgressBar.setVisibility(View.VISIBLE);
+
 
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         Context mContext = getActivity().getBaseContext();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.sessions_list);
+        showProgressBar(true);
         mRecyclerView.setHasFixedSize(false);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
@@ -80,7 +81,7 @@ public class SessionListFragment extends Fragment {
                             RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(),
                                     FitnessController.getInstance().getDistances(), getActivity().getBaseContext());
                             mRecyclerView.setAdapter(mAdapter);
-                            mProgressBar.setVisibility(View.GONE);
+                            showProgressBar(false);
                         }
                         break;
 
@@ -159,7 +160,7 @@ public class SessionListFragment extends Fragment {
                         calendar.set(year, month, day);
                         FitnessController.getInstance().setEndTime(calendar);
                         mDateEndButton.setText(Utils.getRightDate(FitnessController.getInstance().getEndTime(), getActivity()));
-                        mProgressBar.setVisibility(View.VISIBLE);
+                        showProgressBar(true);
                         handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                     }
                 };
@@ -182,7 +183,7 @@ public class SessionListFragment extends Fragment {
                         calendar.set(year, month, day);
                         FitnessController.getInstance().setStartTime(calendar);
                         mDateStartButton.setText(Utils.getRightDate(FitnessController.getInstance().getStartTime(), getActivity()));
-                        mProgressBar.setVisibility(View.VISIBLE);
+                        showProgressBar(true);
                         handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
                     }
                 };
@@ -193,5 +194,15 @@ public class SessionListFragment extends Fragment {
             }
         });
 
+    }
+
+    private void showProgressBar(boolean b) {
+        if (b) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 }
