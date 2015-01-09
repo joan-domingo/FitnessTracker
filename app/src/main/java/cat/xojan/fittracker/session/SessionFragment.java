@@ -29,12 +29,16 @@ import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.xml.datatype.DatatypeConstants;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
@@ -187,6 +191,7 @@ public class SessionFragment extends Fragment {
             mapFragment.getView().setVisibility(View.VISIBLE);
             final GoogleMap map = mapFragment.getMap();
             map.clear();
+            map.setPadding(40, 80, 40, 0);
             map.setMyLocationEnabled(false);
             map.getUiSettings().setZoomControlsEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
@@ -226,7 +231,21 @@ public class SessionFragment extends Fragment {
                 oldAltitude = currentAltitude;
             }
 
-            ((TextView)view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(elevationGain, getActivity()));
+            if (mLocationDataPoints.size() > 0) {
+                //add start marker
+                map.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        .position(new LatLng( mLocationDataPoints.get(0).getValue(Field.FIELD_LATITUDE).asFloat(),
+                                mLocationDataPoints.get(0).getValue(Field.FIELD_LONGITUDE).asFloat())));
+
+                //add end marker
+                map.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        .position(new LatLng( mLocationDataPoints.get(mLocationDataPoints.size()-1).getValue(Field.FIELD_LATITUDE).asFloat(),
+                                mLocationDataPoints.get(mLocationDataPoints.size()-1).getValue(Field.FIELD_LONGITUDE).asFloat())));
+            }
+
+            ((TextView) view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(elevationGain, getActivity()));
             ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(elevationLoss, getActivity()));
 
             map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {

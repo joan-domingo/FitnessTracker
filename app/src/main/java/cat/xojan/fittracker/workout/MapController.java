@@ -94,7 +94,7 @@ public class MapController {
         //init google map
         mMap = map;
         mMap.clear();
-        mMap.setPadding(20, 330, 20, 150);
+        mMap.setPadding(40, 280, 40, 120);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);

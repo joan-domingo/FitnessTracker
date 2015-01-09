@@ -125,6 +125,7 @@ public class ResultFragment extends Fragment {
         //init google map
         mMap.clear();
         mMap.setMyLocationEnabled(true);
+        mMap.setPadding(40, 80, 40, 0);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
@@ -140,7 +141,7 @@ public class ResultFragment extends Fragment {
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(MapController.getInstance().getBounds(), 40));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(MapController.getInstance().getBounds(), 5));
             }
         });
     }
