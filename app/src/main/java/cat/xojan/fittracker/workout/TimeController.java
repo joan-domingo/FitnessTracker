@@ -1,13 +1,9 @@
 package cat.xojan.fittracker.workout;
 
 import android.os.SystemClock;
-import android.util.Log;
 import android.widget.Chronometer;
 
 import java.util.Calendar;
-
-import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.Utils;
 
 public class TimeController {
 

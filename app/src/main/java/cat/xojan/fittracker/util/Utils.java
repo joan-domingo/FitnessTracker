@@ -1,15 +1,13 @@
-package cat.xojan.fittracker;
+package cat.xojan.fittracker.util;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import cat.xojan.fittracker.googlefit.FitnessController;
-import cat.xojan.fittracker.workout.MapController;
+import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.R;
 
 public class Utils {
     public static String millisToTime(long millis) {

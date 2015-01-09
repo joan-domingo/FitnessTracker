@@ -24,7 +24,10 @@ import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
+import com.google.android.gms.fitness.request.OnDataPointListener;
+import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
@@ -62,6 +65,17 @@ public class FitnessController {
     private List<Float> mDistanceSessions;
     private Calendar mSessionListStartDate = getStartDate();
     private Calendar mSessionListEndDate = Calendar.getInstance();
+
+    private OnDataPointListener mDataPointListener = new OnDataPointListener() {
+        @Override
+        public void onDataPoint(DataPoint dataPoint) {
+            for (Field field : dataPoint.getDataType().getFields()) {
+                Value val = dataPoint.getValue(field);
+                Log.i(Constant.TAG, "Detected DataPoint field: " + field.getName());
+                Log.i(Constant.TAG, "Detected DataPoint value: " + val);
+            }
+        }
+    };
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
@@ -444,6 +458,45 @@ public class FitnessController {
         locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
         locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
         mLocationDataSet.add(locationDataPoint);
+    }
+
+    public void registerListener() {
+        Fitness.SensorsApi.add(
+                mClient,
+                new SensorRequest.Builder()
+                        .setDataType(DataType.TYPE_LOCATION_SAMPLE) // Can't be omitted.
+                        .setSamplingRate(10, TimeUnit.SECONDS)
+                        .build(),
+                mDataPointListener)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        if (status.isSuccess()) {
+                            Log.i(Constant.TAG, "Listener registered!");
+                        } else {
+                            Log.i(Constant.TAG, "Listener not registered.");
+                        }
+                    }
+                });
+    }
+
+    public void removeListener() {
+        // Waiting isn't actually necessary as the unregister call will complete regardless,
+        // even if called from within onStop, but a callback can still be added in order to
+        // inspect the results.
+        Fitness.SensorsApi.remove(
+                mClient,
+                mDataPointListener)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        if (status.isSuccess()) {
+                            Log.i(Constant.TAG, "Listener was removed!");
+                        } else {
+                            Log.i(Constant.TAG, "Listener was not removed.");
+                        }
+                    }
+                });
     }
 
     public String getFitnessActivity() {

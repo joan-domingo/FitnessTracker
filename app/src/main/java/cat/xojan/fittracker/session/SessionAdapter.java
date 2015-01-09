@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.Utils;
+import cat.xojan.fittracker.util.Utils;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
 

@@ -1,16 +1,10 @@
 package cat.xojan.fittracker.workout;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
-
-import java.util.Calendar;
-
-import cat.xojan.fittracker.Utils;
+import cat.xojan.fittracker.util.Utils;
 
 public class SpeedController {
 

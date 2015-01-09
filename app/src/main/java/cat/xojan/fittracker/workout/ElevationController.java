@@ -5,7 +5,7 @@ import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
-import cat.xojan.fittracker.Utils;
+import cat.xojan.fittracker.util.Utils;
 
 public class ElevationController {
 

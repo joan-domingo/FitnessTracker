@@ -27,7 +27,7 @@ import java.util.Calendar;
 import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.Utils;
+import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.workout.WorkoutFragment;
 
