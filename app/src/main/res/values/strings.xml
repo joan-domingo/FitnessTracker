@@ -71,5 +71,6 @@
     <string name="select_date_format">Select Date Format</string>
     <string name="attributions">Attributions</string>
     <string name="new_workout">New Workout</string>
+    <string name="is_tracking_you">is tracking your workout</string>
 
 </resources>

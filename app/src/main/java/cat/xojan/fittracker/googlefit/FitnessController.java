@@ -314,6 +314,8 @@ public class FitnessController {
                 .read(DataType.TYPE_SPEED)
                 .read(DataType.TYPE_DISTANCE_DELTA)
                 .read(DataType.TYPE_LOCATION_SAMPLE)
+                /*.read(DataType.TYPE_ACTIVITY_SAMPLE)
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)*/
                 .readSessionsFromAllApps()
                 .build();
 

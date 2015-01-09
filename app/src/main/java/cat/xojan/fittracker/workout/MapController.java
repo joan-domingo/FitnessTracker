@@ -244,6 +244,7 @@ public class MapController {
     }
 
     public void exit() {
+        FitnessController.getInstance().removeListener();
     }
 
     public LatLngBounds getBounds() {

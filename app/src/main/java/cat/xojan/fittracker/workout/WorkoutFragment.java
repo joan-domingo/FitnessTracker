@@ -38,7 +38,7 @@ public class WorkoutFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
-
+        NotificationController.getInstance().showNotification(getActivity());
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_workout_toolbar);
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
@@ -113,6 +113,7 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //finish button
+                NotificationController.getInstance().dismissNotification(getActivity());
                 MapController.getInstance().finish();
                 TimeController.getInstance().finish();
             }
@@ -122,6 +123,7 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MapController.getInstance().exit();
+                NotificationController.getInstance().dismissNotification(getActivity());
                 //exit
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
@@ -134,6 +136,7 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MapController.getInstance().exit();
+                NotificationController.getInstance().dismissNotification(getActivity());
                 //exit
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
