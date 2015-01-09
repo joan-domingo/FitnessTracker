@@ -1,11 +1,9 @@
 package cat.xojan.fittracker.workout;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -28,21 +26,18 @@ import cat.xojan.fittracker.result.ResultFragment;
 
 public class MapController {
 
-    private LocationManager mLocationManager;
-    private GoogleMap mMap;
-    private LocationListener mFirstLocationListener;
-    private LocationListener mLocationListener;
-    private LatLngBounds.Builder mBoundsBuilder;
-    private boolean isTracking;
-    private boolean isPaused;
-    private LatLng oldPosition;
-    private View mView;
+    private static GoogleMap mMap;
+    private static LatLngBounds.Builder mBoundsBuilder;
+    private static boolean isTracking;
+    private static boolean isPaused;
+    private static LatLng oldPosition;
+    private static View mView;
     private FragmentActivity mFragmentActivity;
     private int mLapIndex;
     private List<MarkerOptions> mMarkerList;
-
     private static MapController instance = null;
-    private List<PolylineOptions> mPolylines;
+    private static List<PolylineOptions> mPolylines;
+    private static boolean mFirstLocation;
 
     public MapController() {}
 
@@ -53,9 +48,40 @@ public class MapController {
         return instance;
     }
 
+    public static Handler getHandler() {
+        return handler;
+    }
+
+    private static float mCurrentLatitude;
+    private static float mCurrentLongitude;
+    private static float mCurrentAltitude;
+    private static float mCurrentAccuracy;
+
+    private static Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+
+            mCurrentLatitude = bundle.getFloat(Constant.BUNDLE_LATITUDE);
+            mCurrentLongitude = bundle.getFloat(Constant.BUNDLE_LONGITUDE);
+            mCurrentAltitude = bundle.getFloat(Constant.BUNDLE_ALTITUDE);
+            mCurrentAccuracy = bundle.getFloat(Constant.BUNDLE_ACCURACY);
+
+            if (mFirstLocation) {
+                Log.i(Constant.TAG, "Got First Location");
+                oldPosition = new LatLng(mCurrentLatitude, mCurrentLongitude);
+                updateMap(mCurrentLatitude, mCurrentLongitude);
+                showStartButton();
+                mFirstLocation = false;
+            } else {
+                updateTrack(mCurrentLatitude, mCurrentLongitude, mCurrentAltitude, mCurrentAccuracy);
+                updateMap(mCurrentLatitude, mCurrentLongitude);
+            }
+        }
+    };
+
     public void init(GoogleMap map, FragmentActivity activity, View view) {
         //init variables
-        mLocationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         mFragmentActivity = activity;
         isPaused = false;
         isTracking = false;
@@ -63,6 +89,7 @@ public class MapController {
         mLapIndex = 0;
         mMarkerList = new ArrayList<>();
         mPolylines = new ArrayList<>();
+        mFirstLocation = true;
 
         //init google map
         mMap = map;
@@ -75,72 +102,17 @@ public class MapController {
         //init buttons
         mView.findViewById(R.id.waiting_gps_bar).setVisibility(View.VISIBLE);
 
-        //get first location
-        getFirstLocation();
+        //register location listener
+        FitnessController.getInstance().registerListener();
     }
 
-    private void getFirstLocation() {
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mFirstLocationListener = new LocationListener() {
-
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.i(Constant.TAG, "Got First Location");
-                oldPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                updateMap(location);
-                showStartButton();
-                getLocationUpdates();
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        });
-    }
-
-    private void showStartButton() {
+    private static void showStartButton() {
         mView.findViewById(R.id.start_bar).setVisibility(View.VISIBLE);
         mView.findViewById(R.id.waiting_gps_bar).setVisibility(View.GONE);
     }
 
-    private void getLocationUpdates() {
-        mLocationManager.removeUpdates(mFirstLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, mLocationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                updateTrack(location);
-                updateMap(location);
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                resume();
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                pause();
-            }
-        });
-    }
-
-    private void updateTrack(Location location) {
-        LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+    private static void updateTrack(double latitude, double longitude, double altitude, double accuracy) {
+        LatLng currentPosition = new LatLng(latitude, longitude);
         if (isTracking) {
             //create polyline with last location
             addMapPolyline(new PolylineOptions()
@@ -151,9 +123,9 @@ public class MapController {
                     .color(Color.BLACK));
 
             DistanceController.getInstance().updateDistance(oldPosition, currentPosition);
-            ElevationController.getInstance().updateElevationGain(location);
+            ElevationController.getInstance().updateElevationGain(altitude);
             SpeedController.getInstance().updateSpeed();
-            FitnessController.getInstance().storeLocation(location);
+            FitnessController.getInstance().storeLocation(latitude, longitude, altitude, accuracy);
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
@@ -161,17 +133,16 @@ public class MapController {
         oldPosition = currentPosition;
     }
 
-    private void addMapPolyline(PolylineOptions polylineOptions) {
+    private static void addMapPolyline(PolylineOptions polylineOptions) {
         mMap.addPolyline(polylineOptions);
         mPolylines.add(polylineOptions);
     }
 
-    private void updateMap(Location location) {
+    private static void updateMap(double latitude, double longitude) {
         if (isTracking || isPaused) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 0));
         } else {
-            mLocationManager.removeUpdates(mFirstLocationListener);//TODO
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15));
         }
     }
 
@@ -196,37 +167,17 @@ public class MapController {
             mBoundsBuilder.include(position);
             oldPosition = position;
         }
-        FitnessController.getInstance().storeLocation(getCurrentLocation());
-        ElevationController.getInstance().setFirstAltitude(getCurrentLocation());
+        FitnessController.getInstance().storeLocation(mCurrentLatitude, mCurrentLongitude, mCurrentAltitude, mCurrentAccuracy);
+        ElevationController.getInstance().setFirstAltitude(mCurrentAltitude);
     }
 
-    private double getCurrentAltitude() {
-        double currentAltitude = 0;
-        boolean isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (!isGPSEnabled) {
-            //TODO: gps not enabled
-        } else {
-            Location currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            currentAltitude = currentLocation.getAltitude();
-        }
-        return currentAltitude;
+    private LatLng getCurrentPosition() {
+        return new LatLng(mCurrentLatitude, mCurrentLongitude);
     }
 
     private void addMapMarker(MarkerOptions markerOptions) {
         mMap.addMarker(markerOptions);
         mMarkerList.add(markerOptions);
-    }
-
-    private LatLng getCurrentPosition() {
-        LatLng currentPosition = null;
-        boolean isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (!isGPSEnabled) {
-            //TODO: gps not enabled
-        } else {
-            Location currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            currentPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        }
-        return currentPosition;
     }
 
     public void lap() {
@@ -254,11 +205,6 @@ public class MapController {
         mView.findViewById(R.id.lap_pause_bar).setVisibility(View.GONE);
 
         addFinishMarker();
-        FitnessController.getInstance().storeLocation(getCurrentLocation());
-    }
-
-    private Location getCurrentLocation() {
-        return mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
     private void addFinishMarker() {
@@ -284,8 +230,8 @@ public class MapController {
     }
 
     public void finish() {
-        //stop listening location
-        mLocationManager.removeUpdates(mLocationListener);
+        //remove location listener
+        FitnessController.getInstance().removeListener();
 
         //change buttons visibility
         mView.findViewById(R.id.resume_finish_bar).setVisibility(View.GONE);
@@ -298,9 +244,6 @@ public class MapController {
     }
 
     public void exit() {
-        mLocationManager.removeUpdates(mFirstLocationListener);
-        if (mLocationListener != null)
-            mLocationManager.removeUpdates(mLocationListener);
     }
 
     public LatLngBounds getBounds() {

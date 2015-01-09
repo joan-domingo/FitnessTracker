@@ -40,8 +40,8 @@ public class ElevationController {
         mSegmentElevationLoss = 0;
     }
 
-    public void updateElevationGain(Location location) {
-        float currentAltitude = (float) location.getAltitude();
+    public void updateElevationGain(double altitude) {
+        float currentAltitude = (float) altitude;
         float altitudeResult = currentAltitude - mOldAltitude;
 
         if (altitudeResult >= 0) {
@@ -69,7 +69,7 @@ public class ElevationController {
         return mSessionElevationLoss;
     }
 
-    public void setFirstAltitude(Location currentLocation) {
-        mOldAltitude = (float) currentLocation.getAltitude();
+    public void setFirstAltitude(float altitude) {
+        mOldAltitude = altitude;
     }
 }

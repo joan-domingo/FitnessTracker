@@ -31,4 +31,9 @@ public class Constant {
 
     public static final String WORKOUT_FRAGMENT_TAG = "workoutFragment";
     public static final String RESULT_FRAGMENT_TAG = "resultFragment";
+
+    public static final String BUNDLE_LATITUDE = "latitude";
+    public static final String BUNDLE_LONGITUDE = "longitude";
+    public static final String BUNDLE_ALTITUDE = "altitude";
+    public static final String BUNDLE_ACCURACY = "accuracy";
 }

@@ -147,10 +147,10 @@ public class SessionDataUtils {
         row.addView(createValue(context, String.valueOf(unitCounter)));
         row.addView(createValue(context, Utils.getRightPace((float) speed, context)));
         row.addView(createValue(context, Utils.getRightSpeed((float) speed, context)));
-        row.addView(createValue(context, Utils.millisToTime(startTime)));
-        row.addView(createValue(context, Utils.millisToTime(endTime)));
         row.addView(createValue(context, Utils.getRightElevation(elevationGain, context)));
         row.addView(createValue(context, Utils.getRightElevation(elevationLoss, context)));
+        row.addView(createValue(context, Utils.millisToTime(startTime)));
+        row.addView(createValue(context, Utils.millisToTime(endTime)));
         intervalTable.addView(row);
     }
 

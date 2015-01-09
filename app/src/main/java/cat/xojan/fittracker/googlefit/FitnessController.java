@@ -6,8 +6,8 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -24,7 +24,6 @@ import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
@@ -37,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
@@ -44,6 +44,7 @@ import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.session.SessionFragment;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
+import cat.xojan.fittracker.workout.MapController;
 import cat.xojan.fittracker.workout.TimeController;
 
 public class FitnessController {
@@ -66,23 +67,32 @@ public class FitnessController {
     private Calendar mSessionListStartDate = getStartDate();
     private Calendar mSessionListEndDate = Calendar.getInstance();
 
-    private OnDataPointListener mDataPointListener = new OnDataPointListener() {
-        @Override
-        public void onDataPoint(DataPoint dataPoint) {
-            for (Field field : dataPoint.getDataType().getFields()) {
-                Value val = dataPoint.getValue(field);
-                Log.i(Constant.TAG, "Detected DataPoint field: " + field.getName());
-                Log.i(Constant.TAG, "Detected DataPoint value: " + val);
-            }
-        }
-    };
-
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
         date.add(Calendar.MONTH, -1);
 
         return date;
     }
+
+    private OnDataPointListener mDataPointListener = new OnDataPointListener() {
+        @Override
+        public void onDataPoint(DataPoint dataPoint) {
+            /*for (Field field : dataPoint.getDataType().getFields()) {
+                Value val = dataPoint.getValue(field);
+                Log.i(Constant.TAG, "Detected DataPoint field: " + field.getName());
+                Log.i(Constant.TAG, "Detected DataPoint value: " + val);
+            }*/
+            Bundle bundle = new Bundle();
+            bundle.putFloat(Constant.BUNDLE_LATITUDE, dataPoint.getValue(Field.FIELD_LATITUDE).asFloat());
+            bundle.putFloat(Constant.BUNDLE_LONGITUDE, dataPoint.getValue(Field.FIELD_LONGITUDE).asFloat());
+            bundle.putFloat(Constant.BUNDLE_ALTITUDE, dataPoint.getValue(Field.FIELD_ALTITUDE).asFloat());
+            bundle.putFloat(Constant.BUNDLE_ACCURACY, dataPoint.getValue(Field.FIELD_ACCURACY).asFloat());
+            Message msg = new Message();
+            msg.setData(bundle);
+            MapController.getHandler().sendMessage(msg);
+        }
+    };
+
 
     protected FitnessController() {
     }
@@ -448,15 +458,15 @@ public class FitnessController {
         mLocationDataSet = DataSet.create(mLocationDataSource);
     }
 
-    public void storeLocation(Location location) {
+    public void storeLocation(double latitude, double longitude, double altitude, double accuracy) {
         long time = Calendar.getInstance().getTimeInMillis();
         //distance
         DataPoint locationDataPoint = DataPoint.create(mLocationDataSource);
         locationDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
-        locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) location.getLatitude());
-        locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) location.getLongitude());
-        locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
-        locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
+        locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) latitude);
+        locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) longitude);
+        locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat((float) accuracy);
+        locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) altitude);
         mLocationDataSet.add(locationDataPoint);
     }
 
