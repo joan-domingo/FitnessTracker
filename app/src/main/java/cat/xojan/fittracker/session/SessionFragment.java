@@ -133,8 +133,10 @@ public class SessionFragment extends Fragment {
         ((TextView)view.findViewById(R.id.fragment_session_start)).setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_end)).setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
         ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS), mSession.getStartTime(TimeUnit.MILLISECONDS)));
+
         ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, getActivity()));
+
         ((TextView)view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(0, getActivity()));
         ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(0, getActivity()));
 
@@ -148,7 +150,7 @@ public class SessionFragment extends Fragment {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
                     mNumSegments = ds.getDataPoints().get(0).getValue(Field.FIELD_NUM_SEGMENTS).asInt();
                 }
-            } else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
+            }/* else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
 
                     String speed = Utils.getRightSpeed(ds.getDataPoints().get(0).getValue(Field.FIELD_AVERAGE).asFloat(), getActivity().getBaseContext());
@@ -157,7 +159,7 @@ public class SessionFragment extends Fragment {
                     String pace = Utils.getRightPace(ds.getDataPoints().get(0).getValue(Field.FIELD_AVERAGE).asFloat(), getActivity().getBaseContext());
                     ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(pace);
                 }
-            } else if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
+            } */else if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
                 mDistanceDataPoints = ds.getDataPoints();
 //                FitnessController.getInstance().dumpDataSet(ds);
             } else if (ds.getDataType().equals(DataType.TYPE_SPEED)) {
@@ -173,6 +175,10 @@ public class SessionFragment extends Fragment {
             totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
         }
         ((TextView)view.findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, getActivity()));
+        long totalTime = (mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS)) / 1000;
+        float speed = totalDistance / totalTime;
+        ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
 
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
