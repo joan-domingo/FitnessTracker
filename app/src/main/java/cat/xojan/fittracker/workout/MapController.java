@@ -1,6 +1,10 @@
 package cat.xojan.fittracker.workout;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -37,7 +41,8 @@ public class MapController {
     private List<MarkerOptions> mMarkerList;
     private static MapController instance = null;
     private static List<PolylineOptions> mPolylines;
-    private static boolean mFirstLocation;
+    private LocationListener mFirstLocationListener;
+    private LocationManager mLocationManager;
 
     public MapController() {}
 
@@ -67,16 +72,8 @@ public class MapController {
             mCurrentAltitude = bundle.getFloat(Constant.BUNDLE_ALTITUDE);
             mCurrentAccuracy = bundle.getFloat(Constant.BUNDLE_ACCURACY);
 
-            if (mFirstLocation) {
-                Log.i(Constant.TAG, "Got First Location");
-                oldPosition = new LatLng(mCurrentLatitude, mCurrentLongitude);
-                updateMap(mCurrentLatitude, mCurrentLongitude);
-                showStartButton();
-                mFirstLocation = false;
-            } else {
-                updateTrack(mCurrentLatitude, mCurrentLongitude, mCurrentAltitude, mCurrentAccuracy);
-                updateMap(mCurrentLatitude, mCurrentLongitude);
-            }
+            updateTrack(mCurrentLatitude, mCurrentLongitude, mCurrentAltitude, mCurrentAccuracy);
+            updateMap(mCurrentLatitude, mCurrentLongitude);
         }
     };
 
@@ -89,7 +86,6 @@ public class MapController {
         mLapIndex = 0;
         mMarkerList = new ArrayList<>();
         mPolylines = new ArrayList<>();
-        mFirstLocation = true;
 
         //init google map
         mMap = map;
@@ -102,8 +98,42 @@ public class MapController {
         //init buttons
         mView.findViewById(R.id.waiting_gps_bar).setVisibility(View.VISIBLE);
 
-        //register location listener
-        FitnessController.getInstance().registerListener();
+        //register first location listener
+        mLocationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        getFirstLocation();
+    }
+
+    private void getFirstLocation() {
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mFirstLocationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.i(Constant.TAG, "Got First Location");
+                mCurrentLatitude = (float) location.getLatitude();
+                mCurrentLongitude = (float) location.getLongitude();
+
+                oldPosition = new LatLng(mCurrentLatitude, mCurrentLongitude);
+                updateMap(mCurrentLatitude, mCurrentLongitude);
+                FitnessController.getInstance().registerListener();
+                mLocationManager.removeUpdates(mFirstLocationListener);
+                showStartButton();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        });
     }
 
     private static void showStartButton() {

@@ -57,6 +57,7 @@ public class SessionListFragment extends Fragment {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                FitnessController.getInstance().setEndTime(Calendar.getInstance());
                 handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
             }
         });
@@ -99,8 +100,7 @@ public class SessionListFragment extends Fragment {
                 }
             }
         };
-
-        FitnessController.getInstance().init();
+        handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
 
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
