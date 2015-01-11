@@ -275,6 +275,7 @@ public class MapController {
 
     public void exit() {
         FitnessController.getInstance().removeListener();
+        mLocationManager.removeUpdates(mFirstLocationListener);
     }
 
     public LatLngBounds getBounds() {
