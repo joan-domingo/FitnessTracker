@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -180,15 +181,13 @@ public class SessionFragment extends Fragment {
         ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
 
+        SessionDataUtils.fillIntervalTable(view, getActivity(), mNumSegments, mLocationDataPoints, mDistanceDataPoints, mSpeedDataPoints);
+
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
         } else {
             fillMap(false);
         }
-
-        SessionDataUtils.fillIntervalTable(view, getActivity(), mNumSegments, mLocationDataPoints, mDistanceDataPoints, mSpeedDataPoints);
-
-        showProgressBar(false);
     }
 
     private void fillMap(boolean fillMap) {
@@ -201,41 +200,6 @@ public class SessionFragment extends Fragment {
             map.setMyLocationEnabled(false);
             map.getUiSettings().setZoomControlsEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
-
-            LatLng oldPosition = null;
-            final LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-            float elevationGain = 0;
-            float elevationLoss = 0;
-            float oldAltitude = 0;
-
-            for (DataPoint dp : mLocationDataPoints) {
-                //elevation
-                float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
-
-                //position
-                LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
-                boundsBuilder.include(currentPosition);
-
-                if (oldPosition != null) {
-                    //create polyline with last location
-                    map.addPolyline(new PolylineOptions()
-                            .geodesic(true)
-                            .add(oldPosition)
-                            .add(currentPosition)
-                            .width(4)
-                            .color(Color.BLACK));
-
-                    //estimate altitude gain/loss
-                    float elevation = currentAltitude - oldAltitude;
-                    if (elevation >= 0) {
-                        elevationGain = elevationGain + elevation;
-                    } else {
-                        elevationLoss = elevationLoss + (-elevation);
-                    }
-                }
-                oldPosition = currentPosition;
-                oldAltitude = currentAltitude;
-            }
 
             if (mLocationDataPoints.size() > 0) {
                 //add start marker
@@ -251,15 +215,27 @@ public class SessionFragment extends Fragment {
                                 mLocationDataPoints.get(mLocationDataPoints.size()-1).getValue(Field.FIELD_LONGITUDE).asFloat())));
             }
 
-            ((TextView) view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(elevationGain, getActivity()));
-            ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(elevationLoss, getActivity()));
+            new PolylineCreator(mLocationDataPoints) {
+                public void onResult () {
+                    ((TextView) view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(elevationGain, getActivity()));
+                    ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(elevationLoss, getActivity()));
 
-            map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                @Override
-                public void onMapLoaded() {
-                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5));
+                    map.addPolyline(polylineOptions
+                            .geodesic(true)
+                            .width(4)
+                            .color(Color.BLACK));
+
+                    showProgressBar(false);
+
+                    map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                        @Override
+                        public void onMapLoaded() {
+                            map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5));
+                        }
+                    });
                 }
-            });
+            }.execute();
+
         } else {
             mapFragment.getView().setVisibility(View.GONE);
         }

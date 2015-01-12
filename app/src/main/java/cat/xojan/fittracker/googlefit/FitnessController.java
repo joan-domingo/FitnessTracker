@@ -1,9 +1,8 @@
 package cat.xojan.fittracker.googlefit;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -18,8 +17,6 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
-import com.google.android.gms.fitness.request.OnDataPointListener;
-import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
@@ -36,7 +33,6 @@ import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.session.SessionFragment;
 import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
-import cat.xojan.fittracker.workout.MapController;
 import cat.xojan.fittracker.workout.TimeController;
 
 public class FitnessController {
@@ -65,26 +61,6 @@ public class FitnessController {
 
         return date;
     }
-
-    private OnDataPointListener mDataPointListener = new OnDataPointListener() {
-        @Override
-        public void onDataPoint(DataPoint dataPoint) {
-            /*for (Field field : dataPoint.getDataType().getFields()) {
-                Value val = dataPoint.getValue(field);
-                Log.i(Constant.TAG, "Detected DataPoint field: " + field.getName());
-                Log.i(Constant.TAG, "Detected DataPoint value: " + val);
-            }*/
-            Bundle bundle = new Bundle();
-            bundle.putFloat(Constant.BUNDLE_LATITUDE, dataPoint.getValue(Field.FIELD_LATITUDE).asFloat());
-            bundle.putFloat(Constant.BUNDLE_LONGITUDE, dataPoint.getValue(Field.FIELD_LONGITUDE).asFloat());
-            bundle.putFloat(Constant.BUNDLE_ALTITUDE, dataPoint.getValue(Field.FIELD_ALTITUDE).asFloat());
-            bundle.putFloat(Constant.BUNDLE_ACCURACY, dataPoint.getValue(Field.FIELD_ACCURACY).asFloat());
-            Message msg = new Message();
-            msg.setData(bundle);
-            MapController.getHandler().sendMessage(msg);
-        }
-    };
-
 
     protected FitnessController() {
     }
@@ -201,7 +177,7 @@ public class FitnessController {
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
                 .setSessionId(sessionId)
                 .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                //.read(DataType.AGGREGATE_SPEED_SUMMARY)
+                .read(DataType.AGGREGATE_SPEED_SUMMARY)
                 .read(DataType.TYPE_SPEED)
                 .read(DataType.TYPE_DISTANCE_DELTA)
                 .read(DataType.TYPE_LOCATION_SAMPLE)
@@ -214,9 +190,9 @@ public class FitnessController {
                 mSingleSession = session;
                 mSingleSessionDataSets = dataSets;
                 // Process the data sets for this session
-                /*for (DataSet dataSet : dataSets) {
+                for (DataSet dataSet : dataSets) {
                     dumpDataSet(dataSet);
-                }*/
+                }
                 SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
 
@@ -349,55 +325,16 @@ public class FitnessController {
         mLocationDataSet = DataSet.create(mLocationDataSource);
     }
 
-    public void storeLocation(double latitude, double longitude, double altitude, double accuracy) {
+    public void storeLocation(Location location, float altitude) {
         long time = Calendar.getInstance().getTimeInMillis();
         //distance
         DataPoint locationDataPoint = DataPoint.create(mLocationDataSource);
         locationDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
-        locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) latitude);
-        locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) longitude);
-        locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat((float) accuracy);
-        locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) altitude);
+        locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) location.getLatitude());
+        locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) location.getLongitude());
+        locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
+        locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat(altitude);
         mLocationDataSet.add(locationDataPoint);
-    }
-
-    public void registerListener() {
-        Fitness.SensorsApi.add(
-                mClient,
-                new SensorRequest.Builder()
-                        .setDataType(DataType.TYPE_LOCATION_SAMPLE) // Can't be omitted.
-                        .setSamplingRate(10, TimeUnit.SECONDS)
-                        .build(),
-                mDataPointListener)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(Constant.TAG, "Listener registered!");
-                        } else {
-                            Log.i(Constant.TAG, "Listener not registered.");
-                        }
-                    }
-                });
-    }
-
-    public void removeListener() {
-        // Waiting isn't actually necessary as the unregister call will complete regardless,
-        // even if called from within onStop, but a callback can still be added in order to
-        // inspect the results.
-        Fitness.SensorsApi.remove(
-                mClient,
-                mDataPointListener)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(Constant.TAG, "Listener was removed!");
-                        } else {
-                            Log.i(Constant.TAG, "Listener was not removed.");
-                        }
-                    }
-                });
     }
 
     public String getFitnessActivity() {

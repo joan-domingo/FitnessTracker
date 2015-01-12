@@ -91,7 +91,7 @@ public class ResultFragment extends Fragment {
                 showProgressBar(false);
             }
 
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MapController.getInstance().getLastLocation());
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MapController.getInstance().getLastPosition());
 
         return view;
     }
