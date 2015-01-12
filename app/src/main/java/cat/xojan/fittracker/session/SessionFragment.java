@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,16 +29,12 @@ import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.datatype.DatatypeConstants;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
@@ -50,9 +45,6 @@ import cat.xojan.fittracker.util.Utils;
 public class SessionFragment extends Fragment {
 
     private static Handler handler;
-    private int mNumSegments;
-    private List<DataPoint> mDistanceDataPoints;
-    private List<DataPoint> mSpeedDataPoints;
     private List<DataPoint> mLocationDataPoints;
     private MenuItem mDeleteButton;
     private int mSessionWorkoutTime;
@@ -139,12 +131,9 @@ public class SessionFragment extends Fragment {
         ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, getActivity()));
 
-        ((TextView)view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(0, getActivity()));
-        ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(0, getActivity()));
-
-        mNumSegments = 0;
-        mDistanceDataPoints = null;
-        mSpeedDataPoints = null;
+        int mNumSegments = 0;
+        List<DataPoint> mDistanceDataPoints = null;
+        List<DataPoint> mSpeedDataPoints = null;
         mLocationDataPoints = null;
 
         for (DataSet ds : mDataSets) {
@@ -152,7 +141,7 @@ public class SessionFragment extends Fragment {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
                     mNumSegments = ds.getDataPoints().get(0).getValue(Field.FIELD_NUM_SEGMENTS).asInt();
                     mSessionWorkoutTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
-                    ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.millisToTime(mSessionWorkoutTime));
+                    ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSessionWorkoutTime, 0));
                 }
             }/* else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
@@ -178,12 +167,13 @@ public class SessionFragment extends Fragment {
         for (DataPoint dp : mDistanceDataPoints) {
             totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
         }
-        ((TextView)view.findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, getActivity()));;
+        ((TextView)view.findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, getActivity()));
         float speed = totalDistance / (mSessionWorkoutTime / 1000);
         ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
 
         SessionDataUtils.fillIntervalTable(view, getActivity(), mNumSegments, mLocationDataPoints, mDistanceDataPoints, mSpeedDataPoints);
+        showProgressBar(false);
 
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
@@ -195,57 +185,47 @@ public class SessionFragment extends Fragment {
     private void fillMap(boolean fillMap) {
          MapFragment mapFragment = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.fragment_session_map));
         if (fillMap) {
-            mapFragment.getView().setVisibility(View.VISIBLE);
+            if (mapFragment.getView() != null)
+                mapFragment.getView().setVisibility(View.VISIBLE);
             final GoogleMap map = mapFragment.getMap();
             map.clear();
-            map.setPadding(40, 80, 40, 0);
+            map.setPadding(0, 0, 0, 0);
             map.setMyLocationEnabled(false);
             map.getUiSettings().setZoomControlsEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
 
-            /*if (mLocationDataPoints.size() > 0) {
-                //add start marker
-                map.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                        .position(new LatLng( mLocationDataPoints.get(0).getValue(Field.FIELD_LATITUDE).asFloat(),
-                                mLocationDataPoints.get(0).getValue(Field.FIELD_LONGITUDE).asFloat())));
+            final LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+            LatLng oldPosition = null;
 
-                //add end marker
-                map.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                        .position(new LatLng( mLocationDataPoints.get(mLocationDataPoints.size()-1).getValue(Field.FIELD_LATITUDE).asFloat(),
-                                mLocationDataPoints.get(mLocationDataPoints.size()-1).getValue(Field.FIELD_LONGITUDE).asFloat())));
-            }*/
+            for (DataPoint dp : mLocationDataPoints) {
 
-            new PolylineCreator(mLocationDataPoints, mDistanceDataPoints, mNumSegments) {
-                public void onResult () {
-                    ((TextView) view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(elevationGain, getActivity()));
-                    ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(elevationLoss, getActivity()));
+                //position
+                LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
+                boundsBuilder.include(currentPosition);
 
-                    for (PolylineOptions pl : mPolyList) {
-                        map.addPolyline(pl
-                                .geodesic(true)
-                                .width(4)
-                                .color(Color.BLACK));
-                    }
-
-                    for (MarkerOptions mo : mMarkerList) {
-                        map.addMarker(mo);
-                    }
-
-                    showProgressBar(false);
-
-                    map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                        @Override
-                        public void onMapLoaded() {
-                            map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5));
-                        }
-                    });
+                if (oldPosition != null) {
+                    //create polyline with last location
+                    map.addPolyline(new PolylineOptions()
+                            .geodesic(true)
+                            .add(oldPosition)
+                            .add(currentPosition)
+                            .width(4)
+                            .color(Color.BLACK));
                 }
-            }.execute();
+
+                oldPosition = currentPosition;
+            }
+
+            map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5));
+                }
+            });
 
         } else {
-            mapFragment.getView().setVisibility(View.GONE);
+            if (mapFragment.getView() != null)
+                mapFragment.getView().setVisibility(View.GONE);
         }
     }
 

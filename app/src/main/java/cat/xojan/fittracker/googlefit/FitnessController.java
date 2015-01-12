@@ -54,6 +54,7 @@ public class FitnessController {
     private List<Float> mDistanceSessions;
     private Calendar mSessionListStartDate = getStartDate();
     private Calendar mSessionListEndDate = Calendar.getInstance();
+    private List<Integer> mActivitesDuration;
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
@@ -85,6 +86,7 @@ public class FitnessController {
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
                 .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
                 .readSessionsFromAllApps()
                 .build();
 
@@ -95,10 +97,26 @@ public class FitnessController {
                 Collections.reverse(sessions);
                 mReadSessions = sessions;
                 mDistanceSessions = getSessionsDistance(sessionReadResult);
+                mActivitesDuration = getSessionsDuration(sessionReadResult);
                 SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
             }
 
         }.execute(readRequest);
+    }
+
+    private List<Integer> getSessionsDuration(SessionReadResult sessionReadResult) {
+        List<Integer> sessionDuration = new ArrayList<>(sessionReadResult.getSessions().size());
+
+        for (Session s : sessionReadResult.getSessions()) {
+            int duration = 0;
+            for (DataSet ds : sessionReadResult.getDataSet(s, DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
+                for (DataPoint dp : ds.getDataPoints()) {
+                    duration = dp.getValue(Field.FIELD_DURATION).asInt();
+                }
+            }
+            sessionDuration.add(duration);
+        }
+        return sessionDuration;
     }
 
     private List<Float> getSessionsDistance(SessionReadResult sessionReadResult) {
@@ -190,9 +208,9 @@ public class FitnessController {
                 mSingleSession = session;
                 mSingleSessionDataSets = dataSets;
                 // Process the data sets for this session
-                for (DataSet dataSet : dataSets) {
-                    dumpDataSet(dataSet);
-                }
+//                for (DataSet dataSet : dataSets) {
+//                    dumpDataSet(dataSet);
+//                }
                 SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
 
@@ -325,7 +343,7 @@ public class FitnessController {
         mLocationDataSet = DataSet.create(mLocationDataSource);
     }
 
-    public void storeLocation(Location location, float altitude) {
+    public void storeLocation(Location location) {
         long time = Calendar.getInstance().getTimeInMillis();
         //distance
         DataPoint locationDataPoint = DataPoint.create(mLocationDataSource);
@@ -333,7 +351,7 @@ public class FitnessController {
         locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) location.getLatitude());
         locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) location.getLongitude());
         locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
-        locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat(altitude);
+        locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
         mLocationDataSet.add(locationDataPoint);
     }
 
@@ -375,5 +393,9 @@ public class FitnessController {
 
     public List<DataPoint> getSpeedDataPoints() {
         return mSpeedDataSet.getDataPoints();
+    }
+
+    public List<Integer> getActivitiesDuration() {
+        return mActivitesDuration;
     }
 }

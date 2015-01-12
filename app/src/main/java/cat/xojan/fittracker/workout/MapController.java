@@ -46,8 +46,6 @@ public class MapController {
     private LocationListener mFirstLocationListener;
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
-    private SensorManager mSensorManager;
-    private Sensor mPressure;
 
     public MapController() {}
 
@@ -79,10 +77,6 @@ public class MapController {
         //init buttons
         mView.findViewById(R.id.waiting_gps_bar).setVisibility(View.VISIBLE);
 
-        // get SensorManager instance.
-        mSensorManager = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
-        mPressure = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-
         //register first location listener
         mLocationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         getFirstLocation();
@@ -99,8 +93,6 @@ public class MapController {
                 mLocationManager.removeUpdates(mFirstLocationListener);
                 getLocationUpdates();
                 showStartButton();
-                ElevationController.getInstance().setFirstAltitude(mAltitude);
-                mSensorManager.registerListener(mSensorListener, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
             }
 
             @Override
@@ -163,9 +155,8 @@ public class MapController {
                     .color(Color.BLACK));
 
             DistanceController.getInstance().updateDistance(oldPosition, currentPosition);
-            ElevationController.getInstance().updateElevationGain(mAltitude);
             SpeedController.getInstance().updateSpeed();
-            FitnessController.getInstance().storeLocation(location, mAltitude);
+            FitnessController.getInstance().storeLocation(location);
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
@@ -207,7 +198,7 @@ public class MapController {
         mBoundsBuilder.include(position);
         oldPosition = position;
 
-        FitnessController.getInstance().storeLocation(getCurrentLocation(), mAltitude);
+        FitnessController.getInstance().storeLocation(getCurrentLocation());
     }
 
     private void addMapMarker(MarkerOptions markerOptions) {
@@ -217,7 +208,7 @@ public class MapController {
 
     public void lap() {
         addLapMarker();
-        FitnessController.getInstance().storeLocation(getCurrentLocation(), mAltitude);
+        FitnessController.getInstance().storeLocation(getCurrentLocation());
     }
 
     private void addLapMarker() {
@@ -265,9 +256,6 @@ public class MapController {
         //remove location listener
         mLocationManager.removeUpdates(mLocationListener);
 
-        //remove sensor listener
-        mSensorManager.unregisterListener(mSensorListener);
-
         //change buttons visibility
         mView.findViewById(R.id.resume_finish_bar).setVisibility(View.GONE);
 
@@ -279,9 +267,6 @@ public class MapController {
     }
 
     public void exit() {
-        if (mSensorListener != null) {
-            mSensorManager.unregisterListener(mSensorListener);
-        }
         if (mLocationListener != null)
             mLocationManager.removeUpdates(mLocationListener);
         mLocationManager.removeUpdates(mFirstLocationListener);
@@ -309,21 +294,6 @@ public class MapController {
     private Location getCurrentLocation() {
         return mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
-
-    private float mAltitude;
-    private SensorEventListener mSensorListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            if (SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, event.values[0]) != 0.0) {
-                mAltitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, event.values[0]);
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
-    };
 
     public LatLng getLastPosition() {
         return new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude());

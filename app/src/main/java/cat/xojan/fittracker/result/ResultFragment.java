@@ -26,7 +26,6 @@ import cat.xojan.fittracker.session.SessionListFragment;
 import cat.xojan.fittracker.util.SessionDataUtils;
 import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.workout.DistanceController;
-import cat.xojan.fittracker.workout.ElevationController;
 import cat.xojan.fittracker.workout.MapController;
 import cat.xojan.fittracker.workout.TimeController;
 
@@ -101,8 +100,6 @@ public class ResultFragment extends Fragment {
         ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(TimeController.getInstance().getSessionStartTime()));
         ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(TimeController.getInstance().getSessionEndTime()));
         ((TextView) view.findViewById(R.id.fragment_result_total_distance)).setText(Utils.getRightDistance(DistanceController.getInstance().getSessionDistance(), getActivity()));
-        ((TextView) view.findViewById(R.id.fragment_result_total_elevation_gain)).setText(Utils.getRightElevation(ElevationController.getInstance().getTotalElevationGain(), getActivity()));
-        ((TextView) view.findViewById(R.id.fragment_result_total_elevation_loss)).setText(Utils.getRightElevation(ElevationController.getInstance().getTotalElevationLoss(), getActivity()));
         float speed = DistanceController.getInstance().getSessionDistance() / (TimeController.getInstance().getSessionWorkoutTime() / 1000);
         ((TextView) view.findViewById(R.id.fragment_result_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_result_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));

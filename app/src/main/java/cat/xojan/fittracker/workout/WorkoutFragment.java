@@ -55,14 +55,12 @@ public class WorkoutFragment extends Fragment {
         Button exitGPSButton = (Button) view.findViewById(R.id.workout_button_exit_gps);
         TextView paceView = (TextView) view.findViewById(R.id.workout_pace);
         TextView speedView = (TextView) view.findViewById(R.id.workout_speed);
-        TextView elevationGainView = (TextView) view.findViewById(R.id.workout_elevation_gain);
 
         //init controllers
         MapController.getInstance().init(map, getActivity(), view);
         TimeController.getInstance().init(chronometer);
 
         DistanceController.getInstance().init(distanceView, getActivity());
-        ElevationController.getInstance().init(elevationGainView, getActivity());
         SpeedController.getInstance().init(paceView, speedView, getActivity());
 
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +82,6 @@ public class WorkoutFragment extends Fragment {
                 FitnessController.getInstance().saveSegment();
                 TimeController.getInstance().lapStart();
                 DistanceController.getInstance().lap();
-                ElevationController.getInstance().lap();
                 SpeedController.getInstance().reset();
             }
         });

@@ -62,8 +62,8 @@
     <string name="to">TO:</string>
     <string name="workout">workout</string>
     <string name="action_delete">Delete</string>
-    <string name="kilometres_metres">Kilometers/Meters</string>
-    <string name="miles_feet">Miles/Feet</string>
+    <string name="kilometres_metres">Kilometers</string>
+    <string name="miles_feet">Miles</string>
     <string name="session_name">Name:</string>
     <string name="session_description">Description:</string>
     <string name="settings">Settings</string>
@@ -72,5 +72,7 @@
     <string name="attributions">Attributions</string>
     <string name="new_workout">New Workout</string>
     <string name="is_tracking_you">is tracking your workout</string>
+    <string name="total_max_speed">MAX SPEED</string>
+    <string name="total_min_speed">MIN SPEED</string>
 
 </resources>

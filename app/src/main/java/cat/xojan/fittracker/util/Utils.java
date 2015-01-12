@@ -78,9 +78,9 @@ public class Utils {
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
-            return Utils.speedToPaceInMi(value) + context.getString(R.string.pmi);
+            return Utils.speedToPaceInMi(value) + " " + context.getString(R.string.pmi);
         } else {
-            return Utils.speedToPaceInKm(value) + context.getString(R.string.pkm);
+            return Utils.speedToPaceInKm(value) + " " + context.getString(R.string.pkm);
         }
     }
 

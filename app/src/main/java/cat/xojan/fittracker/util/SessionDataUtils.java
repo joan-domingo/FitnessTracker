@@ -44,8 +44,6 @@ public class SessionDataUtils {
             headersRow.addView(createHeader(context, context.getText(R.string.distance)));
             headersRow.addView(createHeader(context, context.getText(R.string.pace)));
             headersRow.addView(createHeader(context, context.getText(R.string.speed)));
-            headersRow.addView(createHeader(context, context.getText(R.string.elevation_gain)));
-            headersRow.addView(createHeader(context, context.getText(R.string.elevation_loss)));
             headersRow.addView(createHeader(context, context.getText(R.string.start)));
             headersRow.addView(createHeader(context, context.getText(R.string.end)));
 
@@ -56,9 +54,6 @@ public class SessionDataUtils {
             double distance = 0;
             int unitCounter = 1;
             long startTime = 0;
-            float elevationGain = 0;
-            float elevationLoss = 0;
-            float oldAltitude = 0;
             String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
@@ -66,42 +61,32 @@ public class SessionDataUtils {
                 if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
                         dp.getStartTime(TimeUnit.MILLISECONDS) <= mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)) {
 
-                    float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
                     LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
 
                     if (oldPosition != null) {
                         distance = distance + SphericalUtil.computeDistanceBetween(oldPosition, currentPosition);
-                        float elevation = currentAltitude - oldAltitude;
-                        if (elevation >= 0) {
-                            elevationGain = elevationGain + elevation;
-                        } else {
-                            elevationLoss = elevationLoss + (-elevation);
-                        }
 
                         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
                             double miles = distance / 1609.344;
                             if (miles >= unitCounter) {
                                 addRow(intervalTable, unitCounter + " " + context.getText(R.string.mi), startTime,
-                                        dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss, context);
+                                        dp.getEndTime(TimeUnit.MILLISECONDS), context);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
-                                elevationGain = elevationLoss = 0;
                             }
                         } else {
                             double kms = distance / 1000;
                             if (kms >= unitCounter) {
                                 addRow(intervalTable, unitCounter + " " + context.getText(R.string.km), startTime,
-                                        dp.getEndTime(TimeUnit.MILLISECONDS), elevationGain, elevationLoss, context);
+                                        dp.getEndTime(TimeUnit.MILLISECONDS), context);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
-                                elevationGain = elevationLoss = 0;
                             }
                         }
                     } else {
                         startTime = dp.getStartTime(TimeUnit.MILLISECONDS);
                     }
                     oldPosition = currentPosition;
-                    oldAltitude = currentAltitude;
                 }
             }
 
@@ -113,10 +98,6 @@ public class SessionDataUtils {
             valuesRow.addView(createValue(context, Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), context)));
             valuesRow.addView(createValue(context, Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), context)));
             valuesRow.addView(createValue(context, Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), context)));
-            valuesRow.addView(createValue(context, getSegmentElevationGain(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
-                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS), context, mLocationDataPoints)));
-            valuesRow.addView(createValue(context, getSegmentElevationLoss(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS),
-                    mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS), context, mLocationDataPoints)));
             valuesRow.addView(createValue(context, Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
             valuesRow.addView(createValue(context, Utils.millisToTime(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
 
@@ -128,8 +109,7 @@ public class SessionDataUtils {
         }
     }
 
-    private static void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, float elevationGain, float elevationLoss,
-                               Context context) {
+    private static void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, Context context) {
         float seconds = endTime - startTime;
         seconds = seconds / 1000;
 
@@ -147,8 +127,6 @@ public class SessionDataUtils {
         row.addView(createValue(context, String.valueOf(unitCounter)));
         row.addView(createValue(context, Utils.getRightPace((float) speed, context)));
         row.addView(createValue(context, Utils.getRightSpeed((float) speed, context)));
-        row.addView(createValue(context, Utils.getRightElevation(elevationGain, context)));
-        row.addView(createValue(context, Utils.getRightElevation(elevationLoss, context)));
         row.addView(createValue(context, Utils.millisToTime(startTime)));
         row.addView(createValue(context, Utils.millisToTime(endTime)));
         intervalTable.addView(row);
@@ -173,49 +151,5 @@ public class SessionDataUtils {
         textView.setTypeface(Typeface.DEFAULT_BOLD);
 
         return textView;
-    }
-
-    private static String getSegmentElevationLoss(long startTime, long endTime, Context context, List<DataPoint> mLocationDataPoints) {
-        boolean firsTime = true;
-        float elevation = 0;
-        float oldAltitude = 0;
-
-        for (DataPoint dp : mLocationDataPoints) {
-            if (dp.getStartTime(TimeUnit.MILLISECONDS) >= startTime && dp.getEndTime(TimeUnit.MILLISECONDS) <= endTime) {
-                float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
-                if (firsTime) {
-                    firsTime = false;
-                } else {
-                    if (currentAltitude - oldAltitude < 0) {
-                        elevation = elevation + (-(currentAltitude - oldAltitude));
-                    }
-                }
-                oldAltitude = currentAltitude;
-            }
-        }
-
-        return Utils.getRightElevation(elevation, context);
-    }
-
-    private static String getSegmentElevationGain(long startTime, long endTime, Context context, List<DataPoint> mLocationDataPoints) {
-        boolean firsTime = true;
-        float elevation = 0;
-        float oldAltitude = 0;
-
-        for (DataPoint dp : mLocationDataPoints) {
-            if (dp.getStartTime(TimeUnit.MILLISECONDS) >= startTime && dp.getEndTime(TimeUnit.MILLISECONDS) <= endTime) {
-                float currentAltitude = dp.getValue(Field.FIELD_ALTITUDE).asFloat();
-                if (firsTime) {
-                    firsTime = false;
-                } else {
-                    if (currentAltitude - oldAltitude >= 0) {
-                        elevation = elevation + (currentAltitude - oldAltitude);
-                    }
-                }
-                oldAltitude = currentAltitude;
-            }
-        }
-
-        return Utils.getRightElevation(elevation, context);
     }
 }
