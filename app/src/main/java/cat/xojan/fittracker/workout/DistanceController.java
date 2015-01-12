@@ -16,6 +16,7 @@ public class DistanceController {
     private float mSegmentDistance;
     private float mSessionDistance;
     private int mUnitCounter = 1;
+    private float mAuxDistance = 0;
 
     private static DistanceController instance = null;
 
@@ -33,17 +34,22 @@ public class DistanceController {
         mContext = activity;
 
         mSegmentDistance = mSessionDistance = 0;
-        updateDistanceView();
         mUnitCounter = 1;
+        mAuxDistance = 0;
+        
+        updateDistanceView();
+
     }
 
     private void updateDistanceView() {
         String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                 .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
+        float distance = mSegmentDistance + mAuxDistance;
+
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
-            String milesString = String.format("%.2f", mSegmentDistance /  1609.344);
-            double miles = mSegmentDistance / 1609.344;
+            String milesString = String.format("%.2f", distance /  1609.344);
+            double miles = distance / 1609.344;
             //check counter
             if (miles >= mUnitCounter) {
                 MapController.getInstance().addKmMarker(mUnitCounter + " " + Constant.DISTANCE_MEASURE_MILE);
@@ -51,8 +57,8 @@ public class DistanceController {
             }
             mDistanceView.setText(milesString + " " + Constant.DISTANCE_MEASURE_MILE);
         } else {
-            String kmString = String.format("%.2f", mSegmentDistance / 1000);
-            float kms = mSegmentDistance / 1000;
+            String kmString = String.format("%.2f", distance / 1000);
+            float kms = distance / 1000;
             //check counter
             if (kms >= mUnitCounter) {
                 MapController.getInstance().addKmMarker(mUnitCounter + " " + Constant.DISTANCE_MEASURE_KM);
@@ -80,6 +86,14 @@ public class DistanceController {
     }
 
     public void lap() {
+        mAuxDistance = 0;
+        mSegmentDistance = 0;
+        updateDistanceView();
+        mUnitCounter = 1;
+    }
+
+    public void resume() {
+        mAuxDistance = mSegmentDistance + mAuxDistance;
         mSegmentDistance = 0;
         updateDistanceView();
         mUnitCounter = 1;

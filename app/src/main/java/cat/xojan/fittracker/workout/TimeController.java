@@ -11,6 +11,7 @@ public class TimeController {
     private long mSessionStart;
     private long mSegmentStart;
     private long mSessionFinish;
+    private long mWorkoutDuration;
 
     private static TimeController instance = null;
     private long mTimeWhenPaused;
@@ -47,14 +48,16 @@ public class TimeController {
         mChronometer.start();
 
         mSessionStart = mSegmentStart = Calendar.getInstance().getTimeInMillis();
+        mWorkoutDuration = 0;
     }
 
     public void lapFinish() {
         mSegmentEnd = Calendar.getInstance().getTimeInMillis();
+        mWorkoutDuration = mWorkoutDuration + (mSegmentEnd - mSegmentStart);
     }
 
     public void lapStart() {
-        mSegmentStart = Calendar.getInstance().getTimeInMillis();
+        mSegmentStart = mSegmentEnd;
         //reset chrono
         mChronometer.setBase(SystemClock.elapsedRealtime());
     }
@@ -62,6 +65,7 @@ public class TimeController {
     public void pause() {
         mTimeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
         mSegmentEnd = mSessionFinish = Calendar.getInstance().getTimeInMillis();
+        mWorkoutDuration = mWorkoutDuration + (mSegmentEnd - mSegmentStart);
         mChronometer.stop();
     }
 
@@ -79,8 +83,8 @@ public class TimeController {
         return mSessionFinish;
     }
 
-    public long getSessionTotalTime() {
-        return mSessionFinish - mSessionStart;
+    public long getSessionWorkoutTime() {
+        return mWorkoutDuration;
     }
 
     public void finish() {

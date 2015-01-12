@@ -79,8 +79,8 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //lap button
-                MapController.getInstance().lap();
                 TimeController.getInstance().lapFinish();
+                MapController.getInstance().lap();
                 FitnessController.getInstance().saveSegment();
                 TimeController.getInstance().lapStart();
                 DistanceController.getInstance().lap();
@@ -106,6 +106,7 @@ public class WorkoutFragment extends Fragment {
                 MapController.getInstance().resume();
                 TimeController.getInstance().resume();
                 SpeedController.getInstance().reset();
+                DistanceController.getInstance().resume();
             }
         });
 

@@ -217,6 +217,7 @@ public class MapController {
 
     public void lap() {
         addLapMarker();
+        FitnessController.getInstance().storeLocation(getCurrentLocation(), mAltitude);
     }
 
     private void addLapMarker() {

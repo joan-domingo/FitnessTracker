@@ -55,6 +55,7 @@ public class SessionFragment extends Fragment {
     private List<DataPoint> mSpeedDataPoints;
     private List<DataPoint> mLocationDataPoints;
     private MenuItem mDeleteButton;
+    private int mSessionWorkoutTime;
 
     public static Handler getHandler() {
         return handler;
@@ -150,6 +151,8 @@ public class SessionFragment extends Fragment {
             if (ds.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
                     mNumSegments = ds.getDataPoints().get(0).getValue(Field.FIELD_NUM_SEGMENTS).asInt();
+                    mSessionWorkoutTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
+                    ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.millisToTime(mSessionWorkoutTime));
                 }
             }/* else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
@@ -175,9 +178,8 @@ public class SessionFragment extends Fragment {
         for (DataPoint dp : mDistanceDataPoints) {
             totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
         }
-        ((TextView)view.findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, getActivity()));
-        long totalTime = (mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS)) / 1000;
-        float speed = totalDistance / totalTime;
+        ((TextView)view.findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, getActivity()));;
+        float speed = totalDistance / (mSessionWorkoutTime / 1000);
         ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
 
@@ -201,7 +203,7 @@ public class SessionFragment extends Fragment {
             map.getUiSettings().setZoomControlsEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
 
-            if (mLocationDataPoints.size() > 0) {
+            /*if (mLocationDataPoints.size() > 0) {
                 //add start marker
                 map.addMarker(new MarkerOptions()
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
@@ -213,17 +215,23 @@ public class SessionFragment extends Fragment {
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                         .position(new LatLng( mLocationDataPoints.get(mLocationDataPoints.size()-1).getValue(Field.FIELD_LATITUDE).asFloat(),
                                 mLocationDataPoints.get(mLocationDataPoints.size()-1).getValue(Field.FIELD_LONGITUDE).asFloat())));
-            }
+            }*/
 
-            new PolylineCreator(mLocationDataPoints) {
+            new PolylineCreator(mLocationDataPoints, mDistanceDataPoints, mNumSegments) {
                 public void onResult () {
                     ((TextView) view.findViewById(R.id.fragment_session_total_elevation_gain)).setText(Utils.getRightElevation(elevationGain, getActivity()));
                     ((TextView)view.findViewById(R.id.fragment_session_total_elevation_loss)).setText(Utils.getRightElevation(elevationLoss, getActivity()));
 
-                    map.addPolyline(polylineOptions
-                            .geodesic(true)
-                            .width(4)
-                            .color(Color.BLACK));
+                    for (PolylineOptions pl : mPolyList) {
+                        map.addPolyline(pl
+                                .geodesic(true)
+                                .width(4)
+                                .color(Color.BLACK));
+                    }
+
+                    for (MarkerOptions mo : mMarkerList) {
+                        map.addMarker(mo);
+                    }
 
                     showProgressBar(false);
 

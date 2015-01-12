@@ -48,7 +48,7 @@ public class FitnessController {
     private DataSource mDistanceDataSource;
     private DataSet mDistanceDataSet;
     private DataSource mSummaryDataSource;
-//    private DataSource mAggregateSpeedDataSource;
+    private DataSource mAggregateSpeedDataSource;
     private DataSource mLocationDataSource;
     private DataSet mLocationDataSet;
     private List<Float> mDistanceSessions;
@@ -125,11 +125,12 @@ public class FitnessController {
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
         summaryDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
         summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
+        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) TimeController.getInstance().getSessionWorkoutTime());
 
         //summary speed (aggregate)
-        /*DataPoint summarySpeedDataPoint = DataPoint.create(mAggregateSpeedDataSource);
+        DataPoint summarySpeedDataPoint = DataPoint.create(mAggregateSpeedDataSource);
         summarySpeedDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
-        summarySpeedDataPoint.getValue(Field.FIELD_AVERAGE).setFloat(insertAggregateSpeed());*/
+        summarySpeedDataPoint.getValue(Field.FIELD_AVERAGE).setFloat(insertAggregateSpeed());
 
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
@@ -145,7 +146,7 @@ public class FitnessController {
         SessionInsertRequest insertRequest = new SessionInsertRequest.Builder()
                 .setSession(session)
                 .addAggregateDataPoint(summaryDataPoint)
-                //.addAggregateDataPoint(summarySpeedDataPoint)
+                .addAggregateDataPoint(summarySpeedDataPoint)
                 .addDataSet(mSpeedDataSet)
                 .addDataSet(mDistanceDataSet)
                 .addDataSet(mLocationDataSet)
@@ -164,11 +165,10 @@ public class FitnessController {
     }
 
     private float insertAggregateSpeed() {
-        long timeInSeconds = TimeController.getInstance().getSessionTotalTime() / 1000;
+        long timeInSeconds = TimeController.getInstance().getSessionWorkoutTime() / 1000;
         float distanceInMeters = DistanceController.getInstance().getSessionDistance();
 
-        float result = distanceInMeters / timeInSeconds;
-        return result;
+        return (distanceInMeters / timeInSeconds);
     }
 
     public void readSession(String sessionId, long startTime, long endTime) {
@@ -310,11 +310,11 @@ public class FitnessController {
                 .build();
 
         //speed summary
-        /*mAggregateSpeedDataSource = new DataSource.Builder()
-                .setAppPackageName(context)
+        mAggregateSpeedDataSource = new DataSource.Builder()
+                .setAppPackageName(mContext)
                 .setDataType(DataType.AGGREGATE_SPEED_SUMMARY)
                 .setType(DataSource.TYPE_RAW)
-                .build();*/
+                .build();
 
         //location
         mLocationDataSource = new DataSource.Builder()
