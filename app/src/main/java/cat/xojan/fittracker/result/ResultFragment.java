@@ -96,7 +96,7 @@ public class ResultFragment extends Fragment {
     }
 
     private void setContent() {
-        ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.millisToTime(TimeController.getInstance().getSessionWorkoutTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.getTimeDifference(TimeController.getInstance().getSessionWorkoutTime(), 0));
         ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(TimeController.getInstance().getSessionStartTime()));
         ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(TimeController.getInstance().getSessionEndTime()));
         ((TextView) view.findViewById(R.id.fragment_result_total_distance)).setText(Utils.getRightDistance(DistanceController.getInstance().getSessionDistance(), getActivity()));

@@ -8,8 +8,8 @@ android {
         applicationId "cat.xojan.fittracker"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 10
-        versionName "1.24"
+        versionCode 11
+        versionName "1.25"
     }
     buildTypes {
         release {
