@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.session;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.fitness.HistoryApi;
+import com.google.android.gms.fitness.data.DataSource;
+import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Session;
 
 import java.util.List;
@@ -109,6 +113,20 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
                 PackageManager pkgManager = context.getPackageManager();
                 Drawable appIcon = pkgManager.getApplicationIcon(mDataset.get(position).getAppPackageName());
                 holder.mIcon.setImageDrawable(appIcon);
+                /*holder.mIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Inside your activity
+                        long startTime = mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS);
+                        long endTime = mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS);
+
+                        Intent fitIntent = new HistoryApi.ViewIntentBuilder(context, DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                                .setPreferredApplication(mDataset.get(position).getAppPackageName())
+                                .build();
+                        context.startActivity(fitIntent);
+                    }
+                });*/
             } catch (PackageManager.NameNotFoundException e) {}
         }
     }

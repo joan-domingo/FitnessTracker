@@ -11,4 +11,5 @@
     <color name="button_green">#4CAF50</color>
     <color name="black">#000000</color>
     <color name="dark_gray">#333333</color>
+    <color name="detail_data">#666666</color>
 </resources>

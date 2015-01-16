@@ -23,7 +23,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.session.SessionListFragment;
-import cat.xojan.fittracker.util.SessionDataUtils;
+import cat.xojan.fittracker.util.SessionDetailedDataLoader;
 import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.MapController;
@@ -104,8 +104,9 @@ public class ResultFragment extends Fragment {
         ((TextView) view.findViewById(R.id.fragment_result_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_result_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
 
-        SessionDataUtils.fillIntervalTable(view, getActivity(), FitnessController.getInstance().getNumSegments(), FitnessController.getInstance().getLocationDataPoints(),
-                FitnessController.getInstance().getDistanceDataPoints(), FitnessController.getInstance().getSpeedDataPoints());
+        new SessionDetailedDataLoader(view, getActivity().getBaseContext(), FitnessController.getInstance().getNumSegments())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, FitnessController.getInstance().getLocationDataPoints(),
+                        FitnessController.getInstance().getDistanceDataPoints(), FitnessController.getInstance().getSpeedDataPoints());
     }
 
     private void showProgressBar(boolean b) {

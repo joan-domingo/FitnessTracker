@@ -3,7 +3,7 @@ package cat.xojan.fittracker.session;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,12 +26,8 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
-import cat.xojan.fittracker.util.SessionDataUtils;
+import cat.xojan.fittracker.util.SessionDetailedDataLoader;
 import cat.xojan.fittracker.util.Utils;
 
 public class SessionFragment extends Fragment {
@@ -172,8 +168,11 @@ public class SessionFragment extends Fragment {
         ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
 
-        SessionDataUtils.fillIntervalTable(view, getActivity(), mNumSegments, mLocationDataPoints, mDistanceDataPoints, mSpeedDataPoints);
         showProgressBar(false);
+
+        new SessionDetailedDataLoader(view, getActivity().getBaseContext(), mNumSegments)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mLocationDataPoints,
+                        mDistanceDataPoints, mSpeedDataPoints);
 
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
@@ -194,34 +193,7 @@ public class SessionFragment extends Fragment {
             map.getUiSettings().setZoomControlsEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
 
-            final LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-            LatLng oldPosition = null;
-
-            for (DataPoint dp : mLocationDataPoints) {
-
-                //position
-                LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
-                boundsBuilder.include(currentPosition);
-
-                if (oldPosition != null) {
-                    //create polyline with last location
-                    map.addPolyline(new PolylineOptions()
-                            .geodesic(true)
-                            .add(oldPosition)
-                            .add(currentPosition)
-                            .width(4)
-                            .color(Color.BLACK));
-                }
-
-                oldPosition = currentPosition;
-            }
-
-            map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                @Override
-                public void onMapLoaded() {
-                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5));
-                }
-            });
+            new MapLoader(map).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mLocationDataPoints);
 
         } else {
             if (mapFragment.getView() != null)

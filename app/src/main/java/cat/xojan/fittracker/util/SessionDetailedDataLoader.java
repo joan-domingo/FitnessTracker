@@ -2,6 +2,7 @@ package cat.xojan.fittracker.util;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,32 +21,53 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 
-public class SessionDataUtils {
+public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, LinearLayout> {
 
-    public static void fillIntervalTable(View view, Context context, int numSegments, List<DataPoint> mLocationDataPoints,
-                                         List<DataPoint> mDistanceDataPoints, List<DataPoint> mSpeedDataPoints) {
-        LinearLayout intervalView = (LinearLayout) view.findViewById(R.id.session_intervals);
-        intervalView.removeAllViews();
+    private final View mView;
+    private final Context mContext;
+    private final int mNumSegments;
 
-        for (int i = 0; i < numSegments; i++) {
+    public SessionDetailedDataLoader(View view, Context context, int numSegments) {
+        mView = view;
+        mContext = context;
+        mNumSegments = numSegments;
+    }
+
+    @Override
+    protected LinearLayout doInBackground(List<DataPoint>... params) {
+        if (params == null) {
+            return null;
+        }
+        if (params[0] == null || params[1] == null || params[2] == null) {
+            return null;
+        }
+        List<DataPoint> mLocationDataPoints = params[0];
+        List<DataPoint> mDistanceDataPoints = params[1];
+        List<DataPoint> mSpeedDataPoints = params[2];
+
+        LinearLayout intervalView = new LinearLayout(mContext);
+        intervalView.setOrientation(LinearLayout.VERTICAL);
+
+        for (int i = 0; i < mNumSegments; i++) {
             //1 - interval title
-            TextView title = new TextView(context);
-            title.setText(context.getText(R.string.interval) + " " + (i + 1));
+            TextView title = new TextView(mContext);
+            title.setText(mContext.getText(R.string.interval) + " " + (i + 1));
             title.setTextSize(20);
             title.setTypeface(Typeface.DEFAULT_BOLD);
+            title.setTextColor(mContext.getResources().getColor(R.color.detail_data));
 
             intervalView.addView(title);
 
             //2- headers
-            TableLayout intervalTable = new TableLayout(context);
-            TableRow headersRow = new TableRow(context);
+            TableLayout intervalTable = new TableLayout(mContext);
+            TableRow headersRow = new TableRow(mContext);
 
-            headersRow.addView(createHeader(context, context.getText(R.string.time)));
-            headersRow.addView(createHeader(context, context.getText(R.string.distance)));
-            headersRow.addView(createHeader(context, context.getText(R.string.pace)));
-            headersRow.addView(createHeader(context, context.getText(R.string.speed)));
-            headersRow.addView(createHeader(context, context.getText(R.string.start)));
-            headersRow.addView(createHeader(context, context.getText(R.string.end)));
+            headersRow.addView(createHeader(mContext, mContext.getText(R.string.time)));
+            headersRow.addView(createHeader(mContext, mContext.getText(R.string.distance)));
+            headersRow.addView(createHeader(mContext, mContext.getText(R.string.pace)));
+            headersRow.addView(createHeader(mContext, mContext.getText(R.string.speed)));
+            headersRow.addView(createHeader(mContext, mContext.getText(R.string.start)));
+            headersRow.addView(createHeader(mContext, mContext.getText(R.string.end)));
 
             intervalTable.addView(headersRow);
 
@@ -54,7 +76,7 @@ public class SessionDataUtils {
             double distance = 0;
             int unitCounter = 1;
             long startTime = 0;
-            String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
             for (DataPoint dp : mLocationDataPoints) {
@@ -69,16 +91,16 @@ public class SessionDataUtils {
                         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
                             double miles = distance / 1609.344;
                             if (miles >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + context.getText(R.string.mi), startTime,
-                                        dp.getEndTime(TimeUnit.MILLISECONDS), context);
+                                addRow(intervalTable, unitCounter + " " + mContext.getText(R.string.mi), startTime,
+                                        dp.getEndTime(TimeUnit.MILLISECONDS), mContext);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
                             }
                         } else {
                             double kms = distance / 1000;
                             if (kms >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + context.getText(R.string.km), startTime,
-                                        dp.getEndTime(TimeUnit.MILLISECONDS), context);
+                                addRow(intervalTable, unitCounter + " " + mContext.getText(R.string.km), startTime,
+                                        dp.getEndTime(TimeUnit.MILLISECONDS), mContext);
                                 unitCounter++;
                                 startTime = dp.getEndTime(TimeUnit.MILLISECONDS);
                             }
@@ -91,22 +113,24 @@ public class SessionDataUtils {
             }
 
             //4 - values
-            TableRow valuesRow = new TableRow(context);
+            TableRow valuesRow = new TableRow(mContext);
 
-            valuesRow.addView(createValue(context, Utils.getTimeDifference(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
+            valuesRow.addView(createValue(mContext, Utils.getTimeDifference(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
                     mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(context, Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), context)));
-            valuesRow.addView(createValue(context, Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), context)));
-            valuesRow.addView(createValue(context, Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), context)));
-            valuesRow.addView(createValue(context, Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(context, Utils.millisToTime(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(mContext, Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), mContext)));
+            valuesRow.addView(createValue(mContext, Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
+            valuesRow.addView(createValue(mContext, Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
+            valuesRow.addView(createValue(mContext, Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(mContext, Utils.millisToTime(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
 
-            valuesRow.setBackgroundColor(context.getResources().getColor(R.color.grey));
+            valuesRow.setBackgroundColor(mContext.getResources().getColor(R.color.grey));
             intervalTable.addView(valuesRow);
 
             //5 add table to view
             intervalView.addView(intervalTable);
         }
+
+        return intervalView;
     }
 
     private static void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, Context context) {
@@ -137,7 +161,7 @@ public class SessionDataUtils {
         textView.setText(text);
         textView.setPadding(10, 2, 10, 2);
         textView.setGravity(Gravity.CENTER);
-//        textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTextColor(context.getResources().getColor(R.color.detail_data));
 
         return textView;
     }
@@ -149,7 +173,16 @@ public class SessionDataUtils {
         textView.setGravity(Gravity.CENTER);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTextColor(context.getResources().getColor(R.color.detail_data));
 
         return textView;
+    }
+
+    @Override
+    protected void onPostExecute(LinearLayout intervalView) {
+        LinearLayout detailedDataView = (LinearLayout) mView.findViewById(R.id.session_intervals);
+        detailedDataView.removeAllViews();
+
+        detailedDataView.addView(intervalView);
     }
 }
