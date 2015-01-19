@@ -27,7 +27,7 @@ public class SpeedController {
         mSpeedView = speedView;
         mContext = activity;
 
-        mPaceView.setText("00:00:00");
+        mPaceView.setText(Utils.getRightPace(0f, mContext));
         mSpeedView.setText(Utils.getRightSpeed(0f, mContext));
 
         mMaxSpeed = 0;

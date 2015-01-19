@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="measure_unit_entries">
-        <item>Kilometers</item>
-        <item>Miles</item>
+        <item>@string/kilometres</item>
+        <item>@string/miles</item>
     </string-array>
     <string-array name="measure_unit_entries_values">
         <item>Km</item>
@@ -10,9 +10,9 @@
     </string-array>
 
     <string-array name="date_format_entries">
-        <item>DD-MM-YYYY</item>
-        <item>MM-DD-YYYY</item>
-        <item>YYYY-MM-DD</item>
+        <item>@string/ddmmyyyy</item>
+        <item>@string/mmddyyyy</item>
+        <item>@string/yyyymmdd</item>
     </string-array>
     <string-array name="date_format_entries_values">
         <item>dmy</item>

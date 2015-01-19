@@ -2,10 +2,6 @@ package cat.xojan.fittracker.workout;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -198,6 +194,7 @@ public class MapController {
         mBoundsBuilder.include(position);
         oldPosition = position;
 
+        TimeController.getInstance().start();
         FitnessController.getInstance().storeLocation(getCurrentLocation());
     }
 

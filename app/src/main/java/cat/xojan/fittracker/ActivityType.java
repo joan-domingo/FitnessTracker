@@ -8,7 +8,6 @@ public enum ActivityType {
     running(FitnessActivities.RUNNING, R.string.running),
     walking(FitnessActivities.WALKING, R.string.walking),
     biking(FitnessActivities.BIKING, R.string.biking);
-    //swimming(FitnessActivities.SWIMMING, R.string.swimming);
 
     String fitnessActivity;
     int activityString;
@@ -41,5 +40,18 @@ public enum ActivityType {
         }
 
         return R.drawable.ic_walking3;
+    }
+
+
+    public static int getRightLanguageString(String activity) {
+        if (activity.equals(running.fitnessActivity)) {
+            return running.activityString;
+        } else if (activity.equals(walking.fitnessActivity)) {
+            return walking.activityString;
+        } else if (activity.equals(biking.fitnessActivity)) {
+            return biking.activityString;
+        }
+
+        return R.string.workout;
     }
 }

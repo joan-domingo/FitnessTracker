@@ -1,5 +1,8 @@
 package cat.xojan.fittracker.workout;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,7 +23,7 @@ import com.google.android.gms.maps.MapFragment;
 
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
-import cat.xojan.fittracker.session.SessionListFragment;
+import cat.xojan.fittracker.sessionlist.SessionListFragment;
 
 public class WorkoutFragment extends Fragment {
 
@@ -67,7 +70,6 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //start button
-                TimeController.getInstance().start();
                 FitnessController.getInstance().start();
                 MapController.getInstance().start();
             }
@@ -147,9 +149,29 @@ public class WorkoutFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        LocationManager manager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.enable_gps);
+            builder.setMessage(R.string.enable_gps_desc);
+            builder.create().show();
+        }
+    }
+
+    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        menu.clear();
+        MenuItem settings = menu.findItem(R.id.action_settings);
+        settings.setVisible(false);
+        MenuItem delete = menu.findItem(R.id.action_delete);
+        delete.setVisible(false);
+        MenuItem attributions = menu.findItem(R.id.action_attributions);
+        attributions.setVisible(false);
+        MenuItem music = menu.findItem(R.id.action_music);
+        music.setVisible(true);
     }
 }

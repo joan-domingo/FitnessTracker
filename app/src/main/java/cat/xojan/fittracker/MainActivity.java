@@ -1,14 +1,18 @@
 package cat.xojan.fittracker;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,7 +26,7 @@ import com.google.android.gms.fitness.Fitness;
 import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.menu.AttributionFragment;
 import cat.xojan.fittracker.menu.PreferenceActivity;
-import cat.xojan.fittracker.session.SessionListFragment;
+import cat.xojan.fittracker.sessionlist.SessionListFragment;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -172,6 +176,8 @@ public class MainActivity extends ActionBarActivity {
 
         MenuItem delete = menu.findItem(R.id.action_delete);
         delete.setVisible(false);
+        MenuItem music = menu.findItem(R.id.action_music);
+        music.setVisible(false);
 
         return true;
     }
@@ -185,8 +191,8 @@ public class MainActivity extends ActionBarActivity {
 
         switch (id) {
             case R.id.action_settings:
-                Intent intent = new Intent(this, PreferenceActivity.class);
-                startActivity(intent);
+                Intent settingsIntent = new Intent(this, PreferenceActivity.class);
+                startActivity(settingsIntent);
                 break;
             case android.R.id.home:
                 getSupportFragmentManager().popBackStack();
@@ -196,6 +202,14 @@ public class MainActivity extends ActionBarActivity {
                         .replace(R.id.fragment_container, new AttributionFragment())
                         .addToBackStack(null)
                         .commit();
+                break;
+            case R.id.action_music:
+                //TODO
+                long eventtime = SystemClock.uptimeMillis();
+                Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+                KeyEvent downEvent = new KeyEvent(eventtime, eventtime, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, 0);
+                downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
+                sendOrderedBroadcast(downIntent, null);
                 break;
         }
 

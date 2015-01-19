@@ -16,12 +16,12 @@ public class Utils {
     }
 
     public static String millisToDay(long timeInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.getDefault());
         return sdf.format(timeInMillis);
     }
 
     public static String millisToDayComplete(long timeInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE dd", Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE dd", Locale.getDefault());
         return sdf.format(timeInMillis);
     }
 
@@ -115,18 +115,6 @@ public class Utils {
         } else {
             distance = distance / 1000;
             return String.format("%.2f", distance) + " " + context.getString(R.string.km);
-        }
-    }
-
-    public static String getRightElevation(float elevation, Context context) {
-        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
-
-        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
-            double feet = elevation * 3.2808399;
-            return String.format("%.2f", feet) + " " + context.getString(R.string.feet);
-        } else {
-            return String.format("%.2f", elevation) + " " + context.getString(R.string.meters);
         }
     }
 

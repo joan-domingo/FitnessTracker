@@ -1,7 +1,6 @@
-package cat.xojan.fittracker.session;
+package cat.xojan.fittracker.sessionlist;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +11,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.fitness.HistoryApi;
-import com.google.android.gms.fitness.data.DataSource;
-import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Session;
 
 import java.util.List;

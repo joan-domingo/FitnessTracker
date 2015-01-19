@@ -13,4 +13,10 @@
     <item android:id="@+id/action_attributions"
         android:title="@string/attributions"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_music"
+        android:title="@string/music"
+        android:icon="@drawable/ic_my_library_music_white_48dp"
+        app:showAsAction="always" />
 </menu>

@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.session;
+package cat.xojan.fittracker.sessionlist;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

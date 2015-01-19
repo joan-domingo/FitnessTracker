@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.session;
+package cat.xojan.fittracker.sessionlist;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -9,7 +9,6 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 
 import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.R;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {

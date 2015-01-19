@@ -1,5 +1,7 @@
 package cat.xojan.fittracker.result;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,9 +22,10 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
-import cat.xojan.fittracker.session.SessionListFragment;
+import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
 import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.workout.DistanceController;
@@ -67,10 +70,23 @@ public class ResultFragment extends Fragment {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new SessionListFragment())
-                        .commit();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(R.string.save_activity)
+                        .setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                getActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.fragment_container, new SessionListFragment())
+                                        .commit();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                builder.create().show();
             }
         });
 
@@ -80,12 +96,11 @@ public class ResultFragment extends Fragment {
         new LocationReader(getActivity()) {
 
             public void onResult(String cityName) {
+                mName.setText(getText(R.string.workout) + " " + Utils.millisToDay(TimeController.getInstance().getSessionEndTime()));
                 if (!TextUtils.isEmpty(cityName)) {
-                    mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
-                    mDescription.setText(FitnessController.getInstance().getFitnessActivity() + " @ " + cityName);
+                    mDescription.setText(getText(ActivityType.getRightLanguageString(FitnessController.getInstance().getFitnessActivity())) + " @ " + cityName);
                 } else {
-                    mName.setText(Utils.millisToDay(TimeController.getInstance().getSessionEndTime()) + " " + getText(R.string.workout));
-                    mDescription.setText(FitnessController.getInstance().getFitnessActivity());
+                    mDescription.setText(getText(ActivityType.getRightLanguageString(FitnessController.getInstance().getFitnessActivity())));
                 }
                 showProgressBar(false);
             }

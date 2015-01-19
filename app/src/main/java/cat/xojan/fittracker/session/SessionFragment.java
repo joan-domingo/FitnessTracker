@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
 import cat.xojan.fittracker.util.Utils;
 
@@ -222,6 +223,8 @@ public class SessionFragment extends Fragment {
         mDeleteButton.setVisible(false);
         MenuItem attributions = menu.findItem(R.id.action_attributions);
         attributions.setVisible(false);
+        MenuItem music = menu.findItem(R.id.action_music);
+        music.setVisible(false);
     }
 
     @Override
