@@ -109,20 +109,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
                 PackageManager pkgManager = context.getPackageManager();
                 Drawable appIcon = pkgManager.getApplicationIcon(mDataset.get(position).getAppPackageName());
                 holder.mIcon.setImageDrawable(appIcon);
-                /*holder.mIcon.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Inside your activity
-                        long startTime = mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS);
-                        long endTime = mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS);
-
-                        Intent fitIntent = new HistoryApi.ViewIntentBuilder(context, DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                                .setPreferredApplication(mDataset.get(position).getAppPackageName())
-                                .build();
-                        context.startActivity(fitIntent);
-                    }
-                });*/
             } catch (PackageManager.NameNotFoundException e) {}
         }
     }

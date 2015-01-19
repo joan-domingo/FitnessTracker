@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
@@ -118,7 +119,9 @@ public class SessionFragment extends Fragment {
 
     private void fillViewContent(View view) {
 
-        ((TextView) view.findViewById(R.id.fragment_session_name)).setText(mSession.getName());
+        TextView name = ((TextView) view.findViewById(R.id.fragment_session_name));
+        name.setText(mSession.getName());
+
         ((TextView)view.findViewById(R.id.fragment_session_description)).setText(mSession.getDescription());
         ((TextView)view.findViewById(R.id.fragment_session_date)).setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), getActivity()));
         ((TextView)view.findViewById(R.id.fragment_session_start)).setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
@@ -132,13 +135,16 @@ public class SessionFragment extends Fragment {
         List<DataPoint> mDistanceDataPoints = null;
         List<DataPoint> mSpeedDataPoints = null;
         mLocationDataPoints = null;
+        DataSource dataSource = null;
+
 
         for (DataSet ds : mDataSets) {
             if (ds.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
+                dataSource = ds.getDataSource();
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
                     mNumSegments = ds.getDataPoints().get(0).getValue(Field.FIELD_NUM_SEGMENTS).asInt();
                     mSessionWorkoutTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
-                    ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSessionWorkoutTime, 0));
+                    ((TextView) view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSessionWorkoutTime, 0));
                 }
             }/* else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
@@ -159,6 +165,24 @@ public class SessionFragment extends Fragment {
                 //FitnessController.getInstance().dumpDataSet(ds);
             }
         }
+
+
+        /*final DataSource finalDataSource = dataSource; TODO
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long startTime = mSession.getStartTime(TimeUnit.MILLISECONDS);
+                long endTime = mSession.getEndTime(TimeUnit.MILLISECONDS);
+
+                Intent fitIntent = new HistoryApi.ViewIntentBuilder(getActivity(), DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART)
+                        .setDataSource(finalDataSource)
+                        .build();
+                getActivity().startActivity(fitIntent);
+            }
+        });*/
+
 
         float totalDistance = 0;
         for (DataPoint dp : mDistanceDataPoints) {

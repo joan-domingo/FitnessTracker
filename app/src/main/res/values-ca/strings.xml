@@ -12,7 +12,7 @@
     <string name="date">DATA ACTIVITAT</string>
     <string name="date_format">Format de la Data</string>
     <string name="delete">Eliminar</string>
-    <string name="delete_session">Segur que vols eliminar aquesta Activitat?</string>
+    <string name="delete_session">Segur que vols eliminar aquesta activitat?</string>
     <string name="distance">Distància</string>
     <string name="finish">Finalitzar</string>
     <string name="finish_time">HORA FINAL</string>
