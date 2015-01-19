@@ -65,5 +65,10 @@
     <string name="save_activity">Do you really want to exit without saving the activity?</string>
     <string name="enable_gps_desc">Please enable GPS in your device settings.</string>
     <string name="enable_gps">Device GPS is not enabled</string>
+    <string name="Km" translatable="false">Km</string>
+    <string name="Mi" translatable="false">Mi</string>
+    <string name="dmy" translatable="false">dmy</string>
+    <string name="mdy" translatable="false">mdy</string>
+    <string name="ymd" translatable="false">ymd</string>
 
 </resources>

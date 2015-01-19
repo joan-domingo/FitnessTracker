@@ -5,8 +5,8 @@
         <item>@string/miles</item>
     </string-array>
     <string-array name="measure_unit_entries_values">
-        <item>Km</item>
-        <item>Mi</item>
+        <item>@string/Km</item>
+        <item>@string/Mi</item>
     </string-array>
 
     <string-array name="date_format_entries">
@@ -15,8 +15,8 @@
         <item>@string/yyyymmdd</item>
     </string-array>
     <string-array name="date_format_entries_values">
-        <item>dmy</item>
-        <item>mdy</item>
-        <item>ymd</item>
+        <item>@string/dmy</item>
+        <item>@string/mdy</item>
+        <item>@string/ymd</item>
     </string-array>
 </resources>
