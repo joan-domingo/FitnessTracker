@@ -119,9 +119,10 @@ public class ResultFragment extends Fragment {
         ((TextView) view.findViewById(R.id.fragment_result_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
         ((TextView) view.findViewById(R.id.fragment_result_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
 
-        new SessionDetailedDataLoader(view, getActivity().getBaseContext(), FitnessController.getInstance().getNumSegments())
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, FitnessController.getInstance().getLocationDataPoints(),
-                        FitnessController.getInstance().getDistanceDataPoints(), FitnessController.getInstance().getSpeedDataPoints());
+        new SessionDetailedDataLoader(view, getActivity().getBaseContext())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        FitnessController.getInstance().getLocationDataPoints(),
+                        FitnessController.getInstance().getSegmentDataPoints());
     }
 
     private void showProgressBar(boolean b) {

@@ -25,12 +25,10 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
 
     private final View mView;
     private final Context mContext;
-    private final int mNumSegments;
 
-    public SessionDetailedDataLoader(View view, Context context, int numSegments) {
+    public SessionDetailedDataLoader(View view, Context context) {
         mView = view;
         mContext = context;
-        mNumSegments = numSegments;
     }
 
     @Override
@@ -38,17 +36,16 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         if (params == null) {
             return null;
         }
-        if (params[0] == null || params[1] == null || params[2] == null) {
+        if (params[0] == null || params[0].size() == 0 || params[1] == null) {
             return null;
         }
         List<DataPoint> mLocationDataPoints = params[0];
-        List<DataPoint> mDistanceDataPoints = params[1];
-        List<DataPoint> mSpeedDataPoints = params[2];
+        List<DataPoint> mSegmentDataPoints = params[1];
 
         LinearLayout intervalView = new LinearLayout(mContext);
         intervalView.setOrientation(LinearLayout.VERTICAL);
 
-        for (int i = 0; i < mNumSegments; i++) {
+        for (int i = 0; i < mSegmentDataPoints.size(); i++) {
             //1 - interval title
             TextView title = new TextView(mContext);
             title.setText(mContext.getText(R.string.interval) + " " + (i + 1));
@@ -77,20 +74,18 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
             double lastDistance = 0;
             int unitCounter = 1;
             long startTime = 0;
-            long endTime = 0;
             String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
                     .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
             for (DataPoint dp : mLocationDataPoints) {
-                if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
-                        dp.getStartTime(TimeUnit.MILLISECONDS) <= mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)) {
+                if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
+                        dp.getStartTime(TimeUnit.MILLISECONDS) <= mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)) {
 
                     LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(), dp.getValue(Field.FIELD_LONGITUDE).asFloat());
 
                     if (oldPosition != null) {
                         distance = distance + SphericalUtil.computeDistanceBetween(oldPosition, currentPosition);
                         lastDistance = lastDistance + SphericalUtil.computeDistanceBetween(oldPosition, currentPosition);
-                        endTime = dp.getEndTime(TimeUnit.MILLISECONDS);
 
                         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
                             double miles = distance / 1609.344;
@@ -113,24 +108,29 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
                         }
                     } else {
                         startTime = dp.getStartTime(TimeUnit.MILLISECONDS);
-                        endTime = dp.getEndTime(TimeUnit.MILLISECONDS);
                     }
                     oldPosition = currentPosition;
                 }
             }
             //last value
-            addLastDetailedRow(intervalTable, lastDistance, startTime, endTime, mContext);
+            if (unitCounter > 1)
+                addLastDetailedRow(intervalTable, lastDistance, startTime, mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS), mContext);
 
             //4 - values
             TableRow valuesRow = new TableRow(mContext);
 
-            valuesRow.addView(createValue(mContext, Utils.getTimeDifference(mDistanceDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
-                    mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(mContext, Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), mContext)));
-            valuesRow.addView(createValue(mContext, Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
-            valuesRow.addView(createValue(mContext, Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
-            valuesRow.addView(createValue(mContext, Utils.millisToTime(mDistanceDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-            valuesRow.addView(createValue(mContext, Utils.millisToTime(endTime)));
+            valuesRow.addView(createValue(mContext, Utils.getTimeDifference(mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
+                    mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
+            //valuesRow.addView(createValue(mContext, Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), mContext)));
+            valuesRow.addView(createValue(mContext, Utils.getRightDistance((float) distance, mContext)));
+            //valuesRow.addView(createValue(mContext, Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
+            double speed = distance / ((mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS) -
+                    mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))/1000);
+            valuesRow.addView(createValue(mContext, Utils.getRightPace((float) speed, mContext)));
+            //valuesRow.addView(createValue(mContext, Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
+            valuesRow.addView(createValue(mContext, Utils.getRightSpeed((float) speed, mContext)));
+            valuesRow.addView(createValue(mContext, Utils.millisToTime(mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
+            valuesRow.addView(createValue(mContext, Utils.millisToTime(mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
 
             valuesRow.setBackgroundColor(mContext.getResources().getColor(R.color.grey));
             intervalTable.addView(valuesRow);
@@ -206,7 +206,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
     protected void onPostExecute(LinearLayout intervalView) {
         LinearLayout detailedDataView = (LinearLayout) mView.findViewById(R.id.session_intervals);
         detailedDataView.removeAllViews();
-
-        detailedDataView.addView(intervalView);
+        if (intervalView != null)
+            detailedDataView.addView(intervalView);
     }
 }

@@ -19,7 +19,6 @@
     <string name="save">Save</string>
     <string name="choose_activity">Choose Activity</string>
     <string name="choose_unit">Choose Measure Unit</string>
-    <string name="delete">Delete</string>
     <string name="delete_session">Do you really want to delete this workout?</string>
     <string name="cancel">Cancel</string>
     <string name="settings_unit_measure_title">Measure Unit</string>

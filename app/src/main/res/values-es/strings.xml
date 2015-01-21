@@ -12,7 +12,6 @@
     <string name="date">FECHA ACTIVIDAD</string>
     <string name="date_format">Formato de la Fecha</string>
     <string name="ddmmyyyy">DD-MM-AAAA</string>
-    <string name="delete">Eliminar</string>
     <string name="delete_session">Seguro que quiere eliminar esta actividad?</string>
     <string name="distance">Distancia</string>
     <string name="end_interval">Final</string>

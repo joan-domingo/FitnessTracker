@@ -108,12 +108,14 @@ public class SessionListFragment extends Fragment {
                 new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        TextView IdentifierView = (TextView) view.findViewById(R.id.session_identifier);
+                        TextView identifierView = (TextView) view.findViewById(R.id.session_identifier);
+                        TextView nameView = (TextView) view.findViewById(R.id.session_identifier_name);
                         TextView startTime = (TextView) view.findViewById(R.id.session_start_time);
                         TextView endTime = (TextView) view.findViewById(R.id.session_end_time);
 
                         Bundle bundle = new Bundle();
-                        bundle.putString(Constant.PARAMETER_SESSION_ID, IdentifierView.getText().toString());
+                        bundle.putString(Constant.PARAMETER_SESSION_ID, identifierView.getText().toString());
+                        bundle.putString(Constant.PARAMETER_SESSION_NAME, nameView.getText().toString());
                         bundle.putLong(Constant.PARAMETER_START_TIME, Long.valueOf(startTime.getText().toString()));
                         bundle.putLong(Constant.PARAMETER_END_TIME, Long.valueOf(endTime.getText().toString()));
 

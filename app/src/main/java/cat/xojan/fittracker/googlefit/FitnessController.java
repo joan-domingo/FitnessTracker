@@ -48,17 +48,14 @@ public class FitnessController {
     private DataSource mDistanceDataSource;
     private DataSet mDistanceDataSet;
     private DataSource mSummaryDataSource;
-    private DataSource mAggregateSpeedDataSource;
     private DataSource mLocationDataSource;
     private DataSet mLocationDataSet;
     private List<Float> mDistanceSessions;
     private Calendar mSessionListStartDate = getStartDate();
     private Calendar mSessionListEndDate = Calendar.getInstance();
     private List<Integer> mActivitesDuration;
-    private DataSource mActivityDataSource;
-    private DataSet mActivityDataSet;
-    private DataSource mStepCountDataSource;
-    private DataSet mStepCountDataSet;
+    private DataSource mSegmentDataSource;
+    private DataSet mSegmentDataSet;
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
@@ -150,23 +147,6 @@ public class FitnessController {
         summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) TimeController.getInstance().getSessionWorkoutTime());
         summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
 
-        //summary speed (aggregate)
-        DataPoint summarySpeedDataPoint = DataPoint.create(mAggregateSpeedDataSource);
-        summarySpeedDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
-        summarySpeedDataPoint.getValue(Field.FIELD_AVERAGE).setFloat(insertAggregateSpeed());
-
-        //activity
-        DataPoint activityDataPoint = DataPoint.create(mActivityDataSource);
-        activityDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
-        activityDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
-        mActivityDataSet.add(activityDataPoint);
-
-        //step count
-        DataPoint stepCountDataPoint = DataPoint.create(mStepCountDataSource);
-        stepCountDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
-        stepCountDataPoint.getValue(Field.FIELD_STEPS).setInt(100);//TODO
-        mStepCountDataSet.add(stepCountDataPoint);
-
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
                 .setName(name)
@@ -181,12 +161,10 @@ public class FitnessController {
         SessionInsertRequest insertRequest = new SessionInsertRequest.Builder()
                 .setSession(session)
                 .addAggregateDataPoint(summaryDataPoint)
-                .addAggregateDataPoint(summarySpeedDataPoint)
-                //.addDataSet(mActivityDataSet)
-                //.addDataSet(mStepCountDataSet)
                 .addDataSet(mSpeedDataSet)
                 .addDataSet(mDistanceDataSet)
                 .addDataSet(mLocationDataSet)
+                .addDataSet(mSegmentDataSet)
                 .build();
 
         new SessionWriter(mClient) {
@@ -201,14 +179,7 @@ public class FitnessController {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
     }
 
-    private float insertAggregateSpeed() {
-        long timeInSeconds = TimeController.getInstance().getSessionWorkoutTime() / 1000;
-        float distanceInMeters = DistanceController.getInstance().getSessionDistance();
-
-        return (distanceInMeters / timeInSeconds);
-    }
-
-    public void readSession(String sessionId, long startTime, long endTime) {
+    public void readSession(String sessionId, long startTime, long endTime, String sessionName) {
         // Build a session read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
@@ -218,6 +189,10 @@ public class FitnessController {
                 .read(DataType.TYPE_SPEED)
                 .read(DataType.TYPE_DISTANCE_DELTA)
                 .read(DataType.TYPE_LOCATION_SAMPLE)
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                .read(DataType.AGGREGATE_DISTANCE_DELTA)
+                .read(DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
+                .setSessionName(sessionName)
                 .readSessionsFromAllApps()
                 .build();
 
@@ -226,10 +201,11 @@ public class FitnessController {
             public void getSessionDataSets(Session session, List<DataSet> dataSets) {
                 mSingleSession = session;
                 mSingleSessionDataSets = dataSets;
-                // Process the data sets for this session
-//                for (DataSet dataSet : dataSets) {
-//                    dumpDataSet(dataSet);
-//                }
+                //Process the data sets for this session
+                for (DataSet dataSet : dataSets) {
+                    if (!dataSet.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE))
+                        dumpDataSet(dataSet);
+                }
                 SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
 
@@ -298,6 +274,10 @@ public class FitnessController {
 
         //segment
         mNumSegments++;
+        DataPoint segmentDataPoint = DataPoint.create(mSegmentDataSource);
+        segmentDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
+        segmentDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
+        mSegmentDataSet.add(segmentDataPoint);
 
         //speed
         DataPoint speedDataPoint = DataPoint.create(mSpeedDataSource);
@@ -346,13 +326,6 @@ public class FitnessController {
                 .setType(DataSource.TYPE_RAW)
                 .build();
 
-        //speed summary
-        mAggregateSpeedDataSource = new DataSource.Builder()
-                .setAppPackageName(mContext)
-                .setDataType(DataType.AGGREGATE_SPEED_SUMMARY)
-                .setType(DataSource.TYPE_RAW)
-                .build();
-
         //location
         mLocationDataSource = new DataSource.Builder()
                 .setAppPackageName(mContext)
@@ -361,21 +334,13 @@ public class FitnessController {
                 .build();
         mLocationDataSet = DataSet.create(mLocationDataSource);
 
-        //activity
-        mActivityDataSource = new DataSource.Builder()
+        //segment
+        mSegmentDataSource = new DataSource.Builder()
                 .setAppPackageName(mContext)
-                .setDataType(DataType.TYPE_ACTIVITY_SAMPLE)
+                .setDataType(DataType.TYPE_ACTIVITY_SEGMENT)
                 .setType(DataSource.TYPE_RAW)
                 .build();
-        mActivityDataSet = DataSet.create(mActivityDataSource);
-
-        //step count
-        mStepCountDataSource = new DataSource.Builder()
-                .setAppPackageName(mContext)
-                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .setType(DataSource.TYPE_RAW)
-                .build();
-        mStepCountDataSet = DataSet.create(mStepCountDataSource);
+        mSegmentDataSet = DataSet.create(mSegmentDataSource);
     }
 
     public void storeLocation(Location location) {
@@ -414,8 +379,8 @@ public class FitnessController {
         mSessionListStartDate = calendar;
     }
 
-    public int getNumSegments() {
-        return mNumSegments;
+    public List<DataPoint> getSegmentDataPoints() {
+        return mSegmentDataSet.getDataPoints();
     }
 
     public List<DataPoint> getLocationDataPoints() {

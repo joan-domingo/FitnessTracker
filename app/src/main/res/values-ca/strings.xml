@@ -11,7 +11,6 @@
     <string name="choose_unit">Selecciona una Unitat de Mesura</string>
     <string name="date">DATA ACTIVITAT</string>
     <string name="date_format">Format de la Data</string>
-    <string name="delete">Eliminar</string>
     <string name="delete_session">Segur que vols eliminar aquesta activitat?</string>
     <string name="distance">Distància</string>
     <string name="finish">Finalitzar</string>

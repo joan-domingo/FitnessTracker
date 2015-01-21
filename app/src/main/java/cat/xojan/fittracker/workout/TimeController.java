@@ -41,6 +41,7 @@ public class TimeController {
                 cArg.setText(hh + ":" + mm + ":" + ss);
             }
         });
+        mChronometer.setText("00:00");
     }
 
     public void start() {
@@ -64,7 +65,7 @@ public class TimeController {
 
     public void pause() {
         mTimeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
-        mSegmentEnd = mSessionFinish = Calendar.getInstance().getTimeInMillis();
+        mSegmentEnd = Calendar.getInstance().getTimeInMillis();
         mWorkoutDuration = mWorkoutDuration + (mSegmentEnd - mSegmentStart);
         mChronometer.stop();
     }
@@ -88,7 +89,7 @@ public class TimeController {
     }
 
     public void finish() {
-        mChronometer.setText("00:00");
+        mSessionFinish = Calendar.getInstance().getTimeInMillis();
     }
 
     public long getSegmentStartTime() {

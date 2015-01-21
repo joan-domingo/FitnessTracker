@@ -40,6 +40,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         public ImageView mActivity;
         public TextView mSummary;
         public TextView mIdentifier;
+        public TextView mIdentifierName;
         public TextView mStartTime;
         public TextView mEndTime;
         public TextView mDay;
@@ -58,6 +59,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
             // hidden
             mIdentifier = (TextView) itemView.findViewById(R.id.session_identifier);
+            mIdentifierName = (TextView) itemView.findViewById(R.id.session_identifier_name);
             mStartTime = (TextView) itemView.findViewById(R.id.session_start_time);
             mEndTime = (TextView) itemView.findViewById(R.id.session_end_time);
         }
@@ -98,6 +100,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
                     " / " + Utils.getRightDistance(mDistance.get(position), context));
         }
         holder.mIdentifier.setText(mDataset.get(position).getIdentifier());
+        holder.mIdentifierName.setText(mDataset.get(position).getName());
         holder.mStartTime.setText(String.valueOf(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));
         holder.mEndTime.setText(String.valueOf(mDataset.get(position).getEndTime(TimeUnit.MILLISECONDS)));
         holder.mDay.setText(Utils.millisToDayComplete(mDataset.get(position).getStartTime(TimeUnit.MILLISECONDS)));

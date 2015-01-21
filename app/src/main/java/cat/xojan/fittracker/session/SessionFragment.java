@@ -45,7 +45,7 @@ public class SessionFragment extends Fragment {
     private static Handler handler;
     private List<DataPoint> mLocationDataPoints;
     private MenuItem mDeleteButton;
-    private int mSessionWorkoutTime;
+    private List<DataPoint> mSegmentDataPoints;
 
     public static Handler getHandler() {
         return handler;
@@ -85,10 +85,11 @@ public class SessionFragment extends Fragment {
 
         Bundle bundle = this.getArguments();
         String sessionId = bundle.getString(Constant.PARAMETER_SESSION_ID, "");
+        String sessionName = bundle.getString(Constant.PARAMETER_SESSION_NAME, "");
         long startTime = bundle.getLong(Constant.PARAMETER_START_TIME, 0);
         long endTime = bundle.getLong(Constant.PARAMETER_END_TIME, 0);
 
-        FitnessController.getInstance().readSession(sessionId, startTime, endTime);
+        FitnessController.getInstance().readSession(sessionId, startTime, endTime, sessionName);
 
         handler = new Handler() {
             @Override
@@ -119,85 +120,83 @@ public class SessionFragment extends Fragment {
 
     private void fillViewContent(View view) {
 
-        TextView name = ((TextView) view.findViewById(R.id.fragment_session_name));
-        name.setText(mSession.getName());
-
-        ((TextView)view.findViewById(R.id.fragment_session_description)).setText(mSession.getDescription());
-        ((TextView)view.findViewById(R.id.fragment_session_date)).setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), getActivity()));
-        ((TextView)view.findViewById(R.id.fragment_session_start)).setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
-        ((TextView)view.findViewById(R.id.fragment_session_end)).setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
-        ((TextView)view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS), mSession.getStartTime(TimeUnit.MILLISECONDS)));
-
+        //name
+        ((TextView) view.findViewById(R.id.fragment_session_name))
+                .setText(mSession.getName());
+        //description
+        ((TextView)view.findViewById(R.id.fragment_session_description))
+                .setText(mSession.getDescription());
+        //date
+        ((TextView)view.findViewById(R.id.fragment_session_date))
+                .setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), getActivity()));
+        //start time
+        ((TextView)view.findViewById(R.id.fragment_session_start))
+                .setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
+        //end time
+        ((TextView)view.findViewById(R.id.fragment_session_end))
+                .setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
+        //total/duration time
+        long sessionTime = mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS);
+        ((TextView)view.findViewById(R.id.fragment_session_total_time))
+                .setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS), mSession.getStartTime(TimeUnit.MILLISECONDS)));
+        //speed
         ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, getActivity()));
+        //pace
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, getActivity()));
 
-        int mNumSegments = 0;
         List<DataPoint> mDistanceDataPoints = null;
         List<DataPoint> mSpeedDataPoints = null;
         mLocationDataPoints = null;
-        DataSource dataSource = null;
-
+        float speed = 0;
 
         for (DataSet ds : mDataSets) {
             if (ds.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
-                dataSource = ds.getDataSource();
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
-                    mNumSegments = ds.getDataPoints().get(0).getValue(Field.FIELD_NUM_SEGMENTS).asInt();
-                    mSessionWorkoutTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
-                    ((TextView) view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(mSessionWorkoutTime, 0));
+                    sessionTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
+                    ((TextView) view.findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(sessionTime, 0));
                 }
-            }/* else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
+            } else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
                 if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
-
-                    String speed = Utils.getRightSpeed(ds.getDataPoints().get(0).getValue(Field.FIELD_AVERAGE).asFloat(), getActivity().getBaseContext());
-                    ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(speed);
-
-                    String pace = Utils.getRightPace(ds.getDataPoints().get(0).getValue(Field.FIELD_AVERAGE).asFloat(), getActivity().getBaseContext());
-                    ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(pace);
+                    speed = ds.getDataPoints().get(0).getValue(Field.FIELD_AVERAGE).asFloat();
                 }
-            } */else if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
+
+            } else if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
                 mDistanceDataPoints = ds.getDataPoints();
-//                FitnessController.getInstance().dumpDataSet(ds);
             } else if (ds.getDataType().equals(DataType.TYPE_SPEED)) {
                 mSpeedDataPoints = ds.getDataPoints();
             } else if (ds.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
                 mLocationDataPoints = ds.getDataPoints();
-                //FitnessController.getInstance().dumpDataSet(ds);
+            } else if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT)) {
+                mSegmentDataPoints = ds.getDataPoints();
             }
         }
-
-
-        /*final DataSource finalDataSource = dataSource; TODO
-        name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long startTime = mSession.getStartTime(TimeUnit.MILLISECONDS);
-                long endTime = mSession.getEndTime(TimeUnit.MILLISECONDS);
-
-                Intent fitIntent = new HistoryApi.ViewIntentBuilder(getActivity(), DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART)
-                        .setDataSource(finalDataSource)
-                        .build();
-                getActivity().startActivity(fitIntent);
-            }
-        });*/
-
 
         float totalDistance = 0;
         for (DataPoint dp : mDistanceDataPoints) {
             totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
         }
+
+        //distance
+        if (totalDistance == 0) {
+            if (speed != 0) {
+                totalDistance = speed * (sessionTime / 1000);
+            }
+        }
         ((TextView)view.findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, getActivity()));
-        float speed = totalDistance / (mSessionWorkoutTime / 1000);
-        ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
-        ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
+
+        //speed/pace
+        if (totalDistance != 0) {
+            if (speed == 0) {
+                    speed = totalDistance / (sessionTime / 1000);
+            }
+            ((TextView) view.findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
+            ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
+        }
 
         showProgressBar(false);
 
-        new SessionDetailedDataLoader(view, getActivity().getBaseContext(), mNumSegments)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mLocationDataPoints,
-                        mDistanceDataPoints, mSpeedDataPoints);
+        new SessionDetailedDataLoader(view, getActivity().getBaseContext())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mLocationDataPoints, mSegmentDataPoints);
 
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
