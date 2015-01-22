@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
+import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.util.Utils;
 
 public class SpeedController {
@@ -42,6 +43,7 @@ public class SpeedController {
 
         if (timeInSeconds > 0 && distanceInMeters > 0) {
             double speed = distanceInMeters / timeInSeconds;
+            FitnessController.getInstance().saveSpeed(speed);
 
             mMaxSpeed = speed > mMaxSpeed ? speed : mMaxSpeed;
             mMinSpeed = speed < mMinSpeed ? speed : mMinSpeed;
@@ -49,6 +51,7 @@ public class SpeedController {
             mSpeedView.setText(Utils.getRightSpeed((float) speed, mContext));
             mPaceView.setText(Utils.getRightPace((float) speed, mContext));
         } else {
+            FitnessController.getInstance().saveSpeed(0f);
             mSpeedView.setText(Utils.getRightSpeed(0f, mContext));
             mPaceView.setText(Utils.getRightPace(0f, mContext));
         }

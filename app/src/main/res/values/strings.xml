@@ -69,5 +69,6 @@
     <string name="dmy" translatable="false">dmy</string>
     <string name="mdy" translatable="false">mdy</string>
     <string name="ymd" translatable="false">ymd</string>
+    <string name="delete">Delete</string>
 
 </resources>
