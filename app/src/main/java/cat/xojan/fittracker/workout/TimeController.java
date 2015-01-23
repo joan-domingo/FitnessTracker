@@ -65,7 +65,7 @@ public class TimeController {
 
     public void pause() {
         mTimeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
-        mSegmentEnd = Calendar.getInstance().getTimeInMillis();
+        mSessionFinish = mSegmentEnd = Calendar.getInstance().getTimeInMillis();
         mWorkoutDuration = mWorkoutDuration + (mSegmentEnd - mSegmentStart);
         mChronometer.stop();
     }
@@ -89,7 +89,7 @@ public class TimeController {
     }
 
     public void finish() {
-        mSessionFinish = Calendar.getInstance().getTimeInMillis();
+
     }
 
     public long getSegmentStartTime() {

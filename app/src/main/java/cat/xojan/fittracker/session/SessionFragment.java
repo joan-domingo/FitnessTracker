@@ -54,6 +54,7 @@ public class SessionFragment extends Fragment {
     private LinearLayout mSessionView;
     private Session mSession;
     private List<DataSet> mDataSets;
+    private List<DataPoint> mSpeedDataPoints;
 
     private static View view;
 
@@ -145,7 +146,6 @@ public class SessionFragment extends Fragment {
         ((TextView) view.findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, getActivity()));
 
         List<DataPoint> mDistanceDataPoints = null;
-        List<DataPoint> mSpeedDataPoints = null;
         mLocationDataPoints = null;
         float speed = 0;
 
@@ -217,7 +217,8 @@ public class SessionFragment extends Fragment {
             map.getUiSettings().setZoomControlsEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
 
-            new MapLoader(map).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mLocationDataPoints);
+            new MapLoader(map, getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    mLocationDataPoints, mSpeedDataPoints);
 
         } else {
             if (mapFragment.getView() != null)

@@ -12,4 +12,15 @@
     <color name="black">#000000</color>
     <color name="dark_gray">#333333</color>
     <color name="detail_data">#666666</color>
+
+    <!-- colors speed map polyline -->
+    <color name="poly_fastest">#ff01781d</color>
+    <color name="poly_super_fast">#ff00aa22</color>
+    <color name="poly_fast">#ff00c501</color>
+    <color name="poly_quite_fast">#ff71f700</color>
+    <color name="poly_quite_slow">#fffff500</color>
+    <color name="poly_slow">#ffff8e00</color>
+    <color name="poly_super_slow">#ffd70d00</color>
+    <color name="poly_slowest">#ff9f0800</color>
+
 </resources>
