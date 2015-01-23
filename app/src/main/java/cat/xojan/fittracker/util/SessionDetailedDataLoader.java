@@ -23,11 +23,11 @@ import cat.xojan.fittracker.R;
 
 public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, LinearLayout> {
 
-    private final View mView;
+    private final LinearLayout mView;
     private final Context mContext;
 
-    public SessionDetailedDataLoader(View view, Context context) {
-        mView = view;
+    public SessionDetailedDataLoader(LinearLayout detailedView, Context context) {
+        mView = detailedView;
         mContext = context;
     }
 
@@ -204,9 +204,8 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
 
     @Override
     protected void onPostExecute(LinearLayout intervalView) {
-        LinearLayout detailedDataView = (LinearLayout) mView.findViewById(R.id.session_intervals);
-        detailedDataView.removeAllViews();
+        mView.removeAllViews();
         if (intervalView != null)
-            detailedDataView.addView(intervalView);
+            mView.addView(intervalView);
     }
 }

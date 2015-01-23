@@ -4,8 +4,7 @@ public class Constant {
 
     public static final String TAG = "cat.xojan.fittracker";
 
-    public static final int MESSAGE_SESSIONS_READ = 0x0001;
-    public static final int GOOGLE_API_CLIENT_CONNECTED = 0x0002;
+    public static final int MESSAGE_READ_SESSIONS = 0x0001;
     public static final int MESSAGE_SINGLE_SESSION_READ = 0x1001;
     public static final int MESSAGE_SESSION_DELETED = 0x1002;
 
@@ -33,4 +32,7 @@ public class Constant {
     public static final String WORKOUT_FRAGMENT_TAG = "workoutFragment";
     public static final String RESULT_FRAGMENT_TAG = "resultFragment";
 
+    public static final String EXTRA_SESSION = "extra_session";
+    public static final String EXTRA_START = "extra_start_time";
+    public static final String EXTRA_END = "extra_end_time";
 }

@@ -41,13 +41,8 @@ public class SessionReader extends AsyncTask<SessionReadRequest, Void, SessionRe
     @Override
     protected void onPostExecute(SessionReadResult sessionReadResult) {
         getSessionList(sessionReadResult);
-        if (sessionReadResult.getSessions().size() > 0)
-            getSessionDataSets(sessionReadResult.getSessions().get(0),
-                sessionReadResult.getDataSet(sessionReadResult.getSessions().get(0)));
     }
 
     public void getSessionList(SessionReadResult sessionReadResult) {}
-
-    public void getSessionDataSets(Session session, List<DataSet> dataSets) {}
 }
 

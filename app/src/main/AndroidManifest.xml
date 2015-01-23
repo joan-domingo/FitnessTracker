@@ -36,6 +36,24 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".session.SessionActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="vnd.google.fitness.VIEW" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.activity.segment" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.step_count.cumulative" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.step_count.delta" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.activity.summary" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.speed.summary" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.speed" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.location.sample" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.distance.delta" />
+                <data android:mimeType="vnd.google.fitness.data_type/com.google.activity.sample" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".menu.PreferenceActivity"
             android:launchMode="singleInstance"

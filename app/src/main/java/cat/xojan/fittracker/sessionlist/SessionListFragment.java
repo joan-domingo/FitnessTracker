@@ -3,6 +3,7 @@ package cat.xojan.fittracker.sessionlist;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,26 +22,32 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+
+import com.google.android.gms.fitness.HistoryApi;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.result.SessionReadResult;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.session.SessionFragment;
-import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.workout.WorkoutFragment;
 
 public class SessionListFragment extends Fragment {
 
-    private static Handler handler;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private Button mDateEndButton;
     private Button mDateStartButton;
     private SwipeRefreshLayout swipeLayout;
+
+    private static Handler handler;
 
     public static Handler getHandler() {
         return handler;
@@ -53,13 +60,27 @@ public class SessionListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
 
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case Constant.MESSAGE_READ_SESSIONS:
+                        SessionReadResult sessionReadResult = FitnessController.getInstance().getSessionReadResult();
+                        RecyclerView.Adapter mAdapter = new SessionAdapter(getActivity(), sessionReadResult);
+                        mRecyclerView.setAdapter(mAdapter);
+                        showProgressBar(false);
+                        break;
+                }
+            }
+        };
+
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setColorSchemeResources(R.color.accent);
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 FitnessController.getInstance().setEndTime(Calendar.getInstance());
-                handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+                FitnessController.getInstance().readSessions();
             }
         });
 
@@ -73,60 +94,43 @@ public class SessionListFragment extends Fragment {
         Context mContext = getActivity().getBaseContext();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.sessions_list);
-        showProgressBar(true);
+        if (FitnessController.getInstance().getSessionReadResult() == null) {
+            showProgressBar(true);
+            FitnessController.getInstance().readSessions();
+        } else {
+            handler.sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
+        }
+
         mRecyclerView.setHasFixedSize(false);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case Constant.GOOGLE_API_CLIENT_CONNECTED:
-                        if (getActivity() != null) {
-                            FitnessController.getInstance().readLastSessions();
-                            break;
-                        }
-                    case Constant.MESSAGE_SESSIONS_READ:
-                        if (getActivity() != null) {
-                            RecyclerView.Adapter mAdapter = new SessionAdapter(FitnessController.getInstance().getReadSessions(),
-                                    FitnessController.getInstance().getDistances(), getActivity().getBaseContext(),
-                                    FitnessController.getInstance().getActivitiesDuration());
-                            mRecyclerView.setAdapter(mAdapter);
-                            showProgressBar(false);
-                        }
-                        break;
-
-                }
-            }
-        };
-        handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
-
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        TextView identifierView = (TextView) view.findViewById(R.id.session_identifier);
-                        TextView nameView = (TextView) view.findViewById(R.id.session_identifier_name);
-                        TextView startTime = (TextView) view.findViewById(R.id.session_start_time);
-                        TextView endTime = (TextView) view.findViewById(R.id.session_end_time);
+                        SessionReadResult sessionReadResult = FitnessController.getInstance().getSessionReadResult();
+                        Session session = sessionReadResult.getSessions().get(position);
+                        // Inside your activity
+                        long startTime = session.getStartTime(TimeUnit.MILLISECONDS);
+                        long endTime = session.getEndTime(TimeUnit.MILLISECONDS);
 
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Constant.PARAMETER_SESSION_ID, identifierView.getText().toString());
-                        bundle.putString(Constant.PARAMETER_SESSION_NAME, nameView.getText().toString());
-                        bundle.putLong(Constant.PARAMETER_START_TIME, Long.valueOf(startTime.getText().toString()));
-                        bundle.putLong(Constant.PARAMETER_END_TIME, Long.valueOf(endTime.getText().toString()));
+                        HistoryApi.ViewIntentBuilder intentBuilder = new HistoryApi.ViewIntentBuilder(getActivity(),
+                                DataType.TYPE_ACTIVITY_SEGMENT)
+                                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                                .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART);
 
-                        SessionFragment sessionFragment = new SessionFragment();
-                        sessionFragment.setArguments(bundle);
+                        for (DataSet ds : sessionReadResult.getDataSet(session, DataType.TYPE_ACTIVITY_SEGMENT)) {
+                            if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT))
+                                intentBuilder.setDataSource(ds.getDataSource());
+                        }
 
-                        getActivity().getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.fragment_container, sessionFragment)
-                                .addToBackStack(null)
-                                .commit();
+                        Intent fitIntent = intentBuilder.build();
+                        fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
+                        fitIntent.putExtra(Constant.EXTRA_START, startTime);
+                        fitIntent.putExtra(Constant.EXTRA_END, endTime);
+                        startActivity(fitIntent);
                     }
                 })
         );
@@ -176,7 +180,7 @@ public class SessionListFragment extends Fragment {
                         FitnessController.getInstance().setEndTime(calendar);
                         mDateEndButton.setText(Utils.getRightDate(FitnessController.getInstance().getEndTime(), getActivity()));
                         showProgressBar(true);
-                        handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+                        FitnessController.getInstance().readSessions();
                     }
                 };
                 Bundle bundle = new Bundle();
@@ -199,7 +203,7 @@ public class SessionListFragment extends Fragment {
                         FitnessController.getInstance().setStartTime(calendar);
                         mDateStartButton.setText(Utils.getRightDate(FitnessController.getInstance().getStartTime(), getActivity()));
                         showProgressBar(true);
-                        handler.sendEmptyMessage(Constant.GOOGLE_API_CLIENT_CONNECTED);
+                        FitnessController.getInstance().readSessions();
                     }
                 };
                 Bundle bundle = new Bundle();

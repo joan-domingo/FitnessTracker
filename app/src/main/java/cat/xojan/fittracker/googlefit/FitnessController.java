@@ -21,16 +21,13 @@ import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.session.SessionFragment;
+import cat.xojan.fittracker.session.SessionActivity;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.TimeController;
@@ -38,9 +35,6 @@ import cat.xojan.fittracker.workout.TimeController;
 public class FitnessController {
 
     private static FitnessController instance = null;
-    private List<Session> mReadSessions;
-    private Session mSingleSession;
-    private List<DataSet> mSingleSessionDataSets;
     private String mFitnessActivity;
     private int mNumSegments;
     private DataSource mSpeedDataSource;
@@ -50,12 +44,13 @@ public class FitnessController {
     private DataSource mSummaryDataSource;
     private DataSource mLocationDataSource;
     private DataSet mLocationDataSet;
-    private List<Float> mDistanceSessions;
     private Calendar mSessionListStartDate = getStartDate();
     private Calendar mSessionListEndDate = Calendar.getInstance();
-    private List<Integer> mActivitesDuration;
     private DataSource mSegmentDataSource;
     private DataSet mSegmentDataSet;
+    private SessionReadResult mSessionReadResult;
+    private Session mSingleSessionResult;
+    private List<DataSet> mSingleSessionDataSets;
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
@@ -82,61 +77,25 @@ public class FitnessController {
         mClient = client;
     }
 
-    public void readLastSessions() {
+    public void readSessions() {
         // Build a session read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
-                .read(DataType.TYPE_DISTANCE_DELTA)
                 .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
                 .readSessionsFromAllApps()
+                .enableServerQueries()
                 .build();
 
         new SessionReader(mClient) {
 
             public void getSessionList(SessionReadResult sessionReadResult) {
-                List<Session> sessions = sessionReadResult.getSessions();
-                Collections.reverse(sessions);
-                mReadSessions = sessions;
-                mDistanceSessions = getSessionsDistance(sessionReadResult);
-                mActivitesDuration = getSessionsDuration(sessionReadResult);
-                SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSIONS_READ);
+                mSessionReadResult = sessionReadResult;
+                SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
             }
 
         }.execute(readRequest);
-    }
-
-    private List<Integer> getSessionsDuration(SessionReadResult sessionReadResult) {
-        List<Integer> sessionDuration = new ArrayList<>(sessionReadResult.getSessions().size());
-
-        for (Session s : sessionReadResult.getSessions()) {
-            int duration = 0;
-            for (DataSet ds : sessionReadResult.getDataSet(s, DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
-                for (DataPoint dp : ds.getDataPoints()) {
-                    duration = dp.getValue(Field.FIELD_DURATION).asInt();
-                }
-            }
-            sessionDuration.add(duration);
-        }
-        return sessionDuration;
-    }
-
-    private List<Float> getSessionsDistance(SessionReadResult sessionReadResult) {
-        List<Float> sessionDistance = new ArrayList<>(sessionReadResult.getSessions().size());
-
-        for (Session s : sessionReadResult.getSessions()) {
-            float distance = 0;
-            for (DataSet ds : sessionReadResult.getDataSet(s, DataType.TYPE_DISTANCE_DELTA)) {
-                for (DataPoint dp : ds.getDataPoints()) {
-                    distance = distance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
-                }
-            }
-            sessionDistance.add(distance);
-        }
-        return sessionDistance;
-    }
-
-    public List<Session> getReadSessions() {
-        return mReadSessions;
     }
 
     public void saveSession(final FragmentActivity fragmentActivity, String name, String description) {
@@ -184,48 +143,7 @@ public class FitnessController {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
     }
 
-    public void readSession(String sessionId, long startTime, long endTime, String sessionName) {
-        // Build a session read request
-        SessionReadRequest readRequest = new SessionReadRequest.Builder()
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .setSessionId(sessionId)
-                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                .read(DataType.AGGREGATE_SPEED_SUMMARY)
-                .read(DataType.TYPE_SPEED)
-                .read(DataType.TYPE_DISTANCE_DELTA)
-                .read(DataType.TYPE_LOCATION_SAMPLE)
-                .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                .read(DataType.AGGREGATE_DISTANCE_DELTA)
-                .read(DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
-                .setSessionName(sessionName)
-                .readSessionsFromAllApps()
-                .build();
-
-        new SessionReader(mClient) {
-
-            public void getSessionDataSets(Session session, List<DataSet> dataSets) {
-                mSingleSession = session;
-                mSingleSessionDataSets = dataSets;
-                //Process the data sets for this session
-                /*for (DataSet dataSet : dataSets) {
-                    //if (!dataSet.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE))
-                        dumpDataSet(dataSet);
-                }*/
-                SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
-            }
-
-        }.execute(readRequest);
-    }
-
-    public Session getSingleSession() {
-        return mSingleSession;
-    }
-
-    public List<DataSet> getSingleSessionDataSets() {
-        return mSingleSessionDataSets;
-    }
-
-    public void dumpDataSet(DataSet dataSet) {
+    /*public void dumpDataSet(DataSet dataSet) {
         Log.i(Constant.TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
@@ -239,7 +157,7 @@ public class FitnessController {
                         " Value: " + dp.getValue(field));
             }
         }
-    }
+    }*/
 
     public void setFitnessActivity(String activity) {
         mFitnessActivity = activity;
@@ -268,7 +186,7 @@ public class FitnessController {
                             // that it did not insert.
                             Log.i(Constant.TAG, "Failed to delete data");
                         }
-                        SessionFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
+                        SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
                     }
                 });
     }
@@ -351,10 +269,6 @@ public class FitnessController {
         return mFitnessActivity;
     }
 
-    public List<Float> getDistances() {
-        return mDistanceSessions;
-    }
-
     public long getEndTime() {
         return mSessionListEndDate.getTimeInMillis();
     }
@@ -379,10 +293,6 @@ public class FitnessController {
         return mLocationDataSet.getDataPoints();
     }
 
-    public List<Integer> getActivitiesDuration() {
-        return mActivitesDuration;
-    }
-
     public void saveSpeed(double speed) {
         long time = Calendar.getInstance().getTimeInMillis();
         //speed
@@ -390,5 +300,45 @@ public class FitnessController {
         speedDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
         speedDataPoint.getValue(Field.FIELD_SPEED).setFloat((float) speed);
         mSpeedDataSet.add(speedDataPoint);
+    }
+
+    public SessionReadResult getSessionReadResult() {
+        return mSessionReadResult;
+    }
+
+    public void readSessionDataSets(long startTime, long endTime, String identifier) {
+        SessionReadRequest readRequest = new SessionReadRequest.Builder()
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                .setSessionId(identifier)
+                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .read(DataType.AGGREGATE_SPEED_SUMMARY)
+                .read(DataType.TYPE_SPEED)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.TYPE_LOCATION_SAMPLE)
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                .read(DataType.AGGREGATE_DISTANCE_DELTA)
+                .read(DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
+                .readSessionsFromAllApps()
+                .build();
+
+        new SessionReader(mClient) {
+
+            public void getSessionList(SessionReadResult sessionReadResult) {
+                if (sessionReadResult.getSessions().size() > 0) {
+                    mSingleSessionResult = sessionReadResult.getSessions().get(0);
+                    mSingleSessionDataSets = sessionReadResult.getDataSet(mSingleSessionResult);
+                }
+                SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
+            }
+
+        }.execute(readRequest);
+    }
+
+    public Session getSingleSessionResult() {
+        return mSingleSessionResult;
+    }
+
+    public List<DataSet> getSingleSessionDataSets() {
+        return mSingleSessionDataSets;
     }
 }
