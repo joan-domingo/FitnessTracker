@@ -138,6 +138,7 @@ public class FitnessController {
                 fragmentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new SessionListFragment())
                         .commit();
+                readSessions();
             }
 
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
@@ -186,7 +187,8 @@ public class FitnessController {
                             // that it did not insert.
                             Log.i(Constant.TAG, "Failed to delete data");
                         }
-                        SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
+                        mSessionListEndDate = Calendar.getInstance();
+                        readSessions();
                     }
                 });
     }

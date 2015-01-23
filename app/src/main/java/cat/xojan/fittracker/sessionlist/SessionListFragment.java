@@ -3,7 +3,6 @@ package cat.xojan.fittracker.sessionlist;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,14 +22,9 @@ import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.fitness.HistoryApi;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.Constant;
@@ -46,7 +40,7 @@ public class SessionListFragment extends Fragment {
     private Button mDateEndButton;
     private Button mDateStartButton;
     private SwipeRefreshLayout swipeLayout;
-
+    private static final String TAG = "RecyclerViewFragment";
     private static Handler handler;
 
     public static Handler getHandler() {
@@ -59,6 +53,7 @@ public class SessionListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
+        view.setTag(TAG);
 
         handler = new Handler() {
             @Override
@@ -89,11 +84,12 @@ public class SessionListFragment extends Fragment {
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.sessions_loading_spinner);
 
-
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         Context mContext = getActivity().getBaseContext();
 
+        //recycler view
         mRecyclerView = (RecyclerView) view.findViewById(R.id.sessions_list);
+
         if (FitnessController.getInstance().getSessionReadResult() == null) {
             showProgressBar(true);
             FitnessController.getInstance().readSessions();
@@ -101,39 +97,8 @@ public class SessionListFragment extends Fragment {
             handler.sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
         }
 
-        mRecyclerView.setHasFixedSize(false);
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mRecyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        SessionReadResult sessionReadResult = FitnessController.getInstance().getSessionReadResult();
-                        Session session = sessionReadResult.getSessions().get(position);
-                        // Inside your activity
-                        long startTime = session.getStartTime(TimeUnit.MILLISECONDS);
-                        long endTime = session.getEndTime(TimeUnit.MILLISECONDS);
-
-                        HistoryApi.ViewIntentBuilder intentBuilder = new HistoryApi.ViewIntentBuilder(getActivity(),
-                                DataType.TYPE_ACTIVITY_SEGMENT)
-                                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                                .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART);
-
-                        for (DataSet ds : sessionReadResult.getDataSet(session, DataType.TYPE_ACTIVITY_SEGMENT)) {
-                            if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT))
-                                intentBuilder.setDataSource(ds.getDataSource());
-                        }
-
-                        Intent fitIntent = intentBuilder.build();
-                        fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
-                        fitIntent.putExtra(Constant.EXTRA_START, startTime);
-                        fitIntent.putExtra(Constant.EXTRA_END, endTime);
-                        startActivity(fitIntent);
-                    }
-                })
-        );
 
         ImageButton newWorkout = (ImageButton) view.findViewById(R.id.fab_add);
         newWorkout.setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.sessionlist;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.fitness.HistoryApi;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
@@ -31,10 +32,11 @@ import cat.xojan.fittracker.util.Utils;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
 
-    private final Context context;
-    private final List<Session> mSession;
+    private static Context mContext;
+    private static List<Session> mSession = null;
     private final List<Float> mDistance;
     private final List<Integer> mDuration;
+    private static SessionReadResult mSessionReadResult;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -42,18 +44,41 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         // each data item is just a string in this case
-        public RelativeLayout mView;
-        public TextView mName;
-        public TextView mDescription;
-        public ImageView mActivity;
-        public TextView mSummary;
-        public TextView mDay;
-        public ImageView mIcon;
+        private final TextView mName;
+        private final TextView mDescription;
+        private final ImageView mActivity;
+        private final TextView mSummary;
+        private final TextView mDay;
+        private final ImageView mIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mView = (RelativeLayout) itemView;
+            // Define click listener for the ViewHolder's View.
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Log.d(Constant.TAG, "Element " + getPosition() + " clicked.");
+                    Session session = mSession.get(getPosition());
+                    long startTime = session.getStartTime(TimeUnit.MILLISECONDS);
+                    long endTime = session.getEndTime(TimeUnit.MILLISECONDS);
 
+                    HistoryApi.ViewIntentBuilder intentBuilder = new HistoryApi.ViewIntentBuilder(mContext,
+                            DataType.TYPE_ACTIVITY_SEGMENT)
+                            .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                            .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART);
+
+                    for (DataSet ds : mSessionReadResult.getDataSet(session, DataType.TYPE_ACTIVITY_SEGMENT)) {
+                        if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT))
+                            intentBuilder.setDataSource(ds.getDataSource());
+                    }
+
+                    Intent fitIntent = intentBuilder.build();
+                    fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
+                    fitIntent.putExtra(Constant.EXTRA_START, startTime);
+                    fitIntent.putExtra(Constant.EXTRA_END, endTime);
+                    mContext.startActivity(fitIntent);
+                }
+            });
             mName = (TextView) itemView.findViewById(R.id.session_name);
             mDescription = (TextView) itemView.findViewById(R.id.session_description);
             mActivity = (ImageView) itemView.findViewById(R.id.session_activity);
@@ -64,9 +89,10 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     }
     // Provide a suitable constructor (depends on the kind of dataset)
     public SessionAdapter(Context context, SessionReadResult sessionReadResult) {
-        this.context = context;
+        mContext = context;
+        mSessionReadResult = sessionReadResult;
         mSession = sessionReadResult.getSessions();
-        if (mSession.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSession.get(mSession.size() - 1).getStartTime(TimeUnit.MILLISECONDS))
+        if (mSession.size() > 1 && mSession.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSession.get(mSession.size() - 1).getStartTime(TimeUnit.MILLISECONDS))
             Collections.reverse(mSession);
         mDistance = getDistanceList(sessionReadResult);
         mDuration = getDurationList(sessionReadResult);
@@ -123,10 +149,10 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mActivity.setImageDrawable(getActivityDrawable(mSession.get(position).getActivity()));
         if (mDuration.get(position) == 0) {
             holder.mSummary.setText(Utils.getTimeDifference(mSession.get(position).getEndTime(TimeUnit.MILLISECONDS),
-                    mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " / " + Utils.getRightDistance(mDistance.get(position), context));
+                    mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " / " + Utils.getRightDistance(mDistance.get(position), mContext));
         } else {
             holder.mSummary.setText(Utils.getTimeDifference(mDuration.get(position), 0) +
-                    " / " + Utils.getRightDistance(mDistance.get(position), context));
+                    " / " + Utils.getRightDistance(mDistance.get(position), mContext));
         }
         holder.mDay.setText(Utils.millisToDayComplete(mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)));
 
@@ -134,7 +160,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
             holder.mIcon.setImageResource(R.drawable.ic_launcher);
         } else {
             try {
-                PackageManager pkgManager = context.getPackageManager();
+                PackageManager pkgManager = mContext.getPackageManager();
                 Drawable appIcon = pkgManager.getApplicationIcon(mSession.get(position).getAppPackageName());
                 holder.mIcon.setImageDrawable(appIcon);
             } catch (PackageManager.NameNotFoundException e) {
@@ -145,7 +171,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
     private Drawable getActivityDrawable(String activity) {
         int drawable = ActivityType.getDrawable(activity);
-        return context.getResources().getDrawable(drawable);
+        return mContext.getResources().getDrawable(drawable);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
