@@ -21,6 +21,7 @@ import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -77,7 +78,7 @@ public class FitnessController {
         mClient = client;
     }
 
-    public void readSessions() {
+    public void readSessions(final boolean sendMessageToSessionList) {
         // Build a session read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
@@ -92,7 +93,10 @@ public class FitnessController {
 
             public void getSessionList(SessionReadResult sessionReadResult) {
                 mSessionReadResult = sessionReadResult;
-                SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
+                if (sendMessageToSessionList)
+                    SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
+                else
+                    SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
             }
 
         }.execute(readRequest);
@@ -138,13 +142,13 @@ public class FitnessController {
                 fragmentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new SessionListFragment())
                         .commit();
-                readSessions();
+                readSessions(true);
             }
 
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
     }
 
-    /*public void dumpDataSet(DataSet dataSet) {
+    public void dumpDataSet(DataSet dataSet) {
         Log.i(Constant.TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
@@ -158,7 +162,7 @@ public class FitnessController {
                         " Value: " + dp.getValue(field));
             }
         }
-    }*/
+    }
 
     public void setFitnessActivity(String activity) {
         mFitnessActivity = activity;
@@ -188,7 +192,7 @@ public class FitnessController {
                             Log.i(Constant.TAG, "Failed to delete data");
                         }
                         mSessionListEndDate = Calendar.getInstance();
-                        readSessions();
+                        readSessions(false);
                     }
                 });
     }
@@ -329,6 +333,10 @@ public class FitnessController {
                 if (sessionReadResult.getSessions().size() > 0) {
                     mSingleSessionResult = sessionReadResult.getSessions().get(0);
                     mSingleSessionDataSets = sessionReadResult.getDataSet(mSingleSessionResult);
+
+                    /*for (DataSet ds : sessionReadResult.getDataSet(mSingleSessionResult)) {
+                        dumpDataSet(ds);
+                    }*/
                 }
                 SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
             }
@@ -342,9 +350,5 @@ public class FitnessController {
 
     public List<DataSet> getSingleSessionDataSets() {
         return mSingleSessionDataSets;
-    }
-
-    public GoogleApiClient getClient() {
-        return mClient;
     }
 }

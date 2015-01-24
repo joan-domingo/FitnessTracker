@@ -75,7 +75,7 @@ public class SessionListFragment extends Fragment {
             @Override
             public void onRefresh() {
                 FitnessController.getInstance().setEndTime(Calendar.getInstance());
-                FitnessController.getInstance().readSessions();
+                FitnessController.getInstance().readSessions(true);
             }
         });
 
@@ -92,7 +92,7 @@ public class SessionListFragment extends Fragment {
 
         if (FitnessController.getInstance().getSessionReadResult() == null) {
             showProgressBar(true);
-            FitnessController.getInstance().readSessions();
+            FitnessController.getInstance().readSessions(true);
         } else {
             handler.sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
         }
@@ -145,7 +145,7 @@ public class SessionListFragment extends Fragment {
                         FitnessController.getInstance().setEndTime(calendar);
                         mDateEndButton.setText(Utils.getRightDate(FitnessController.getInstance().getEndTime(), getActivity()));
                         showProgressBar(true);
-                        FitnessController.getInstance().readSessions();
+                        FitnessController.getInstance().readSessions(true);
                     }
                 };
                 Bundle bundle = new Bundle();
@@ -168,7 +168,7 @@ public class SessionListFragment extends Fragment {
                         FitnessController.getInstance().setStartTime(calendar);
                         mDateStartButton.setText(Utils.getRightDate(FitnessController.getInstance().getStartTime(), getActivity()));
                         showProgressBar(true);
-                        FitnessController.getInstance().readSessions();
+                        FitnessController.getInstance().readSessions(true);
                     }
                 };
                 Bundle bundle = new Bundle();

@@ -22,11 +22,6 @@ public class Constant {
     public static final String PREFERENCE_DATE_FORMAT = "date_format";
     public static final String PREFERENCE_FIRST_RUN = "first_run";
 
-    public static final String PARAMETER_SESSION_ID = "sessionId";
-    public static final String PARAMETER_SESSION_NAME = "sessionName";
-    public static final String PARAMETER_START_TIME = "startTime";
-    public static final String PARAMETER_END_TIME = "endTime";
-    public static final String PARAMETER_RELOAD_LIST = "reloadSessionList";
     public static final String PARAMETER_DATE = "date";
 
     public static final String WORKOUT_FRAGMENT_TAG = "workoutFragment";

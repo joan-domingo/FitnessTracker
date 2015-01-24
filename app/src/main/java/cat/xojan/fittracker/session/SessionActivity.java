@@ -95,6 +95,9 @@ public class SessionActivity extends ActionBarActivity {
                             fillViewContent();
                         }
                         break;
+                    case Constant.MESSAGE_SESSION_DELETED:
+                        finish();
+                        break;
                 }
             }
         };
@@ -216,7 +219,7 @@ public class SessionActivity extends ActionBarActivity {
                         .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 FitnessController.getInstance().deleteSession(mSession);
-                                finish();
+                                showProgressBar(true);
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

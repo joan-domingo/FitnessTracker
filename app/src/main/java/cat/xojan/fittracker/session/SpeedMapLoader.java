@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
 
-public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Void> {
+public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
     private final Context mContext;
     private final GoogleMap mMap;
     private List<PolylineOptions> polyList;
@@ -27,7 +27,7 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(List<DataPoint>... params) {
+    protected Boolean doInBackground(List<DataPoint>... params) {
         List<DataPoint> mLocationDataPoints = params[0];
         List<DataPoint> mSpeedDataPoints = params[1];
         float speed = 0;
@@ -47,6 +47,9 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Void> {
 
         //average speed
         float avgSpeed = speed / mSpeedDataPoints.size();
+        if (avgSpeed == speed) {
+            return false;
+        }
 
         LatLng oldPosition = null;
         long startTime = mLocationDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSpeedDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) ?
@@ -75,7 +78,7 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Void> {
                 startTime = mSpeedDataPoints.get(i + 1).getStartTime(TimeUnit.MILLISECONDS);
         }
 
-        return null;
+        return true;
     }
 
     private void setPolylineColor(float maxSpeed, float minSpeed, float avgSpeed, LatLng oldPosition, LatLng currentPosition, float currentSpeed) {
@@ -118,11 +121,12 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        mMap.clear();
-        for (PolylineOptions pl : polyList) {
-            mMap.addPolyline(pl);
+    protected void onPostExecute(Boolean result) {
+        if (result) {
+            mMap.clear();
+            for (PolylineOptions pl : polyList) {
+                mMap.addPolyline(pl);
+            }
         }
     }
 }
