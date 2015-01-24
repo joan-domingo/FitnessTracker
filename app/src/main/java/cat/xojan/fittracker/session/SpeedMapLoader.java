@@ -113,7 +113,7 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Void> {
                 .geodesic(true)
                 .add(oldPosition)
                 .add(currentPosition)
-                .width(10)
+                .width(12)
                 .color(color);
     }
 

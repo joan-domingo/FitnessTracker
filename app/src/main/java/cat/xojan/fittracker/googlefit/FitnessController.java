@@ -85,7 +85,7 @@ public class FitnessController {
                 .read(DataType.TYPE_DISTANCE_DELTA)
                 .read(DataType.TYPE_ACTIVITY_SEGMENT)
                 .readSessionsFromAllApps()
-                .enableServerQueries()
+                //.enableServerQueries()
                 .build();
 
         new SessionReader(mClient) {
@@ -342,5 +342,9 @@ public class FitnessController {
 
     public List<DataSet> getSingleSessionDataSets() {
         return mSingleSessionDataSets;
+    }
+
+    public GoogleApiClient getClient() {
+        return mClient;
     }
 }

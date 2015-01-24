@@ -1,15 +1,16 @@
 package cat.xojan.fittracker.session;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -32,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.googlefit.FitnessController;
-import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
 import cat.xojan.fittracker.util.Utils;
 
@@ -47,6 +52,13 @@ public class SessionActivity extends ActionBarActivity {
     private List<DataPoint> mLocationDataPoints;
     private List<DataPoint> mSpeedDataPoints;
     private List<DataPoint> mSegmentDataPoints;
+    private GoogleApiClient mClient;
+    private long mStartTime;
+    private long mEndTime;
+    private String mSessionIdentifier;
+    private static final String AUTH_PENDING = "auth_state_pending";
+    private boolean authInProgress = false;
+    private static final int REQUEST_OAUTH = 1;
 
     public static Handler getHandler() {
         return handler;
@@ -57,9 +69,17 @@ public class SessionActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
 
+        if (savedInstanceState != null) {
+            authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.fragment_session_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.fragment_loading_spinner);
+        mSessionView = (LinearLayout) findViewById(R.id.fragment_session_container);
+        showProgressBar(true);
 
         handler = new Handler() {
             @Override
@@ -79,10 +99,6 @@ public class SessionActivity extends ActionBarActivity {
             }
         };
 
-        mProgressBar = (ProgressBar) findViewById(R.id.fragment_loading_spinner);
-        mSessionView = (LinearLayout) findViewById(R.id.fragment_session_container);
-        showProgressBar(true);
-
         /**
          * session contains:
          * name, description, identifier, package name, activity type, start time, end time
@@ -94,12 +110,70 @@ public class SessionActivity extends ActionBarActivity {
         /*long startTime = Fitness.getStartTime(intent, TimeUnit.MILLISECONDS);
         long endTime = Fitness.getEndTime(intent, TimeUnit.MILLISECONDS);
         Session session = Session.extract(intent); TODO not working so far*/
-        long startTime = intent.getLongExtra(Constant.EXTRA_START, 0);
-        long endTime = intent.getLongExtra(Constant.EXTRA_END, 0);
-        String sessionIdentifier = intent.getStringExtra(Constant.EXTRA_SESSION);
+        mStartTime = intent.getLongExtra(Constant.EXTRA_START, 0);
+        mEndTime = intent.getLongExtra(Constant.EXTRA_END, 0);
+        mSessionIdentifier = intent.getStringExtra(Constant.EXTRA_SESSION);
 
         // Show the session in your app
-        FitnessController.getInstance().readSessionDataSets(startTime, endTime, sessionIdentifier);
+        buildFitnessClient();
+    }
+
+    private void buildFitnessClient() {
+        mClient = new GoogleApiClient.Builder(this)
+                .addApi(Fitness.API)
+                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+                .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
+                .addConnectionCallbacks(
+                        new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(Bundle bundle) {
+                                Log.i(Constant.TAG, "Connected!!!");
+                                FitnessController.getInstance().setVars(SessionActivity.this, mClient);
+                                FitnessController.getInstance().readSessionDataSets(mStartTime, mEndTime, mSessionIdentifier);
+                            }
+
+                            @Override
+                            public void onConnectionSuspended(int i) {
+                                // If your connection to the sensor gets lost at some point,
+                                // you'll be able to determine the reason and react to it here.
+                                if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
+                                    Log.i(Constant.TAG, "Connection lost.  Cause: Network Lost.");
+                                } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
+                                    Log.i(Constant.TAG, "Connection lost.  Reason: Service Disconnected");
+                                }
+                            }
+                        }
+                )
+                .addOnConnectionFailedListener(
+                        new GoogleApiClient.OnConnectionFailedListener() {
+                            // Called whenever the API client fails to connect.
+                            @Override
+                            public void onConnectionFailed(ConnectionResult result) {
+                                Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
+                                if (!result.hasResolution()) {
+                                    // Show the localized error dialog
+                                    GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
+                                            SessionActivity.this, 0).show();
+                                    return;
+                                }
+                                // The failure has a resolution. Resolve it.
+                                // Called typically when the app is not yet authorized, and an
+                                // authorization dialog is displayed to the user.
+                                if (!authInProgress) {
+                                    try {
+                                        Log.i(Constant.TAG, "Attempting to resolve failed connection");
+                                        authInProgress = true;
+                                        result.startResolutionForResult(SessionActivity.this,
+                                                REQUEST_OAUTH);
+                                    } catch (IntentSender.SendIntentException e) {
+                                        Log.e(Constant.TAG,
+                                                "Exception while starting resolution activity", e);
+                                    }
+                                }
+                            }
+                        }
+                )
+                .build();
     }
 
     private void showProgressBar(boolean b) {
@@ -267,5 +341,42 @@ public class SessionActivity extends ActionBarActivity {
             if (mapFragment.getView() != null)
                 mapFragment.getView().setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Connect to the Fitness API
+        Log.i(Constant.TAG, "Connecting...");
+        mClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mClient.isConnected()) {
+            mClient.disconnect();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_OAUTH) {
+            authInProgress = false;
+            if (resultCode == RESULT_OK) {
+                // Make sure the app is not already connected or attempting to connect
+                if (!mClient.isConnecting() && !mClient.isConnected()) {
+                    mClient.connect();
+                }
+            } else if (!mClient.isConnected()) {
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(AUTH_PENDING, authInProgress);
     }
 }
