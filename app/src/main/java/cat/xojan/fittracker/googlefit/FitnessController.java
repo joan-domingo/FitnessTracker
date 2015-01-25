@@ -86,7 +86,7 @@ public class FitnessController {
                 .read(DataType.TYPE_DISTANCE_DELTA)
                 .read(DataType.TYPE_ACTIVITY_SEGMENT)
                 .readSessionsFromAllApps()
-                //.enableServerQueries()
+                .enableServerQueries()
                 .build();
 
         new SessionReader(mClient) {
@@ -197,9 +197,17 @@ public class FitnessController {
                 });
     }
 
-    public void saveSegment() {
-        long endTimeSegment = TimeController.getInstance().getSegmentEndTime();
-        long startTimeSegment = TimeController.getInstance().getSegmentStartTime();
+    public void saveSegment(boolean isPauseSegment) {
+        long endTimeSegment;
+        long startTimeSegment;
+
+        if (isPauseSegment) {
+            endTimeSegment = TimeController.getInstance().getSegmentStartTime();
+            startTimeSegment = TimeController.getInstance().getSegmentEndTime();
+        } else {
+            endTimeSegment = TimeController.getInstance().getSegmentEndTime();
+            startTimeSegment = TimeController.getInstance().getSegmentStartTime();
+        }
 
         //segment
         mNumSegments++;
@@ -299,11 +307,10 @@ public class FitnessController {
         return mLocationDataSet.getDataPoints();
     }
 
-    public void saveSpeed(double speed) {
-        long time = Calendar.getInstance().getTimeInMillis();
+    public void saveSpeed(long start, long end, double speed) {
         //speed
         DataPoint speedDataPoint = DataPoint.create(mSpeedDataSource);
-        speedDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
+        speedDataPoint.setTimeInterval(start, end, TimeUnit.MILLISECONDS);
         speedDataPoint.getValue(Field.FIELD_SPEED).setFloat((float) speed);
         mSpeedDataSet.add(speedDataPoint);
     }

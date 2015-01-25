@@ -71,6 +71,7 @@ public class WorkoutFragment extends Fragment {
             public void onClick(View v) {
                 //start button
                 FitnessController.getInstance().start();
+                TimeController.getInstance().start();
                 MapController.getInstance().start();
             }
         });
@@ -81,7 +82,7 @@ public class WorkoutFragment extends Fragment {
                 //lap button
                 TimeController.getInstance().lapFinish();
                 MapController.getInstance().lap();
-                FitnessController.getInstance().saveSegment();
+                FitnessController.getInstance().saveSegment(false);
                 TimeController.getInstance().lapStart();
                 DistanceController.getInstance().lap();
                 SpeedController.getInstance().reset();
@@ -94,7 +95,7 @@ public class WorkoutFragment extends Fragment {
                 //pause button
                 MapController.getInstance().pause();
                 TimeController.getInstance().pause();
-                FitnessController.getInstance().saveSegment();
+                FitnessController.getInstance().saveSegment(false);
             }
         });
 
@@ -102,10 +103,12 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //resume button
-                MapController.getInstance().resume();
                 TimeController.getInstance().resume();
+                FitnessController.getInstance().saveSegment(true);
+                MapController.getInstance().resume();
                 SpeedController.getInstance().reset();
                 DistanceController.getInstance().resume();
+
             }
         });
 
