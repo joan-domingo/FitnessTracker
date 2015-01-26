@@ -142,7 +142,7 @@
                 <TextView
                     android:id="@+id/waiting_gps"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
                     android:textSize="16sp"
@@ -175,7 +175,7 @@
                 <Button
                     android:id="@+id/workout_button_start"
                     android:layout_width="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
                     android:stateListAnimator="@anim/anim"

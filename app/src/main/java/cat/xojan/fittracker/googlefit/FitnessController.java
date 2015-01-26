@@ -92,7 +92,10 @@ public class FitnessController {
         new SessionReader(mClient) {
 
             public void getSessionList(SessionReadResult sessionReadResult) {
-                mSessionReadResult = sessionReadResult;
+                if (sessionReadResult != null) {
+                    mSessionReadResult = sessionReadResult;
+                }
+
                 if (sendMessageToSessionList)
                     SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
                 else
@@ -337,7 +340,7 @@ public class FitnessController {
         new SessionReader(mClient) {
 
             public void getSessionList(SessionReadResult sessionReadResult) {
-                if (sessionReadResult.getSessions().size() > 0) {
+                if (sessionReadResult != null && sessionReadResult.getSessions().size() > 0) {
                     mSingleSessionResult = sessionReadResult.getSessions().get(0);
                     mSingleSessionDataSets = sessionReadResult.getDataSet(mSingleSessionResult);
 

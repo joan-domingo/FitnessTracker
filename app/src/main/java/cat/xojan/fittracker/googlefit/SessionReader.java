@@ -5,12 +5,9 @@ import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
@@ -27,6 +24,10 @@ public class SessionReader extends AsyncTask<SessionReadRequest, Void, SessionRe
     protected SessionReadResult doInBackground(SessionReadRequest... params) {
         // Invoke the Sessions API to fetch the session with the query and wait for the result
         // of the read request.
+        if (params[0] == null) {
+            return null;
+        }
+
         SessionReadResult sessionReadResult =
                 Fitness.SessionsApi.readSession(mClient, params[0])
                         .await(1, TimeUnit.MINUTES);

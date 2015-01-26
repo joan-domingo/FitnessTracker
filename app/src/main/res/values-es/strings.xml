@@ -9,7 +9,7 @@
     <string name="cancel">Cancelar</string>
     <string name="choose_activity">Seleccione una Actividad</string>
     <string name="choose_unit">Seleccione una Unidad de Medida</string>
-    <string name="date">FECHA ACTIVIDAD</string>
+    <string name="date">FECHA</string>
     <string name="date_format">Formato de la Fecha</string>
     <string name="ddmmyyyy">DD-MM-AAAA</string>
     <string name="delete_session">Seguro que quiere eliminar esta actividad?</string>

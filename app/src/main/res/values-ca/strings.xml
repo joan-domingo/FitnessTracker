@@ -9,7 +9,7 @@
     <string name="cancel">Cancel·la</string>
     <string name="choose_activity">Selecciona una Activitat</string>
     <string name="choose_unit">Selecciona una Unitat de Mesura</string>
-    <string name="date">DATA ACTIVITAT</string>
+    <string name="date">DATA</string>
     <string name="date_format">Format de la Data</string>
     <string name="delete_session">Segur que vols eliminar aquesta activitat?</string>
     <string name="distance">Distància</string>
