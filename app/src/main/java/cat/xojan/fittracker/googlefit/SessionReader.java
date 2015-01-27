@@ -24,7 +24,7 @@ public class SessionReader extends AsyncTask<SessionReadRequest, Void, SessionRe
     protected SessionReadResult doInBackground(SessionReadRequest... params) {
         // Invoke the Sessions API to fetch the session with the query and wait for the result
         // of the read request.
-        if (params[0] == null) {
+        if (params[0] == null || mClient == null) {
             return null;
         }
 

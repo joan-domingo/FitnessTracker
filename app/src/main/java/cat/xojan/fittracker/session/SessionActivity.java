@@ -56,9 +56,7 @@ public class SessionActivity extends ActionBarActivity {
     private long mStartTime;
     private long mEndTime;
     private String mSessionIdentifier;
-    private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
-    private static final int REQUEST_OAUTH = 1;
 
     public static Handler getHandler() {
         return handler;
@@ -70,7 +68,7 @@ public class SessionActivity extends ActionBarActivity {
         setContentView(R.layout.activity_session);
 
         if (savedInstanceState != null) {
-            authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
+            authInProgress = savedInstanceState.getBoolean(Constant.AUTH_PENDING);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.fragment_session_toolbar);
@@ -167,7 +165,7 @@ public class SessionActivity extends ActionBarActivity {
                                         Log.i(Constant.TAG, "Attempting to resolve failed connection");
                                         authInProgress = true;
                                         result.startResolutionForResult(SessionActivity.this,
-                                                REQUEST_OAUTH);
+                                                Constant.REQUEST_OAUTH);
                                     } catch (IntentSender.SendIntentException e) {
                                         Log.e(Constant.TAG,
                                                 "Exception while starting resolution activity", e);
@@ -364,7 +362,7 @@ public class SessionActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_OAUTH) {
+        if (requestCode == Constant.REQUEST_OAUTH) {
             authInProgress = false;
             if (resultCode == RESULT_OK) {
                 // Make sure the app is not already connected or attempting to connect
@@ -380,6 +378,6 @@ public class SessionActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(AUTH_PENDING, authInProgress);
+        outState.putBoolean(Constant.AUTH_PENDING, authInProgress);
     }
 }

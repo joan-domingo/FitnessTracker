@@ -52,6 +52,7 @@ public class FitnessController {
     private SessionReadResult mSessionReadResult;
     private Session mSingleSessionResult;
     private List<DataSet> mSingleSessionDataSets;
+    private boolean mIsReading = false;
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
