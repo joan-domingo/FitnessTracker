@@ -336,7 +336,7 @@ public class SessionActivity extends ActionBarActivity {
             map.getUiSettings().setMyLocationButtonEnabled(false);
 
             new MapLoader(map, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    mLocationDataPoints, mSpeedDataPoints);
+                    mLocationDataPoints, mSpeedDataPoints, mSegmentDataPoints);
 
         } else {
             if (mapFragment.getView() != null)

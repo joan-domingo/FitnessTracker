@@ -30,6 +30,8 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
     protected Boolean doInBackground(List<DataPoint>... params) {
         List<DataPoint> mLocationDataPoints = params[0];
         List<DataPoint> mSpeedDataPoints = params[1];
+        List<DataPoint> mSegmentDataPoints = params[2];
+
         float speed = 0;
         float minSpeed = 1000;
         float maxSpeed = 0;

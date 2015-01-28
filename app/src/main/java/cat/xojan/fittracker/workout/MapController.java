@@ -225,6 +225,8 @@ public class MapController {
         mView.findViewById(R.id.resume_finish_bar).setVisibility(View.VISIBLE);
         mView.findViewById(R.id.lap_pause_bar).setVisibility(View.GONE);
 
+        SpeedController.getInstance().updateSpeed();
+
         addFinishMarker();
     }
 

@@ -96,6 +96,7 @@ public class WorkoutFragment extends Fragment {
                 MapController.getInstance().pause();
                 TimeController.getInstance().pause();
                 FitnessController.getInstance().saveSegment(false);
+                DistanceController.getInstance().pause();
             }
         });
 
