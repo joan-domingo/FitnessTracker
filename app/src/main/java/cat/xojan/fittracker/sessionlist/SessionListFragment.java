@@ -60,8 +60,12 @@ public class SessionListFragment extends Fragment {
                 switch (msg.what) {
                     case Constant.MESSAGE_READ_SESSIONS:
                         SessionReadResult sessionReadResult = FitnessController.getInstance().getSessionReadResult();
-                        RecyclerView.Adapter mAdapter = new SessionAdapter(getActivity(), sessionReadResult);
-                        mRecyclerView.setAdapter(mAdapter);
+                        if (sessionReadResult != null) {
+                            RecyclerView.Adapter mAdapter = new SessionAdapter(getActivity(), sessionReadResult);
+                            mRecyclerView.setAdapter(mAdapter);
+                        } else {
+                            FitnessController.getInstance().readSessions(true);
+                        }
                         showProgressBar(false);
                         break;
                 }

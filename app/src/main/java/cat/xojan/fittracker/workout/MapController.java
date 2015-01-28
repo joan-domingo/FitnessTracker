@@ -152,11 +152,11 @@ public class MapController {
 
             DistanceController.getInstance().updateDistance(oldPosition, currentPosition);
             SpeedController.getInstance().updateSpeed();
+            FitnessController.getInstance().storeLocation(location);
+            SpeedController.getInstance().storeSpeed(oldPosition, currentPosition);
         }
         if (isTracking || isPaused) {
             mBoundsBuilder.include(currentPosition);
-            FitnessController.getInstance().storeLocation(location);
-            SpeedController.getInstance().storeSpeed(oldPosition, currentPosition);
         }
         oldPosition = currentPosition;
     }
