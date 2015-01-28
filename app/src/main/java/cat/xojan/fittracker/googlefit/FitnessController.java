@@ -223,8 +223,13 @@ public class FitnessController {
         //distance
         DataPoint distanceDataPoint = DataPoint.create(mDistanceDataSource);
         distanceDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
-        distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(DistanceController.getInstance().getSegmentDistance());
+        if (isPauseSegment) {
+            distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(0f);
+        } else {
+            distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(DistanceController.getInstance().getSegmentDistance());
+        }
         mDistanceDataSet.add(distanceDataPoint);
+
     }
 
     public void start() {

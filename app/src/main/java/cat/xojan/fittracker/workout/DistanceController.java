@@ -98,8 +98,4 @@ public class DistanceController {
         updateDistanceView();
         mUnitCounter = 1;
     }
-
-    public void pause() {
-        mSegmentDistance = 0;
-    }
 }
