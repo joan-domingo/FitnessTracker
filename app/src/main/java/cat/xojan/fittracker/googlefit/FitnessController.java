@@ -52,7 +52,7 @@ public class FitnessController {
     private SessionReadResult mSessionReadResult;
     private Session mSingleSessionResult;
     private List<DataSet> mSingleSessionDataSets;
-    private boolean mIsReading = false;
+    private boolean mReload = true;
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
@@ -80,30 +80,40 @@ public class FitnessController {
     }
 
     public void readSessions(final boolean sendMessageToSessionList) {
-        // Build a session read request
-        SessionReadRequest readRequest = new SessionReadRequest.Builder()
-                .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
-                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                .read(DataType.TYPE_DISTANCE_DELTA)
-                .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                .readSessionsFromAllApps()
-                .enableServerQueries()
-                .build();
+        if (mReload) {
+            // Build a session read request
+            SessionReadRequest readRequest = new SessionReadRequest.Builder()
+                    .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
+                    .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                    .read(DataType.TYPE_DISTANCE_DELTA)
+                    .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                    .readSessionsFromAllApps()
+                    .enableServerQueries()
+                    .build();
 
-        new SessionReader(mClient) {
+            new SessionReader(mClient) {
 
-            public void getSessionList(SessionReadResult sessionReadResult) {
-                if (sessionReadResult != null) {
-                    mSessionReadResult = sessionReadResult;
+                public void getSessionList(SessionReadResult sessionReadResult) {
+                    if (sessionReadResult != null) {
+                        mSessionReadResult = sessionReadResult;
+                    }
+
+                    if (sendMessageToSessionList)
+                        SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
+                    else
+                        SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
+                    mReload = true;
                 }
 
-                if (sendMessageToSessionList)
-                    SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
-                else
-                    SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
-            }
+            }.execute(readRequest);
+        } else {
+            if (sendMessageToSessionList)
+                SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
+            else
+                SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
+            mReload = true;
+        }
 
-        }.execute(readRequest);
     }
 
     public void saveSession(final FragmentActivity fragmentActivity, String name, String description) {
@@ -366,5 +376,9 @@ public class FitnessController {
 
     public List<DataSet> getSingleSessionDataSets() {
         return mSingleSessionDataSets;
+    }
+
+    public void reload(boolean b) {
+        mReload = b;
     }
 }

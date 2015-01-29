@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +39,7 @@ public class SessionListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private Button mDateEndButton;
     private Button mDateStartButton;
-    //private SwipeRefreshLayout swipeLayout;
+    private SwipeRefreshLayout swipeLayout;
     private static final String TAG = "RecyclerViewFragment";
     private static Handler handler;
 
@@ -72,7 +73,7 @@ public class SessionListFragment extends Fragment {
             }
         };
 
-        /*swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setColorSchemeResources(R.color.accent);
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -80,7 +81,7 @@ public class SessionListFragment extends Fragment {
                 FitnessController.getInstance().setEndTime(Calendar.getInstance());
                 FitnessController.getInstance().readSessions(true);
             }
-        });*/
+        });
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.my_awesome_toolbar);
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
@@ -93,12 +94,8 @@ public class SessionListFragment extends Fragment {
         //recycler view
         mRecyclerView = (RecyclerView) view.findViewById(R.id.sessions_list);
 
-        if (FitnessController.getInstance().getSessionReadResult() == null) {
-            showProgressBar(true);
-            FitnessController.getInstance().readSessions(true);
-        } else {
-            handler.sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
-        }
+        showProgressBar(true);
+        FitnessController.getInstance().readSessions(true);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -190,7 +187,7 @@ public class SessionListFragment extends Fragment {
         } else {
             mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-            //swipeLayout.setRefreshing(false);
+            swipeLayout.setRefreshing(false);
         }
     }
 }

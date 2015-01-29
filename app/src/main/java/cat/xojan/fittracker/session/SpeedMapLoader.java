@@ -6,8 +6,12 @@ import android.os.AsyncTask;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -20,18 +24,31 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
     private final Context mContext;
     private final GoogleMap mMap;
     private List<PolylineOptions> polyList;
+    private List<MarkerOptions> mMarkerList;
+    private List<DataPoint> mSpeedDataPoints;
+    private int mSpeedIndex;
+    private List<DataPoint> mLocationDataPoints;
+    private List<DataPoint> mSegmentDataPoints;
+    private LatLngBounds.Builder mBoundsBuilder;
 
     public SpeedMapLoader(GoogleMap map, Context context) {
         mContext = context;
         mMap = map;
+        mMarkerList = new ArrayList<>();
+        mBoundsBuilder = new LatLngBounds.Builder();
     }
 
     @Override
     protected Boolean doInBackground(List<DataPoint>... params) {
-        List<DataPoint> mLocationDataPoints = params[0];
-        List<DataPoint> mSpeedDataPoints = params[1];
-        List<DataPoint> mSegmentDataPoints = params[2];
+        if (params[0] == null || params[1] == null || params[2] == null) {
+            return false;
+        }
 
+        mLocationDataPoints = params[0];
+        mSegmentDataPoints = params[1];
+        mSpeedDataPoints = params[2];
+
+        mSpeedIndex = 0;
         float speed = 0;
         float minSpeed = 1000;
         float maxSpeed = 0;
@@ -53,7 +70,7 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
             return false;
         }
 
-        LatLng oldPosition = null;
+        /*LatLng oldPosition = null;
         long startTime = mLocationDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSpeedDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) ?
                 mLocationDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) :
                 mSpeedDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS);
@@ -78,9 +95,49 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
             }
             if (i + 1 < mSpeedDataPoints.size())
                 startTime = mSpeedDataPoints.get(i + 1).getStartTime(TimeUnit.MILLISECONDS);
+        }*/
+
+
+
+        for (DataPoint segment : mSegmentDataPoints) {
+            LatLng oldPosition = null;
+            for (DataPoint dp : mLocationDataPoints) {
+                if (dp.getStartTime(TimeUnit.MILLISECONDS) >= segment.getStartTime(TimeUnit.MILLISECONDS) &&
+                        dp.getStartTime(TimeUnit.MILLISECONDS) <= segment.getEndTime(TimeUnit.MILLISECONDS)) {
+                    LatLng currentPosition = new LatLng(dp.getValue(Field.FIELD_LATITUDE).asFloat(),
+                            dp.getValue(Field.FIELD_LONGITUDE).asFloat());
+                    mBoundsBuilder.include(currentPosition);
+                    if (oldPosition != null) {
+                        float currentSpeed = getCurrentSpeed(dp.getStartTime(TimeUnit.MILLISECONDS));
+                        setPolylineColor(maxSpeed, minSpeed, avgSpeed, oldPosition, currentPosition, currentSpeed);
+                    } else {
+                        mMarkerList.add(new MarkerOptions()
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                                .position(new LatLng(currentPosition.latitude, currentPosition.longitude)));
+                    }
+                    oldPosition = currentPosition;
+                }
+            }
+            if (oldPosition != null) {
+                mMarkerList.add(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        .position(new LatLng(oldPosition.latitude, oldPosition.longitude)));
+            }
         }
 
         return true;
+    }
+
+    private float getCurrentSpeed(long startTime) {
+        float speed = 0;
+        for (int i = mSpeedIndex; i < mSpeedDataPoints.size(); i++) {
+            if (mSpeedDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) >= startTime) {
+                speed = mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat();
+                mSpeedIndex = i;
+                break;
+            }
+        }
+        return speed;
     }
 
     private void setPolylineColor(float maxSpeed, float minSpeed, float avgSpeed, LatLng oldPosition, LatLng currentPosition, float currentSpeed) {
@@ -129,6 +186,15 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
             for (PolylineOptions pl : polyList) {
                 mMap.addPolyline(pl);
             }
+            for (MarkerOptions mo : mMarkerList) {
+                mMap.addMarker(mo);
+            }
+            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 5));
+                }
+            });
         }
     }
 }

@@ -229,7 +229,7 @@ public class SessionActivity extends ActionBarActivity {
                 builder.create().show();
                 break;
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
         }
 
@@ -330,13 +330,20 @@ public class SessionActivity extends ActionBarActivity {
                 mapFragment.getView().setVisibility(View.VISIBLE);
             final GoogleMap map = mapFragment.getMap();
             map.clear();
-            map.setPadding(0, 0, 0, 0);
+            map.setPadding(40, 80, 40, 0);
             map.setMyLocationEnabled(false);
             map.getUiSettings().setZoomControlsEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
 
-            new MapLoader(map, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    mLocationDataPoints, mSpeedDataPoints, mSegmentDataPoints);
+            if (mSpeedDataPoints != null && mSpeedDataPoints.size() > 0) {
+                new SpeedMapLoader(map, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        mLocationDataPoints,
+                        mSegmentDataPoints,
+                        mSpeedDataPoints);
+            } else {
+                new MapLoader(map).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        mLocationDataPoints, mSegmentDataPoints);
+            }
 
         } else {
             if (mapFragment.getView() != null)
@@ -379,5 +386,11 @@ public class SessionActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(Constant.AUTH_PENDING, authInProgress);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        FitnessController.getInstance().reload(false);
     }
 }
