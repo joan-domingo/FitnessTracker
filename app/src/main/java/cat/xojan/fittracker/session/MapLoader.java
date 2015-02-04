@@ -1,11 +1,9 @@
 package cat.xojan.fittracker.session;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -76,25 +74,10 @@ public class MapLoader extends AsyncTask<List<DataPoint>, Void, Boolean>{
     @Override
     protected void onPostExecute(Boolean result) {
         if (result) {
-            for (PolylineOptions po : mPolyList) {
-                mMap.addPolyline(po
-                        .geodesic(true)
-                        .width(6)
-                        .color(Color.BLACK));
-            }
-
-            for (MarkerOptions mo : mMarkerList) {
-                mMap.addMarker(mo);
-            }
+            onResult(mPolyList, mMarkerList, mBoundsBuilder);
         }
-
-        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                @Override
-                public void onMapLoaded() {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 5));
-                }
-            });
     }
 
+    public void onResult(List<PolylineOptions> mPolyList, List<MarkerOptions> mMarkerList, LatLngBounds.Builder mBoundsBuilder) {}
 
 }

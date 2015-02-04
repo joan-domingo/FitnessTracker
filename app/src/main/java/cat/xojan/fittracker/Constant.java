@@ -28,10 +28,10 @@ public class Constant {
     public static final String RESULT_FRAGMENT_TAG = "resultFragment";
 
     public static final String AUTH_PENDING = "auth_state_pending";
-    public static final String IS_READING = "session_reader_active";
     public static final int REQUEST_OAUTH = 1;
 
     public static final String EXTRA_SESSION = "extra_session";
     public static final String EXTRA_START = "extra_start_time";
     public static final String EXTRA_END = "extra_end_time";
+    public static final String ACTIVITY_LOADED = "activity_loaded";
 }

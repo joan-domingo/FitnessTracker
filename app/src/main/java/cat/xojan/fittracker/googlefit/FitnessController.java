@@ -84,7 +84,7 @@ public class FitnessController {
             // Build a session read request
             SessionReadRequest readRequest = new SessionReadRequest.Builder()
                     .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
-                    .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                    //.read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
                     .read(DataType.TYPE_DISTANCE_DELTA)
                     .read(DataType.TYPE_ACTIVITY_SEGMENT)
                     .readSessionsFromAllApps()
@@ -342,7 +342,7 @@ public class FitnessController {
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
                 .setSessionId(identifier)
-                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                //.read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
                 .read(DataType.AGGREGATE_SPEED_SUMMARY)
                 .read(DataType.TYPE_SPEED)
                 .read(DataType.TYPE_DISTANCE_DELTA)

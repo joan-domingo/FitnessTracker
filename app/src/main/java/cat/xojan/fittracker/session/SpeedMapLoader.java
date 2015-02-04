@@ -22,7 +22,6 @@ import cat.xojan.fittracker.R;
 
 public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
     private final Context mContext;
-    private final GoogleMap mMap;
     private List<PolylineOptions> polyList;
     private List<MarkerOptions> mMarkerList;
     private List<DataPoint> mSpeedDataPoints;
@@ -31,9 +30,8 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
     private List<DataPoint> mSegmentDataPoints;
     private LatLngBounds.Builder mBoundsBuilder;
 
-    public SpeedMapLoader(GoogleMap map, Context context) {
+    public SpeedMapLoader(Context context) {
         mContext = context;
-        mMap = map;
         mMarkerList = new ArrayList<>();
         mBoundsBuilder = new LatLngBounds.Builder();
     }
@@ -69,35 +67,6 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
         if (avgSpeed == speed) {
             return false;
         }
-
-        /*LatLng oldPosition = null;
-        long startTime = mLocationDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSpeedDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) ?
-                mLocationDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS) :
-                mSpeedDataPoints.get(0).getStartTime(TimeUnit.MILLISECONDS);
-        long endTime = 0;
-
-        for (int i = 0; i < mSpeedDataPoints.size(); i++) {
-            if (i + 1 < mSpeedDataPoints.size()) {
-                endTime = mSpeedDataPoints.get(i + 1).getStartTime(TimeUnit.MILLISECONDS);
-            }
-            for (DataPoint locationDP : mLocationDataPoints) {
-
-                if (locationDP.getStartTime(TimeUnit.MILLISECONDS) >= startTime &&
-                        locationDP.getStartTime(TimeUnit.MILLISECONDS) < endTime) {
-                    LatLng currentPosition = new LatLng(locationDP.getValue(Field.FIELD_LATITUDE).asFloat(),
-                            locationDP.getValue(Field.FIELD_LONGITUDE).asFloat());
-                    if (oldPosition != null) {
-                        float currentSpeed = mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat();
-                        setPolylineColor(maxSpeed, minSpeed, avgSpeed, oldPosition, currentPosition, currentSpeed);
-                    }
-                    oldPosition = currentPosition;
-                }
-            }
-            if (i + 1 < mSpeedDataPoints.size())
-                startTime = mSpeedDataPoints.get(i + 1).getStartTime(TimeUnit.MILLISECONDS);
-        }*/
-
-
 
         for (DataPoint segment : mSegmentDataPoints) {
             LatLng oldPosition = null;
@@ -182,19 +151,10 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         if (result) {
-            mMap.clear();
-            for (PolylineOptions pl : polyList) {
-                mMap.addPolyline(pl);
-            }
-            for (MarkerOptions mo : mMarkerList) {
-                mMap.addMarker(mo);
-            }
-            mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                @Override
-                public void onMapLoaded() {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 5));
-                }
-            });
+            onResult(polyList, mMarkerList, mBoundsBuilder);
         }
+    }
+
+    public void onResult(List<PolylineOptions> polyList, List<MarkerOptions> mMarkerList, LatLngBounds.Builder mBoundsBuilder) {
     }
 }

@@ -35,7 +35,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     private static Context mContext;
     private static List<Session> mSession = null;
     private final List<Float> mDistance;
-    private final List<Integer> mDuration;
     private static SessionReadResult mSessionReadResult;
 
     // Provide a reference to the views for each data item
@@ -95,22 +94,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         if (mSession.size() > 1 && mSession.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSession.get(mSession.size() - 1).getStartTime(TimeUnit.MILLISECONDS))
             Collections.reverse(mSession);
         mDistance = getDistanceList(sessionReadResult);
-        mDuration = getDurationList(sessionReadResult);
-    }
-
-    private List<Integer> getDurationList(SessionReadResult sessionReadResult) {
-        List<Integer> sessionDuration = new ArrayList<>(sessionReadResult.getSessions().size());
-
-        for (Session s : sessionReadResult.getSessions()) {
-            int duration = 0;
-            for (DataSet ds : sessionReadResult.getDataSet(s, DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
-                for (DataPoint dp : ds.getDataPoints()) {
-                    duration = dp.getValue(Field.FIELD_DURATION).asInt();
-                }
-            }
-            sessionDuration.add(duration);
-        }
-        return sessionDuration;
     }
 
     private List<Float> getDistanceList(SessionReadResult sessionReadResult) {
@@ -147,13 +130,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mName.setText(mSession.get(position).getName());
         holder.mDescription.setText(mSession.get(position).getDescription());
         holder.mActivity.setImageDrawable(getActivityDrawable(mSession.get(position).getActivity()));
-        if (mDuration.get(position) == 0) {
-            holder.mSummary.setText(Utils.getTimeDifference(mSession.get(position).getEndTime(TimeUnit.MILLISECONDS),
+        holder.mSummary.setText(Utils.getTimeDifference(mSession.get(position).getEndTime(TimeUnit.MILLISECONDS),
                     mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " / " + Utils.getRightDistance(mDistance.get(position), mContext));
-        } else {
-            holder.mSummary.setText(Utils.getTimeDifference(mDuration.get(position), 0) +
-                    " / " + Utils.getRightDistance(mDistance.get(position), mContext));
-        }
         holder.mDay.setText(Utils.millisToDayComplete(mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)));
 
         if (mSession.get(position).getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART)) {
