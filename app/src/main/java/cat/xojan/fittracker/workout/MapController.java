@@ -270,18 +270,6 @@ public class MapController {
         mLocationManager.removeUpdates(mFirstLocationListener);
     }
 
-    public LatLngBounds getBounds() {
-        return mBoundsBuilder.build();
-    }
-
-    public List<MarkerOptions> getMarkers() {
-        return mMarkerList;
-    }
-
-    public List<PolylineOptions> getPolylines() {
-        return mPolylines;
-    }
-
     public void addKmMarker(String unitCounter) {
         addMapMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))

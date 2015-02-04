@@ -23,11 +23,10 @@ import cat.xojan.fittracker.R;
 
 public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, LinearLayout> {
 
-    private final LinearLayout mView;
     private final Context mContext;
+    private double mTotalDistance;
 
-    public SessionDetailedDataLoader(LinearLayout detailedView, Context context) {
-        mView = detailedView;
+    public SessionDetailedDataLoader(Context context) {
         mContext = context;
     }
 
@@ -59,8 +58,8 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
             TableLayout intervalTable = new TableLayout(mContext);
             TableRow headersRow = new TableRow(mContext);
 
+            headersRow.addView(createHeader(mContext, ""));
             headersRow.addView(createHeader(mContext, mContext.getText(R.string.time)));
-            headersRow.addView(createHeader(mContext, mContext.getText(R.string.distance)));
             headersRow.addView(createHeader(mContext, mContext.getText(R.string.pace)));
             headersRow.addView(createHeader(mContext, mContext.getText(R.string.speed)));
             headersRow.addView(createHeader(mContext, mContext.getText(R.string.start_interval)));
@@ -90,7 +89,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
                         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
                             double miles = distance / 1609.344;
                             if (miles >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + mContext.getText(R.string.mi), startTime,
+                                addRow(intervalTable, mContext.getText(R.string.mi) + " " + unitCounter, startTime,
                                         dp.getEndTime(TimeUnit.MILLISECONDS), mContext);
                                 unitCounter++;
                                 lastDistance = 0;
@@ -99,7 +98,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
                         } else {
                             double kms = distance / 1000;
                             if (kms >= unitCounter) {
-                                addRow(intervalTable, unitCounter + " " + mContext.getText(R.string.km), startTime,
+                                addRow(intervalTable, mContext.getText(R.string.km) + " " + unitCounter, startTime,
                                         dp.getEndTime(TimeUnit.MILLISECONDS), mContext);
                                 unitCounter++;
                                 lastDistance = 0;
@@ -116,18 +115,17 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
             if (unitCounter > 1)
                 addLastDetailedRow(intervalTable, lastDistance, startTime, mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS), mContext);
 
-            //4 - values
-            TableRow valuesRow = new TableRow(mContext);
 
+            //4 - values
+            double totalDistance = getTotalDistance(unitCounter - 1, lastDistance, mContext);
+            mTotalDistance = mTotalDistance + totalDistance;
+            TableRow valuesRow = new TableRow(mContext);
+            valuesRow.addView(createValue(mContext, Utils.getRightDistance((float) totalDistance, mContext)));
             valuesRow.addView(createValue(mContext, Utils.getTimeDifference(mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
                     mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-            //valuesRow.addView(createValue(mContext, Utils.getRightDistance(mDistanceDataPoints.get(i).getValue(Field.FIELD_DISTANCE).asFloat(), mContext)));
-            valuesRow.addView(createValue(mContext, Utils.getRightDistance((float) distance, mContext)));
-            //valuesRow.addView(createValue(mContext, Utils.getRightPace(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
-            double speed = distance / ((mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS) -
+           double speed = totalDistance / ((mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS) -
                     mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))/1000);
             valuesRow.addView(createValue(mContext, Utils.getRightPace((float) speed, mContext)));
-            //valuesRow.addView(createValue(mContext, Utils.getRightSpeed(mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat(), mContext)));
             valuesRow.addView(createValue(mContext, Utils.getRightSpeed((float) speed, mContext)));
             valuesRow.addView(createValue(mContext, Utils.millisToTime(mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
             valuesRow.addView(createValue(mContext, Utils.millisToTime(mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS))));
@@ -140,6 +138,16 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         }
 
         return intervalView;
+    }
+
+    private double getTotalDistance(int unitCounter, double lastDistance, Context context) {
+        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+            return ((1609.344 * unitCounter) + lastDistance);
+        } else {
+            return ((1000 * unitCounter) + lastDistance);
+        }
     }
 
     private static void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, Context context) {
@@ -156,8 +164,8 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         }
 
         TableRow row = new TableRow(context);
-        row.addView(createValue(context, Utils.getTimeDifference(endTime, startTime)));
         row.addView(createValue(context, String.valueOf(unitCounter)));
+        row.addView(createValue(context, Utils.getTimeDifference(endTime, startTime)));
         row.addView(createValue(context, Utils.getRightPace((float) speed, context)));
         row.addView(createValue(context, Utils.getRightSpeed((float) speed, context)));
         row.addView(createValue(context, Utils.millisToTime(startTime)));
@@ -171,8 +179,8 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         double speed = distance / seconds;
 
         TableRow row = new TableRow(context);
-        row.addView(createValue(context, Utils.getTimeDifference(endTime, startTime)));
         row.addView(createValue(context, Utils.getRightDistance((float) distance, context)));
+        row.addView(createValue(context, Utils.getTimeDifference(endTime, startTime)));
         row.addView(createValue(context, Utils.getRightPace((float) speed, context)));
         row.addView(createValue(context, Utils.getRightSpeed((float) speed, context)));
         row.addView(createValue(context, Utils.millisToTime(startTime)));
@@ -204,8 +212,9 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
 
     @Override
     protected void onPostExecute(LinearLayout intervalView) {
-        mView.removeAllViews();
-        if (intervalView != null)
-            mView.addView(intervalView);
+        onResult(intervalView, mTotalDistance);
+    }
+
+    public void onResult(LinearLayout intervalView, double mTotalDistance) {
     }
 }

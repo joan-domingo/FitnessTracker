@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,8 +30,13 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -50,13 +56,15 @@ public class SessionActivity extends ActionBarActivity {
     private MenuItem mDeleteButton;
     private List<DataSet> mDataSets;
     private List<DataPoint> mLocationDataPoints;
-    private List<DataPoint> mSpeedDataPoints;
     private List<DataPoint> mSegmentDataPoints;
     private GoogleApiClient mClient;
     private long mStartTime;
     private long mEndTime;
     private String mSessionIdentifier;
     private boolean authInProgress = false;
+    private GoogleMap map;
+    private List<DataPoint> mDistanceDataPoints;
+    private int mActiveTime;
 
     public static Handler getHandler() {
         return handler;
@@ -238,112 +246,131 @@ public class SessionActivity extends ActionBarActivity {
 
     private void fillViewContent() {
 
-        //name
-        ((TextView) findViewById(R.id.fragment_session_name))
-                .setText(mSession.getName());
-        //description
-        ((TextView)findViewById(R.id.fragment_session_description))
-                .setText(mSession.getDescription());
-        //date
-        ((TextView)findViewById(R.id.fragment_session_date))
-                .setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), this));
-        //start time
-        ((TextView)findViewById(R.id.fragment_session_start))
-                .setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
-        //end time
-        ((TextView)findViewById(R.id.fragment_session_end))
-                .setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
-        //total/duration time
-        long sessionTime = mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS);
-        ((TextView)findViewById(R.id.fragment_session_total_time))
-                .setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS), mSession.getStartTime(TimeUnit.MILLISECONDS)));
-        //speed
-        ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, this));
-        //pace
-        ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, this));
+        getDataPoints();
 
-        List<DataPoint> mDistanceDataPoints = null;
+        new SessionDetailedDataLoader(this) {
+
+            public void onResult(LinearLayout intervalView, double totalDistance) {
+                if (intervalView != null) {
+                    LinearLayout detailedView = (LinearLayout) findViewById(R.id.session_intervals);
+                    detailedView.removeAllViews();
+                    detailedView.addView(intervalView);
+                } else {
+                    totalDistance = 0;
+                    for (DataPoint dp : mDistanceDataPoints) {
+                        totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
+                    }
+                }
+                //distance
+                ((TextView)findViewById(R.id.fragment_session_total_distance))
+                        .setText(Utils.getRightDistance((float) totalDistance, SessionActivity.this));
+                //name
+                ((TextView) findViewById(R.id.fragment_session_name))
+                        .setText(mSession.getName());
+                //description
+                ((TextView)findViewById(R.id.fragment_session_description))
+                        .setText(mSession.getDescription());
+                //date
+                ((TextView)findViewById(R.id.fragment_session_date))
+                        .setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), SessionActivity.this));
+                //start time
+                ((TextView)findViewById(R.id.fragment_session_start))
+                        .setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
+                //end time
+                ((TextView)findViewById(R.id.fragment_session_end))
+                        .setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
+                //total/duration time
+                ((TextView)findViewById(R.id.fragment_session_total_time))
+                        .setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS),
+                                mSession.getStartTime(TimeUnit.MILLISECONDS)));
+
+                long sessionTime = mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS);
+                sessionTime = mActiveTime > 0 ? mActiveTime : sessionTime;
+
+                if (totalDistance > 0 && sessionTime > 0) {
+                    double speed = totalDistance / (sessionTime / 1000);
+                    //speed
+                    ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed((float) speed, SessionActivity.this));
+                    //pace
+                    ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace((float) speed, SessionActivity.this));
+                } else {
+                    //speed
+                    ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, SessionActivity.this));
+                    //pace
+                    ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, SessionActivity.this));
+                }
+                showProgressBar(false);
+                if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
+                    fillMap(true);
+                } else {
+                    fillMap(false);
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                mLocationDataPoints,
+                mSegmentDataPoints);
+    }
+
+    private void getDataPoints() {
+        mActiveTime = 0;
+        mDistanceDataPoints = null;
         mLocationDataPoints = null;
-        float speed = 0;
+        mSegmentDataPoints = null;
 
         for (DataSet ds : mDataSets) {
-            if (ds.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
-                if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
-                    sessionTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
-                    ((TextView) findViewById(R.id.fragment_session_total_time)).setText(Utils.getTimeDifference(sessionTime, 0));
-                }
-            } else if (ds.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
-                if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
-                    speed = ds.getDataPoints().get(0).getValue(Field.FIELD_AVERAGE).asFloat();
-                }
-
-            } else if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
+            if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
                 mDistanceDataPoints = ds.getDataPoints();
-            } else if (ds.getDataType().equals(DataType.TYPE_SPEED)) {
-                mSpeedDataPoints = ds.getDataPoints();
             } else if (ds.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
                 mLocationDataPoints = ds.getDataPoints();
             } else if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT)) {
                 mSegmentDataPoints = ds.getDataPoints();
+            } else if (ds.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
+                if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
+                    mActiveTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
+                }
             }
-        }
-
-        float totalDistance = 0;
-        for (DataPoint dp : mDistanceDataPoints) {
-            totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
-        }
-
-        //distance
-        if (totalDistance == 0) {
-            if (speed != 0) {
-                totalDistance = speed * (sessionTime / 1000);
-            }
-        }
-        ((TextView)findViewById(R.id.fragment_session_total_distance)).setText(Utils.getRightDistance(totalDistance, this));
-
-        //speed/pace
-        if (totalDistance != 0) {
-            if (speed == 0) {
-                speed = totalDistance / (sessionTime / 1000);
-            }
-            ((TextView)findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(speed, this));
-            ((TextView)findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(speed, this));
-        }
-
-        showProgressBar(false);
-
-        LinearLayout detailedView = (LinearLayout)findViewById(R.id.session_intervals);
-        new SessionDetailedDataLoader(detailedView, this)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mLocationDataPoints, mSegmentDataPoints);
-
-        if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
-            fillMap(true);
-        } else {
-            fillMap(false);
         }
     }
 
     private void fillMap(boolean fillMap) {
-        MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.fragment_session_map));
-        if (fillMap) {
-            if (mapFragment.getView() != null)
-                mapFragment.getView().setVisibility(View.VISIBLE);
-            final GoogleMap map = mapFragment.getMap();
-            map.clear();
-            map.setPadding(40, 80, 40, 0);
-            map.setMyLocationEnabled(false);
-            map.getUiSettings().setZoomControlsEnabled(false);
-            map.getUiSettings().setMyLocationButtonEnabled(false);
+        final MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.fragment_session_map));
 
-            if (mSpeedDataPoints != null && mSpeedDataPoints.size() > 0) {
-                new SpeedMapLoader(map, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        mLocationDataPoints,
-                        mSegmentDataPoints,
-                        mSpeedDataPoints);
-            } else {
-                new MapLoader(map).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+        if (fillMap) {
+            mapFragment.getView().setVisibility(View.VISIBLE);
+
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    map = googleMap;
+                    map.clear();
+                    map.setPadding(40, 80, 40, 0);
+                    map.setMyLocationEnabled(false);
+                    map.getUiSettings().setZoomControlsEnabled(false);
+                    map.getUiSettings().setMyLocationButtonEnabled(false);
+                }
+            });
+
+                new MapLoader(map) {
+                    public void onResult(final List<PolylineOptions> mPolyList, final List<MarkerOptions> mMarkerList, final LatLngBounds.Builder mBoundsBuilder) {
+                        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                            @Override
+                            public void onMapLoaded() {
+                                map.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 5));
+
+                                for (PolylineOptions pl : mPolyList ) {
+                                    map.addPolyline(pl
+                                            .geodesic(true)
+                                            .width(6)
+                                            .color(Color.BLACK));
+                                }
+                                for (MarkerOptions mo : mMarkerList) {
+                                    map.addMarker(mo);
+                                }
+                            }
+                        });
+                    }
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                         mLocationDataPoints, mSegmentDataPoints);
-            }
 
         } else {
             if (mapFragment.getView() != null)

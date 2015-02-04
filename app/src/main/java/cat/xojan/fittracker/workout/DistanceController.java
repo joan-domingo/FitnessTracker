@@ -16,6 +16,7 @@ public class DistanceController {
     private float mSegmentDistance;
     private float mSessionDistance;
     private int mUnitCounter = 1;
+    private int mSegmentUnitCounter = 1;
     private float mAuxDistance = 0;
 
     private static DistanceController instance = null;
@@ -48,22 +49,38 @@ public class DistanceController {
         float distance = mSegmentDistance + mAuxDistance;
 
         if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
-            String milesString = String.format("%.2f", distance /  1609.344);
             double miles = distance / 1609.344;
             //check counter
             if (miles >= mUnitCounter) {
                 MapController.getInstance().addKmMarker(mUnitCounter + " " + Constant.DISTANCE_MEASURE_MILE);
                 mUnitCounter++;
             }
+            miles = mSegmentDistance / 1609.344;
+            if (miles >= mSegmentUnitCounter) {
+                float mod = (float) ((miles % mSegmentUnitCounter) * 1000);
+                mSessionDistance = mSessionDistance - mod;
+                mSegmentDistance = mSegmentDistance - mod;
+                distance = distance - mod;
+                mSegmentUnitCounter++;
+            }
+            String milesString = String.format("%.2f", distance /  1609.344);
             mDistanceView.setText(milesString + " " + Constant.DISTANCE_MEASURE_MILE);
         } else {
-            String kmString = String.format("%.2f", distance / 1000);
             float kms = distance / 1000;
             //check counter
             if (kms >= mUnitCounter) {
                 MapController.getInstance().addKmMarker(mUnitCounter + " " + Constant.DISTANCE_MEASURE_KM);
                 mUnitCounter++;
             }
+            float segmentKm = mSegmentDistance / 1000;
+            if (segmentKm >= mSegmentUnitCounter) {
+                float mod = ((segmentKm % mSegmentUnitCounter) * 1000);
+                mSessionDistance = mSessionDistance - mod;
+                mSegmentDistance = mSegmentDistance - mod;
+                distance = distance - mod;
+                mSegmentUnitCounter++;
+            }
+            String kmString = String.format("%.2f", distance / 1000);
             mDistanceView.setText(kmString + " " + Constant.DISTANCE_MEASURE_KM);
         }
     }
@@ -90,12 +107,13 @@ public class DistanceController {
         mSegmentDistance = 0;
         updateDistanceView();
         mUnitCounter = 1;
+        mSegmentUnitCounter = 1;
     }
 
     public void resume() {
         mAuxDistance = mSegmentDistance + mAuxDistance;
         mSegmentDistance = 0;
+        mSegmentUnitCounter = 1;
         updateDistanceView();
-        mUnitCounter = 1;
     }
 }
