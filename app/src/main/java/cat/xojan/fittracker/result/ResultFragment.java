@@ -45,6 +45,7 @@ public class ResultFragment extends Fragment {
     private EditText mName;
     private static View view;
     private GoogleMap map;
+    private double totalDistance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,7 +70,8 @@ public class ResultFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FitnessController.getInstance().saveSession(getActivity(), mName.getText().toString(), mDescription.getText().toString());
+                FitnessController.getInstance().saveSession(getActivity(), mName.getText().toString(),
+                        mDescription.getText().toString(), totalDistance);
             }
         });
 
@@ -104,11 +106,12 @@ public class ResultFragment extends Fragment {
     private void setContent() {
 
         new SessionDetailedDataLoader(getActivity().getBaseContext()) {
-            public void onResult(LinearLayout intervalView, double totalDistance) {
+            public void onResult(LinearLayout intervalView, double distance) {
                 if (intervalView != null) {
                     LinearLayout detailedView = (LinearLayout) view.findViewById(R.id.session_intervals);
                     detailedView.removeAllViews();
                     detailedView.addView(intervalView);
+                    totalDistance = distance;
                 } else {
                     totalDistance = DistanceController.getInstance().getSessionDistance();
                 }

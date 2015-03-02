@@ -30,7 +30,6 @@ import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.session.SessionActivity;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;
-import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.TimeController;
 
 public class FitnessController {
@@ -116,13 +115,20 @@ public class FitnessController {
 
     }
 
-    public void saveSession(final FragmentActivity fragmentActivity, String name, String description) {
+    public void saveSession(final FragmentActivity fragmentActivity, String name, String description, double totalDistance) {
         //summary activity (aggregate)
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
         summaryDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
         summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
         summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) TimeController.getInstance().getSessionWorkoutTime());
         summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
+
+        //distance
+        DataPoint distanceDataPoint = DataPoint.create(mDistanceDataSource);
+        distanceDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(),
+                TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
+        distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat((float) totalDistance);
+        mDistanceDataSet.add(distanceDataPoint);
 
         // Create a session with metadata about the activity.
         Session session = new Session.Builder()
@@ -229,17 +235,6 @@ public class FitnessController {
         segmentDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
         segmentDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
         mSegmentDataSet.add(segmentDataPoint);
-
-        //distance
-        DataPoint distanceDataPoint = DataPoint.create(mDistanceDataSource);
-        distanceDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
-        if (isPauseSegment) {
-            distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(0f);
-        } else {
-            distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat(DistanceController.getInstance().getSegmentDistance());
-        }
-        mDistanceDataSet.add(distanceDataPoint);
-
     }
 
     public void start() {
