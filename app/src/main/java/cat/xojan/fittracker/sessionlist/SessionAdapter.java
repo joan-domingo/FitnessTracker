@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,30 +52,27 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         public ViewHolder(View itemView) {
             super(itemView);
             // Define click listener for the ViewHolder's View.
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Log.d(Constant.TAG, "Element " + getPosition() + " clicked.");
-                    Session session = mSession.get(getPosition());
-                    long startTime = session.getStartTime(TimeUnit.MILLISECONDS);
-                    long endTime = session.getEndTime(TimeUnit.MILLISECONDS);
+            itemView.setOnClickListener(v -> {
+                //Log.d(Constant.TAG, "Element " + getPosition() + " clicked.");
+                Session session = mSession.get(getPosition());
+                long startTime = session.getStartTime(TimeUnit.MILLISECONDS);
+                long endTime = session.getEndTime(TimeUnit.MILLISECONDS);
 
-                    HistoryApi.ViewIntentBuilder intentBuilder = new HistoryApi.ViewIntentBuilder(mContext,
-                            DataType.TYPE_ACTIVITY_SEGMENT)
-                            .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                            .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART);
+                HistoryApi.ViewIntentBuilder intentBuilder = new HistoryApi.ViewIntentBuilder(mContext,
+                        DataType.TYPE_ACTIVITY_SEGMENT)
+                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART);
 
-                    for (DataSet ds : mSessionReadResult.getDataSet(session, DataType.TYPE_ACTIVITY_SEGMENT)) {
-                        if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT))
-                            intentBuilder.setDataSource(ds.getDataSource());
-                    }
-
-                    Intent fitIntent = intentBuilder.build();
-                    fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
-                    fitIntent.putExtra(Constant.EXTRA_START, startTime);
-                    fitIntent.putExtra(Constant.EXTRA_END, endTime);
-                    mContext.startActivity(fitIntent);
+                for (DataSet ds : mSessionReadResult.getDataSet(session, DataType.TYPE_ACTIVITY_SEGMENT)) {
+                    if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT))
+                        intentBuilder.setDataSource(ds.getDataSource());
                 }
+
+                Intent fitIntent = intentBuilder.build();
+                fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
+                fitIntent.putExtra(Constant.EXTRA_START, startTime);
+                fitIntent.putExtra(Constant.EXTRA_END, endTime);
+                mContext.startActivity(fitIntent);
             });
             mName = (TextView) itemView.findViewById(R.id.session_name);
             mDescription = (TextView) itemView.findViewById(R.id.session_description);
@@ -141,9 +137,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
                 PackageManager pkgManager = mContext.getPackageManager();
                 Drawable appIcon = pkgManager.getApplicationIcon(mSession.get(position).getAppPackageName());
                 holder.mIcon.setImageDrawable(appIcon);
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.i(Constant.TAG, "Not possible to get session package icon");
-            }
+            } catch (PackageManager.NameNotFoundException e) {}
         }
     }
 

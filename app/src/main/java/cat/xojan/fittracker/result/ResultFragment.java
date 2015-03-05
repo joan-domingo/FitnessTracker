@@ -1,8 +1,9 @@
 package cat.xojan.fittracker.result;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,12 +22,13 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.R;
@@ -38,6 +40,9 @@ import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.workout.DistanceController;
 import cat.xojan.fittracker.workout.MapController;
 import cat.xojan.fittracker.workout.TimeController;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ResultFragment extends Fragment {
 
@@ -67,35 +72,21 @@ public class ResultFragment extends Fragment {
         mName = (EditText) view.findViewById(R.id.result_name);
         mDescription = (EditText) view.findViewById(R.id.result_description);
 
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FitnessController.getInstance().saveSession(getActivity(), mName.getText().toString(),
-                        mDescription.getText().toString(), totalDistance);
-            }
-        });
+        save.setOnClickListener(v -> FitnessController.getInstance().saveSession(getActivity(), mName.getText().toString(),
+                mDescription.getText().toString(), totalDistance));
 
-        exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.save_activity)
-                        .setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                getActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.fragment_container, new SessionListFragment())
-                                        .commit();
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                // Create the AlertDialog object and return it
-                builder.create().show();
-            }
+        exit.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.save_activity)
+                    .setPositiveButton(R.string.exit, (dialog, id) -> getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new SessionListFragment())
+                            .commit())
+                    .setNegativeButton(R.string.cancel, (dialog, id) -> {
+                        // User cancelled the dialog
+                    });
+            // Create the AlertDialog object and return it
+            builder.create().show();
         });
 
         setContent();
@@ -125,20 +116,38 @@ public class ResultFragment extends Fragment {
                 ((TextView) view.findViewById(R.id.fragment_result_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
                 ((TextView) view.findViewById(R.id.fragment_result_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
 
-                new LocationReader(getActivity()) {
-
-                    public void onResult(String cityName) {
-                        mName.setText(getText(R.string.workout) + " " + Utils.millisToDay(TimeController.getInstance().getSessionEndTime()));
-                        if (!TextUtils.isEmpty(cityName)) {
-                            mDescription.setText(getText(ActivityType.getRightLanguageString(FitnessController.getInstance().getFitnessActivity())) + " @ " + cityName);
-                        } else {
-                            mDescription.setText(getText(ActivityType.getRightLanguageString(FitnessController.getInstance().getFitnessActivity())));
-                        }
-                        showProgressBar(false);
-                        setMap();
-                    }
-
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MapController.getInstance().getLastPosition());
+                Observable.just(MapController.getInstance().getLastPosition())
+                        .subscribeOn(Schedulers.newThread())
+                        .subscribe(pos -> {
+                                    String cityName = null;
+                                    Geocoder gcd = new Geocoder(getActivity().getBaseContext(), Locale.ENGLISH);
+                                    List<Address> addresses;
+                                    try {
+                                        addresses = gcd.getFromLocation(pos.latitude, pos.longitude, 1);
+                                        if (addresses != null && addresses.size() > 0)
+                                            cityName = addresses.get(0).getLocality();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Observable.just(cityName)
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(cn -> {
+                                                mName.setText(getText(R.string.workout) + " " +
+                                                        Utils.millisToDay(TimeController.getInstance().getSessionEndTime()));
+                                                if (!TextUtils.isEmpty(cn)) {
+                                                    mDescription.setText(getText(ActivityType
+                                                            .getRightLanguageString(FitnessController.getInstance()
+                                                                    .getFitnessActivity())) + " @ " + cn);
+                                                } else {
+                                                    mDescription.setText(getText(ActivityType
+                                                            .getRightLanguageString(FitnessController.getInstance()
+                                                                    .getFitnessActivity())));
+                                                }
+                                                showProgressBar(false);
+                                                setMap();
+                                            });
+                                }
+                        );
 
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
@@ -160,16 +169,13 @@ public class ResultFragment extends Fragment {
         //init google map
         MapFragment mapFragment = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.result_map));
 
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                map = googleMap;
-                map.clear();
-                map.setPadding(40, 80, 40, 0);
-                map.setMyLocationEnabled(false);
-                map.getUiSettings().setZoomControlsEnabled(false);
-                map.getUiSettings().setMyLocationButtonEnabled(false);
-            }
+        mapFragment.getMapAsync(googleMap -> {
+            map = googleMap;
+            map.clear();
+            map.setPadding(40, 80, 40, 0);
+            map.setMyLocationEnabled(false);
+            map.getUiSettings().setZoomControlsEnabled(false);
+            map.getUiSettings().setMyLocationButtonEnabled(false);
         });
 
         new MapLoader(map) {

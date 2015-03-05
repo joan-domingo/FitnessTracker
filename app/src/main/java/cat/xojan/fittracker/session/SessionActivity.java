@@ -1,14 +1,11 @@
 package cat.xojan.fittracker.session;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,6 +26,9 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
+import com.google.android.gms.fitness.request.SessionReadRequest;
+import com.google.android.gms.fitness.result.SessionReadResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -43,15 +42,16 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.googlefit.FitnessController;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
 import cat.xojan.fittracker.util.Utils;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class SessionActivity extends ActionBarActivity {
 
     private ProgressBar mProgressBar;
     private LinearLayout mSessionView;
-    private static Handler handler;
     private Session mSession;
     private MenuItem mDeleteButton;
     private List<DataSet> mDataSets;
@@ -65,10 +65,6 @@ public class SessionActivity extends ActionBarActivity {
     private GoogleMap map;
     private List<DataPoint> mDistanceDataPoints;
     private int mActiveTime;
-
-    public static Handler getHandler() {
-        return handler;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,27 +82,6 @@ public class SessionActivity extends ActionBarActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.fragment_loading_spinner);
         mSessionView = (LinearLayout) findViewById(R.id.fragment_session_container);
         showProgressBar(true);
-
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case Constant.MESSAGE_SINGLE_SESSION_READ:
-                        mSession = FitnessController.getInstance().getSingleSessionResult();
-                        if (mSession != null) {
-                            if (mSession.getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART))
-                                mDeleteButton.setVisible(true);
-
-                            mDataSets = FitnessController.getInstance().getSingleSessionDataSets();
-                            fillViewContent();
-                        }
-                        break;
-                    case Constant.MESSAGE_SESSION_DELETED:
-                        finish();
-                        break;
-                }
-            }
-        };
 
         /**
          * session contains:
@@ -137,8 +112,7 @@ public class SessionActivity extends ActionBarActivity {
                             @Override
                             public void onConnected(Bundle bundle) {
                                 Log.i(Constant.TAG, "Connected!!!");
-                                FitnessController.getInstance().setVars(SessionActivity.this, mClient);
-                                FitnessController.getInstance().readSessionDataSets(mStartTime, mEndTime, mSessionIdentifier);
+                                readSessionDataSets();
                             }
 
                             @Override
@@ -154,35 +128,66 @@ public class SessionActivity extends ActionBarActivity {
                         }
                 )
                 .addOnConnectionFailedListener(
-                        new GoogleApiClient.OnConnectionFailedListener() {
-                            // Called whenever the API client fails to connect.
-                            @Override
-                            public void onConnectionFailed(ConnectionResult result) {
-                                Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
-                                if (!result.hasResolution()) {
-                                    // Show the localized error dialog
-                                    GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
-                                            SessionActivity.this, 0).show();
-                                    return;
-                                }
-                                // The failure has a resolution. Resolve it.
-                                // Called typically when the app is not yet authorized, and an
-                                // authorization dialog is displayed to the user.
-                                if (!authInProgress) {
-                                    try {
-                                        Log.i(Constant.TAG, "Attempting to resolve failed connection");
-                                        authInProgress = true;
-                                        result.startResolutionForResult(SessionActivity.this,
-                                                Constant.REQUEST_OAUTH);
-                                    } catch (IntentSender.SendIntentException e) {
-                                        Log.e(Constant.TAG,
-                                                "Exception while starting resolution activity", e);
-                                    }
+                        result -> {
+                            Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
+                            if (!result.hasResolution()) {
+                                // Show the localized error dialog
+                                GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
+                                        SessionActivity.this, 0).show();
+                                return;
+                            }
+                            // The failure has a resolution. Resolve it.
+                            // Called typically when the app is not yet authorized, and an
+                            // authorization dialog is displayed to the user.
+                            if (!authInProgress) {
+                                try {
+                                    Log.i(Constant.TAG, "Attempting to resolve failed connection");
+                                    authInProgress = true;
+                                    result.startResolutionForResult(SessionActivity.this,
+                                            Constant.REQUEST_OAUTH);
+                                } catch (IntentSender.SendIntentException e) {
+                                    Log.e(Constant.TAG,
+                                            "Exception while starting resolution activity", e);
                                 }
                             }
                         }
                 )
                 .build();
+    }
+
+    private void readSessionDataSets() {
+        //create read request
+        SessionReadRequest readRequest = new SessionReadRequest.Builder()
+                .setTimeInterval(mStartTime, mEndTime, TimeUnit.MILLISECONDS)
+                .setSessionId(mSessionIdentifier)
+                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.TYPE_LOCATION_SAMPLE)
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                .readSessionsFromAllApps()
+                .build();
+
+        //read session and datasets
+        Observable.just(readRequest)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(request -> {
+                    SessionReadResult sessionReadResult = Fitness.SessionsApi
+                            .readSession(mClient, readRequest)
+                            .await(1, TimeUnit.MINUTES);
+
+                    if (sessionReadResult != null && sessionReadResult.getSessions().size() > 0) {
+                        mSession = sessionReadResult.getSessions().get(0);
+                        mDataSets = sessionReadResult.getDataSet(mSession);
+
+                        Observable.just(mSession)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(s -> {
+                                    if (s.getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART))
+                                        mDeleteButton.setVisible(true);
+                                    fillViewContent();
+                                });
+                    }
+                });
     }
 
     private void showProgressBar(boolean b) {
@@ -222,16 +227,12 @@ public class SessionActivity extends ActionBarActivity {
             case R.id.action_delete:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.delete_session)
-                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                FitnessController.getInstance().deleteSession(mSession);
-                                showProgressBar(true);
-                            }
+                        .setPositiveButton(R.string.delete, (dialog, id1) -> {
+                            deleteSession();
+                            showProgressBar(true);
                         })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
+                        .setNegativeButton(R.string.cancel, (dialog, id1) -> {
+                            // User cancelled the dialog
                         });
                 // Create the AlertDialog object and return it
                 builder.create().show();
@@ -242,6 +243,35 @@ public class SessionActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteSession() {
+        //  Create a delete request object, providing a data type and a time interval
+        DataDeleteRequest request = new DataDeleteRequest.Builder()
+                .addSession(mSession)
+                .deleteAllData()
+                .setTimeInterval(mSession.getStartTime(TimeUnit.MILLISECONDS),
+                        mSession.getEndTime(TimeUnit.MILLISECONDS),
+                        TimeUnit.MILLISECONDS)
+                .build();
+
+        // Invoke the History API with the Google API client object and delete request, and then
+        // specify a callback that will check the result.
+        Observable.just(request)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(r -> {
+                    Fitness.HistoryApi.deleteData(mClient, request)
+                            .setResultCallback(status -> {
+                                if (status.isSuccess()) {
+                                    Log.i(Constant.TAG, "Successfully deleted data");
+                                } else {
+                                    // The deletion will fail if the requesting app tries to delete data
+                                    // that it did not insert.
+                                    Log.i(Constant.TAG, "Failed to delete data");
+                                }
+                            });
+                    finish();
+                });
     }
 
     private void fillViewContent() {
@@ -413,11 +443,5 @@ public class SessionActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(Constant.AUTH_PENDING, authInProgress);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        FitnessController.getInstance().reload(false);
     }
 }

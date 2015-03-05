@@ -2,12 +2,9 @@ package cat.xojan.fittracker.googlefit;
 
 import android.content.Context;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -16,21 +13,19 @@ import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
-import com.google.android.gms.fitness.request.SessionReadRequest;
-import com.google.android.gms.fitness.result.SessionReadResult;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.session.SessionActivity;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.workout.TimeController;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class FitnessController {
 
@@ -48,10 +43,6 @@ public class FitnessController {
     private Calendar mSessionListEndDate = Calendar.getInstance();
     private DataSource mSegmentDataSource;
     private DataSet mSegmentDataSet;
-    private SessionReadResult mSessionReadResult;
-    private Session mSingleSessionResult;
-    private List<DataSet> mSingleSessionDataSets;
-    private boolean mReload = true;
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
@@ -69,51 +60,13 @@ public class FitnessController {
         }
         return instance;
     }
-    private GoogleApiClient mClient = null;
 
     private Context mContext;
 
-    public void setVars(Context context, GoogleApiClient client) {
+    public void setVars(Context context) {
         mContext = context;
-        mClient = client;
     }
 
-    public void readSessions(final boolean sendMessageToSessionList) {
-        if (mReload) {
-            // Build a session read request
-            SessionReadRequest readRequest = new SessionReadRequest.Builder()
-                    .setTimeInterval(mSessionListStartDate.getTimeInMillis(), mSessionListEndDate.getTimeInMillis(), TimeUnit.MILLISECONDS)
-                    //.read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                    .read(DataType.TYPE_DISTANCE_DELTA)
-                    .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                    .readSessionsFromAllApps()
-                    .enableServerQueries()
-                    .build();
-
-            new SessionReader(mClient) {
-
-                public void getSessionList(SessionReadResult sessionReadResult) {
-                    if (sessionReadResult != null) {
-                        mSessionReadResult = sessionReadResult;
-                    }
-
-                    if (sendMessageToSessionList)
-                        SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
-                    else
-                        SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
-                    mReload = true;
-                }
-
-            }.execute(readRequest);
-        } else {
-            if (sendMessageToSessionList)
-                SessionListFragment.getHandler().sendEmptyMessage(Constant.MESSAGE_READ_SESSIONS);
-            else
-                SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SESSION_DELETED);
-            mReload = true;
-        }
-
-    }
 
     public void saveSession(final FragmentActivity fragmentActivity, String name, String description, double totalDistance) {
         //summary activity (aggregate)
@@ -155,66 +108,30 @@ public class FitnessController {
 
         SessionInsertRequest insertRequest = insertRequestBuilder.build();
 
-        new SessionWriter(mClient) {
+        Observable.just(insertRequest)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(request -> {
+                    Status insertStatus = Fitness.SessionsApi.insertSession(MainActivity.mClient, insertRequest)
+                            .await(1, TimeUnit.MINUTES);
 
-            public void onFinishSessionWriting() {
-                setEndTime(Calendar.getInstance());
-                fragmentActivity.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new SessionListFragment())
-                        .commit();
-                readSessions(true);
-            }
+                    if (!insertStatus.isSuccess()) {
+                        Log.i(Constant.TAG, "There was a problem inserting the session: " +
+                                insertStatus.getStatusMessage());
+                    } else {
+                        Log.i(Constant.TAG, "Session insert was successful!");
+                        // At this point, the session has been inserted and can be read.
+                        setEndTime(Calendar.getInstance());
 
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, insertRequest);
-    }
+                        fragmentActivity.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new SessionListFragment())
+                                .commit();
+                    }
 
-    public void dumpDataSet(DataSet dataSet) {
-        Log.i(Constant.TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-
-        for (DataPoint dp : dataSet.getDataPoints()) {
-            Log.i(Constant.TAG, "Data point:");
-            Log.i(Constant.TAG, "\tType: " + dp.getDataType().getName());
-            Log.i(Constant.TAG, "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            Log.i(Constant.TAG, "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
-            for (Field field : dp.getDataType().getFields()) {
-                Log.i(Constant.TAG, "\tField: " + field.getName() +
-                        " Value: " + dp.getValue(field));
-            }
-        }
+                });
     }
 
     public void setFitnessActivity(String activity) {
         mFitnessActivity = activity;
-    }
-
-    public void deleteSession(Session session) {
-        //  Create a delete request object, providing a data type and a time interval
-        DataDeleteRequest request = new DataDeleteRequest.Builder()
-                .addSession(session)
-                .deleteAllData()
-                .setTimeInterval(session.getStartTime(TimeUnit.MILLISECONDS),
-                        session.getEndTime(TimeUnit.MILLISECONDS),
-                        TimeUnit.MILLISECONDS)
-                .build();
-
-        // Invoke the History API with the Google API client object and delete request, and then
-        // specify a callback that will check the result.
-        Fitness.HistoryApi.deleteData(mClient, request)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(Constant.TAG, "Successfully deleted data");
-                        } else {
-                            // The deletion will fail if the requesting app tries to delete data
-                            // that it did not insert.
-                            Log.i(Constant.TAG, "Failed to delete data");
-                        }
-                        mSessionListEndDate = Calendar.getInstance();
-                        readSessions(false);
-                    }
-                });
     }
 
     public void saveSegment(boolean isPauseSegment) {
@@ -327,53 +244,5 @@ public class FitnessController {
         speedDataPoint.setTimeInterval(start, end, TimeUnit.MILLISECONDS);
         speedDataPoint.getValue(Field.FIELD_SPEED).setFloat((float) speed);
         mSpeedDataSet.add(speedDataPoint);
-    }
-
-    public SessionReadResult getSessionReadResult() {
-        return mSessionReadResult;
-    }
-
-    public void readSessionDataSets(long startTime, long endTime, String identifier) {
-        SessionReadRequest readRequest = new SessionReadRequest.Builder()
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .setSessionId(identifier)
-                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                //.read(DataType.AGGREGATE_SPEED_SUMMARY)
-                //.read(DataType.TYPE_SPEED)
-                .read(DataType.TYPE_DISTANCE_DELTA)
-                .read(DataType.TYPE_LOCATION_SAMPLE)
-                .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                //.read(DataType.AGGREGATE_DISTANCE_DELTA)
-                //.read(DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
-                .readSessionsFromAllApps()
-                .build();
-
-        new SessionReader(mClient) {
-
-            public void getSessionList(SessionReadResult sessionReadResult) {
-                if (sessionReadResult != null && sessionReadResult.getSessions().size() > 0) {
-                    mSingleSessionResult = sessionReadResult.getSessions().get(0);
-                    mSingleSessionDataSets = sessionReadResult.getDataSet(mSingleSessionResult);
-
-                    /*for (DataSet ds : sessionReadResult.getDataSet(mSingleSessionResult)) {
-                        dumpDataSet(ds);
-                    }*/
-                }
-                SessionActivity.getHandler().sendEmptyMessage(Constant.MESSAGE_SINGLE_SESSION_READ);
-            }
-
-        }.execute(readRequest);
-    }
-
-    public Session getSingleSessionResult() {
-        return mSingleSessionResult;
-    }
-
-    public List<DataSet> getSingleSessionDataSets() {
-        return mSingleSessionDataSets;
-    }
-
-    public void reload(boolean b) {
-        mReload = b;
     }
 }

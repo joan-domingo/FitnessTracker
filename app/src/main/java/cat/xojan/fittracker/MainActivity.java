@@ -2,7 +2,6 @@ package cat.xojan.fittracker;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,7 +28,7 @@ import cat.xojan.fittracker.sessionlist.SessionListFragment;
 public class MainActivity extends ActionBarActivity {
 
     private boolean authInProgress = false;
-    private GoogleApiClient mClient = null;
+    public static GoogleApiClient mClient = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
                                 @Override
                                 public void onConnected(Bundle bundle) {
                                     Log.i(Constant.TAG, "Connected!!!");
-                                    FitnessController.getInstance().setVars(MainActivity.this, mClient);
+                                    FitnessController.getInstance().setVars(MainActivity.this);
                                     setInitialFragment();
                                 }
 
@@ -71,30 +69,26 @@ public class MainActivity extends ActionBarActivity {
                             }
                     )
                     .addOnConnectionFailedListener(
-                            new GoogleApiClient.OnConnectionFailedListener() {
-                                // Called whenever the API client fails to connect.
-                                @Override
-                                public void onConnectionFailed(ConnectionResult result) {
-                                    Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
-                                    if (!result.hasResolution()) {
-                                        // Show the localized error dialog
-                                        GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
-                                                MainActivity.this, 0).show();
-                                        return;
-                                    }
-                                    // The failure has a resolution. Resolve it.
-                                    // Called typically when the app is not yet authorized, and an
-                                    // authorization dialog is displayed to the user.
-                                    if (!authInProgress) {
-                                        try {
-                                            Log.i(Constant.TAG, "Attempting to resolve failed connection");
-                                            authInProgress = true;
-                                            result.startResolutionForResult(MainActivity.this,
-                                                    Constant.REQUEST_OAUTH);
-                                        } catch (IntentSender.SendIntentException e) {
-                                            Log.e(Constant.TAG,
-                                                    "Exception while starting resolution activity", e);
-                                        }
+                            result -> {
+                                Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
+                                if (!result.hasResolution()) {
+                                    // Show the localized error dialog
+                                    GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
+                                            MainActivity.this, 0).show();
+                                    return;
+                                }
+                                // The failure has a resolution. Resolve it.
+                                // Called typically when the app is not yet authorized, and an
+                                // authorization dialog is displayed to the user.
+                                if (!authInProgress) {
+                                    try {
+                                        Log.i(Constant.TAG, "Attempting to resolve failed connection");
+                                        authInProgress = true;
+                                        result.startResolutionForResult(MainActivity.this,
+                                                Constant.REQUEST_OAUTH);
+                                    } catch (IntentSender.SendIntentException e) {
+                                        Log.e(Constant.TAG,
+                                                "Exception while starting resolution activity", e);
                                     }
                                 }
                             }
@@ -115,9 +109,7 @@ public class MainActivity extends ActionBarActivity {
         Fragment workoutFragment = getSupportFragmentManager().findFragmentByTag(Constant.WORKOUT_FRAGMENT_TAG);
         Fragment resultFragment = getSupportFragmentManager().findFragmentByTag(Constant.RESULT_FRAGMENT_TAG);
 
-        if (workoutFragment != null || resultFragment != null || getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            //nothing to do
-        } else {
+        if (workoutFragment == null || resultFragment == null || getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, new SessionListFragment())
@@ -131,15 +123,13 @@ public class MainActivity extends ActionBarActivity {
         final String[] unitArrayValues = getResources().getStringArray(R.array.measure_unit_entries_values);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_unit)
-                .setItems(unitArray, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String unit = unitArrayValues[which];
-                        getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                                .edit()
-                                .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)
-                                .commit();
-                        showDateFormatDialog();
-                    }
+                .setItems(unitArray, (dialog, which) -> {
+                    String unit = unitArrayValues[which];
+                    getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                            .edit()
+                            .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)
+                            .commit();
+                    showDateFormatDialog();
                 });
         builder.create().show();
     }
@@ -149,16 +139,14 @@ public class MainActivity extends ActionBarActivity {
         final String[] dateFormatEntriesValues = getResources().getStringArray(R.array.date_format_entries_values);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.select_date_format)
-                .setItems(dateFormatEntries, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String dateFormat = dateFormatEntriesValues[which];
-                        getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                                .edit()
-                                .putBoolean(Constant.PREFERENCE_FIRST_RUN, false)
-                                .putString(Constant.PREFERENCE_DATE_FORMAT, dateFormat)
-                                .commit();
-                        addInitialFragment();
-                    }
+                .setItems(dateFormatEntries, (dialog, which) -> {
+                    String dateFormat = dateFormatEntriesValues[which];
+                    getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                            .edit()
+                            .putBoolean(Constant.PREFERENCE_FIRST_RUN, false)
+                            .putString(Constant.PREFERENCE_DATE_FORMAT, dateFormat)
+                            .commit();
+                    addInitialFragment();
                 });
         builder.create().show();
     }
@@ -252,9 +240,7 @@ public class MainActivity extends ActionBarActivity {
         Fragment workoutFragment = getSupportFragmentManager().findFragmentByTag(Constant.WORKOUT_FRAGMENT_TAG);
         Fragment resultFragment = getSupportFragmentManager().findFragmentByTag(Constant.RESULT_FRAGMENT_TAG);
 
-        if (workoutFragment != null || resultFragment != null) {
-            //nothing to do
-        } else {
+        if (workoutFragment == null || resultFragment == null) {
             super.onBackPressed();
         }
     }
