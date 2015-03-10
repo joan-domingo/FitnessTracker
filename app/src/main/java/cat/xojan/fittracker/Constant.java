@@ -22,6 +22,7 @@ public class Constant {
 
     public static final String WORKOUT_FRAGMENT_TAG = "workoutFragment";
     public static final String RESULT_FRAGMENT_TAG = "resultFragment";
+    public static final String LIST_FRAGMENT_TAG = "listFragment";
 
     public static final String AUTH_PENDING = "auth_state_pending";
     public static final int REQUEST_OAUTH = 1;

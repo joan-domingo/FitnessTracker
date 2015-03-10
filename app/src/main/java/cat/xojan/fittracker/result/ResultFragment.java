@@ -30,9 +30,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import cat.xojan.fittracker.ActivityType;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.controller.FitnessController;
 import cat.xojan.fittracker.session.MapLoader;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
@@ -45,6 +47,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ResultFragment extends Fragment {
+
+    @Inject FitnessController fitController;
 
     private EditText mDescription;
     private EditText mName;
@@ -72,7 +76,7 @@ public class ResultFragment extends Fragment {
         mName = (EditText) view.findViewById(R.id.result_name);
         mDescription = (EditText) view.findViewById(R.id.result_description);
 
-        save.setOnClickListener(v -> FitnessController.getInstance().saveSession(getActivity(), mName.getText().toString(),
+        save.setOnClickListener(v -> fitController.saveSession(getActivity(), mName.getText().toString(),
                 mDescription.getText().toString(), totalDistance));
 
         exit.setOnClickListener(v -> {
@@ -136,11 +140,11 @@ public class ResultFragment extends Fragment {
                                                         Utils.millisToDay(TimeController.getInstance().getSessionEndTime()));
                                                 if (!TextUtils.isEmpty(cn)) {
                                                     mDescription.setText(getText(ActivityType
-                                                            .getRightLanguageString(FitnessController.getInstance()
+                                                            .getRightLanguageString(fitController
                                                                     .getFitnessActivity())) + " @ " + cn);
                                                 } else {
                                                     mDescription.setText(getText(ActivityType
-                                                            .getRightLanguageString(FitnessController.getInstance()
+                                                            .getRightLanguageString(fitController
                                                                     .getFitnessActivity())));
                                                 }
                                                 showProgressBar(false);
@@ -151,8 +155,8 @@ public class ResultFragment extends Fragment {
 
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        FitnessController.getInstance().getLocationDataPoints(),
-                        FitnessController.getInstance().getSegmentDataPoints());
+                fitController.getLocationDataPoints(),
+                fitController.getSegmentDataPoints());
     }
 
     private void showProgressBar(boolean b) {
@@ -198,8 +202,8 @@ public class ResultFragment extends Fragment {
                 });
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                FitnessController.getInstance().getLocationDataPoints(),
-                FitnessController.getInstance().getSegmentDataPoints());
+                fitController.getLocationDataPoints(),
+                fitController.getSegmentDataPoints());
     }
 
     @Override

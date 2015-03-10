@@ -1,10 +1,11 @@
-package cat.xojan.fittracker.googlefit;
+package cat.xojan.fittracker.controller;
 
 import android.content.Context;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -14,13 +15,13 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
+import com.google.android.gms.fitness.request.SessionReadRequest;
 
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.workout.TimeController;
@@ -29,7 +30,8 @@ import rx.schedulers.Schedulers;
 
 public class FitnessController {
 
-    private static FitnessController instance = null;
+    private GoogleApiClient mClient;
+    private final Context mContext;
     private String mFitnessActivity;
     private int mNumSegments;
     private DataSource mSpeedDataSource;
@@ -39,34 +41,22 @@ public class FitnessController {
     private DataSource mSummaryDataSource;
     private DataSource mLocationDataSource;
     private DataSet mLocationDataSet;
-    private Calendar mSessionListStartDate = getStartDate();
-    private Calendar mSessionListEndDate = Calendar.getInstance();
+    private Calendar mSessionListStartDate;
+    private Calendar mSessionListEndDate;
     private DataSource mSegmentDataSource;
     private DataSet mSegmentDataSet;
+
+    public FitnessController(Context mContext) {
+        this.mContext = mContext;
+        mSessionListStartDate = getStartDate();
+        mSessionListEndDate = Calendar.getInstance();
+    }
 
     private Calendar getStartDate() {
         Calendar date = Calendar.getInstance();
         date.add(Calendar.MONTH, -1);
-
         return date;
     }
-
-    protected FitnessController() {
-    }
-
-    public static FitnessController getInstance() {
-        if (instance == null) {
-            instance = new FitnessController();
-        }
-        return instance;
-    }
-
-    private Context mContext;
-
-    public void setVars(Context context) {
-        mContext = context;
-    }
-
 
     public void saveSession(final FragmentActivity fragmentActivity, String name, String description, double totalDistance) {
         //summary activity (aggregate)
@@ -111,7 +101,7 @@ public class FitnessController {
         Observable.just(insertRequest)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(request -> {
-                    Status insertStatus = Fitness.SessionsApi.insertSession(MainActivity.mClient, insertRequest)
+                    Status insertStatus = Fitness.SessionsApi.insertSession(mClient, insertRequest)
                             .await(1, TimeUnit.MINUTES);
 
                     if (!insertStatus.isSuccess()) {
@@ -244,5 +234,25 @@ public class FitnessController {
         speedDataPoint.setTimeInterval(start, end, TimeUnit.MILLISECONDS);
         speedDataPoint.getValue(Field.FIELD_SPEED).setFloat((float) speed);
         mSpeedDataSet.add(speedDataPoint);
+    }
+
+    public void setClient(GoogleApiClient mClient) {
+        this.mClient = mClient;
+    }
+
+    public GoogleApiClient getClient() {
+        return mClient;
+    }
+
+    public SessionReadRequest getSessionsReadRequest() {
+        return new SessionReadRequest.Builder()
+                .setTimeInterval(getStartTime(),
+                        getEndTime(),
+                        TimeUnit.MILLISECONDS)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                .readSessionsFromAllApps()
+                .enableServerQueries()
+                .build();
     }
 }

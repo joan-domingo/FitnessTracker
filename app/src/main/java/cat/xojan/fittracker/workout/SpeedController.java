@@ -9,10 +9,15 @@ import com.google.maps.android.SphericalUtil;
 
 import java.util.Calendar;
 
-import cat.xojan.fittracker.googlefit.FitnessController;
+import javax.inject.Inject;
+
+import cat.xojan.fittracker.controller.FitnessController;
 import cat.xojan.fittracker.util.Utils;
 
 public class SpeedController {
+
+    @Inject
+    FitnessController fitController;
 
     private static SpeedController instance = null;
     private TextView mSpeedView;
@@ -77,9 +82,9 @@ public class SpeedController {
             long time = now - lastSpeedUpdated;
             double speed = distance / (time / 1000);
             if (time > 0 && distance > 0)
-                FitnessController.getInstance().saveSpeed(lastSpeedUpdated, now, speed);
+                fitController.saveSpeed(lastSpeedUpdated, now, speed);
             else
-                FitnessController.getInstance().saveSpeed(lastSpeedUpdated, now, 0f);
+                fitController.saveSpeed(lastSpeedUpdated, now, 0f);
 
             lastSpeedUpdated = now;
             mOldPosition = currentPosition;

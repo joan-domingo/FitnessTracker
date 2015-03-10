@@ -21,12 +21,15 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
+import javax.inject.Inject;
+
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.controller.FitnessController;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;
 
 public class WorkoutFragment extends Fragment {
 
+    @Inject FitnessController fitController;
     private static View view;
 
     @Override
@@ -66,86 +69,65 @@ public class WorkoutFragment extends Fragment {
         DistanceController.getInstance().init(distanceView, getActivity());
         SpeedController.getInstance().init(paceView, speedView, getActivity());
 
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //start button
-                FitnessController.getInstance().start();
-                TimeController.getInstance().start();
-                MapController.getInstance().start();
-            }
+        startButton.setOnClickListener(v -> {
+            //start button
+            fitController.start();
+            TimeController.getInstance().start();
+            MapController.getInstance().start();
         });
 
-        lapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //lap button
-                TimeController.getInstance().lapFinish();
-                MapController.getInstance().lap();
-                FitnessController.getInstance().saveSegment(false);
-                TimeController.getInstance().lapStart();
-                DistanceController.getInstance().lap();
-                SpeedController.getInstance().reset();
-            }
+        lapButton.setOnClickListener(v -> {
+            //lap button
+            TimeController.getInstance().lapFinish();
+            MapController.getInstance().lap();
+            fitController.saveSegment(false);
+            TimeController.getInstance().lapStart();
+            DistanceController.getInstance().lap();
+            SpeedController.getInstance().reset();
         });
 
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //pause button
-                MapController.getInstance().pause();
-                TimeController.getInstance().pause();
-                FitnessController.getInstance().saveSegment(false);
-            }
+        pauseButton.setOnClickListener(v -> {
+            //pause button
+            MapController.getInstance().pause();
+            TimeController.getInstance().pause();
+            fitController.saveSegment(false);
         });
 
-        resumeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //resume button
-                TimeController.getInstance().resume();
-                FitnessController.getInstance().saveSegment(true);
-                MapController.getInstance().resume();
-                SpeedController.getInstance().reset();
-                DistanceController.getInstance().resume();
+        resumeButton.setOnClickListener(v -> {
+            //resume button
+            TimeController.getInstance().resume();
+            fitController.saveSegment(true);
+            MapController.getInstance().resume();
+            SpeedController.getInstance().reset();
+            DistanceController.getInstance().resume();
 
-            }
         });
 
-        finishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //finish button
-                NotificationController.getInstance().dismissNotification(getActivity());
-                MapController.getInstance().finish();
-                TimeController.getInstance().finish();
-            }
+        finishButton.setOnClickListener(v -> {
+            //finish button
+            NotificationController.getInstance().dismissNotification(getActivity());
+            MapController.getInstance().finish();
+            TimeController.getInstance().finish();
         });
 
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MapController.getInstance().exit();
-                NotificationController.getInstance().dismissNotification(getActivity());
-                //exit
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new SessionListFragment())
-                        .commit();
-            }
+        exitButton.setOnClickListener(v -> {
+            MapController.getInstance().exit();
+            NotificationController.getInstance().dismissNotification(getActivity());
+            //exit
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new SessionListFragment())
+                    .commit();
         });
 
-        exitGPSButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MapController.getInstance().exit();
-                NotificationController.getInstance().dismissNotification(getActivity());
-                //exit
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new SessionListFragment())
-                        .commit();
-            }
+        exitGPSButton.setOnClickListener(v -> {
+            MapController.getInstance().exit();
+            NotificationController.getInstance().dismissNotification(getActivity());
+            //exit
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new SessionListFragment())
+                    .commit();
         });
 
         return view;

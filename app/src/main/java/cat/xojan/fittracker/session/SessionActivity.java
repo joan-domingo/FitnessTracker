@@ -6,7 +6,6 @@ import android.content.IntentSender;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -40,6 +39,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import cat.xojan.fittracker.BaseActivity;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
@@ -48,7 +48,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SessionActivity extends ActionBarActivity {
+public class SessionActivity extends BaseActivity {
 
     private ProgressBar mProgressBar;
     private LinearLayout mSessionView;
@@ -153,6 +153,10 @@ public class SessionActivity extends ActionBarActivity {
                         }
                 )
                 .build();
+    }
+
+    @Override
+    protected void setFragment() {
     }
 
     private void readSessionDataSets() {

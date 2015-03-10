@@ -21,12 +21,16 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.googlefit.FitnessController;
+import cat.xojan.fittracker.controller.FitnessController;
 import cat.xojan.fittracker.result.ResultFragment;
 
 public class MapController {
+
+    @Inject FitnessController fitController;
 
     private static GoogleMap mMap;
     private static LatLngBounds.Builder mBoundsBuilder;
@@ -43,6 +47,7 @@ public class MapController {
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
 
+
     public MapController() {}
 
     public static MapController getInstance() {
@@ -53,6 +58,7 @@ public class MapController {
     }
 
     public void init(GoogleMap map, FragmentActivity activity, View view) {
+
         //init variables
         mFragmentActivity = activity;
         isPaused = false;
@@ -152,7 +158,7 @@ public class MapController {
 
             DistanceController.getInstance().updateDistance(oldPosition, currentPosition);
             SpeedController.getInstance().updateSpeed();
-            FitnessController.getInstance().storeLocation(location);
+            fitController.storeLocation(location);
             SpeedController.getInstance().storeSpeed(oldPosition, currentPosition);
         }
         if (isTracking || isPaused) {
@@ -194,7 +200,7 @@ public class MapController {
 
         mBoundsBuilder.include(position);
         oldPosition = position;
-        FitnessController.getInstance().storeLocation(getCurrentLocation());
+        fitController.storeLocation(getCurrentLocation());
     }
 
     private void addMapMarker(MarkerOptions markerOptions) {
@@ -204,7 +210,7 @@ public class MapController {
 
     public void lap() {
         addLapMarker();
-        FitnessController.getInstance().storeLocation(getCurrentLocation());
+        fitController.storeLocation(getCurrentLocation());
     }
 
     private void addLapMarker() {
