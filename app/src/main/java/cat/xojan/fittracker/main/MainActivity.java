@@ -15,9 +15,9 @@ import javax.inject.Inject;
 import cat.xojan.fittracker.BaseActivity;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.main.fragments.SessionListFragment;
 import cat.xojan.fittracker.menu.AttributionFragment;
 import cat.xojan.fittracker.menu.PreferenceActivity;
-import cat.xojan.fittracker.main.fragments.SessionListFragment;
 
 public class MainActivity extends BaseActivity {
 

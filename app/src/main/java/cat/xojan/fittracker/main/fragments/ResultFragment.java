@@ -7,7 +7,6 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -32,6 +31,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import butterknife.InjectView;
+import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.main.ActivityType;
@@ -53,11 +54,33 @@ public class ResultFragment extends BaseFragment {
     @Inject DistanceController distanceController;
     @Inject TimeController timeController;
 
-    private EditText mDescription;
-    private EditText mName;
+    @InjectView(R.id.result_description) EditText mDescription;
+    @InjectView(R.id.result_name) EditText mName;
+
     private static View view;
     private GoogleMap map;
     private double totalDistance;
+
+    @OnClick(R.id.result_button_save)
+    public void onClickSave(Button save) {
+        fitController.saveSession(getActivity(), mName.getText().toString(),
+                mDescription.getText().toString(), totalDistance);
+    }
+
+    @OnClick(R.id.result_button_exit)
+    public void onClickExit(Button exit) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.save_activity)
+                .setPositiveButton(R.string.exit, (dialog, id) -> getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SessionListFragment())
+                        .commit())
+                .setNegativeButton(R.string.cancel, (dialog, id) -> {
+                    // User cancelled the dialog
+                });
+        // Create the AlertDialog object and return it
+        builder.create().show();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,31 +97,13 @@ public class ResultFragment extends BaseFragment {
         setHasOptionsMenu(true);
         showProgressBar(true);
 
-        Button save = (Button) view.findViewById(R.id.result_button_save);
-        Button exit = (Button) view.findViewById(R.id.result_button_exit);
-        mName = (EditText) view.findViewById(R.id.result_name);
-        mDescription = (EditText) view.findViewById(R.id.result_description);
-
-        save.setOnClickListener(v -> fitController.saveSession(getActivity(), mName.getText().toString(),
-                mDescription.getText().toString(), totalDistance));
-
-        exit.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.save_activity)
-                    .setPositiveButton(R.string.exit, (dialog, id) -> getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, new SessionListFragment())
-                            .commit())
-                    .setNegativeButton(R.string.cancel, (dialog, id) -> {
-                        // User cancelled the dialog
-                    });
-            // Create the AlertDialog object and return it
-            builder.create().show();
-        });
-
-        setContent();
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setContent();
     }
 
     private void setContent() {

@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -39,7 +40,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.BaseActivity;
+import javax.inject.Inject;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
@@ -48,10 +52,12 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SessionActivity extends BaseActivity {
+public class SessionActivity extends ActionBarActivity {
 
-    private ProgressBar mProgressBar;
-    private LinearLayout mSessionView;
+    @InjectView(R.id.fragment_loading_spinner) ProgressBar mProgressBar;
+    @InjectView(R.id.fragment_session_container) LinearLayout mSessionView;
+    @InjectView(R.id.fragment_session_toolbar) Toolbar toolbar;
+
     private Session mSession;
     private MenuItem mDeleteButton;
     private List<DataSet> mDataSets;
@@ -70,30 +76,16 @@ public class SessionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
+        ButterKnife.inject(this);
 
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(Constant.AUTH_PENDING);
         }
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.fragment_session_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mProgressBar = (ProgressBar) findViewById(R.id.fragment_loading_spinner);
-        mSessionView = (LinearLayout) findViewById(R.id.fragment_session_container);
         showProgressBar(true);
 
-        /**
-         * session contains:
-         * name, description, identifier, package name, activity type, start time, end time
-         */
-
         Intent intent = getIntent();
-
-        // Get the intent extras
-        /*long startTime = Fitness.getStartTime(intent, TimeUnit.MILLISECONDS);
-        long endTime = Fitness.getEndTime(intent, TimeUnit.MILLISECONDS);
-        Session session = Session.extract(intent); TODO not working so far*/
         mStartTime = intent.getLongExtra(Constant.EXTRA_START, 0);
         mEndTime = intent.getLongExtra(Constant.EXTRA_END, 0);
         mSessionIdentifier = intent.getStringExtra(Constant.EXTRA_SESSION);
@@ -153,10 +145,6 @@ public class SessionActivity extends BaseActivity {
                         }
                 )
                 .build();
-    }
-
-    @Override
-    protected void setFragment() {
     }
 
     private void readSessionDataSets() {

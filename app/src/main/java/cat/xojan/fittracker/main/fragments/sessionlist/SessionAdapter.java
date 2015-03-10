@@ -71,6 +71,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
                 fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
                 fitIntent.putExtra(Constant.EXTRA_START, startTime);
                 fitIntent.putExtra(Constant.EXTRA_END, endTime);
+                fitIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 mContext.startActivity(fitIntent);
             });
         }
