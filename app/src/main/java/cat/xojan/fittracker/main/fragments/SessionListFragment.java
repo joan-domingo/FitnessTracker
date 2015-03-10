@@ -36,10 +36,9 @@ import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.main.controllers.FitnessController;
-import cat.xojan.fittracker.sessionlist.DatePickerFragment;
-import cat.xojan.fittracker.sessionlist.SessionAdapter;
+import cat.xojan.fittracker.main.fragments.sessionlist.DatePickerFragment;
+import cat.xojan.fittracker.main.fragments.sessionlist.SessionAdapter;
 import cat.xojan.fittracker.util.Utils;
-import cat.xojan.fittracker.workout.WorkoutFragment;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -49,6 +48,7 @@ public class SessionListFragment extends BaseFragment {
 
     @Inject FitnessController fitController;
     @Inject Context mContext;
+    @Inject WorkoutFragment workoutFragment;
 
     @InjectView(R.id.sessions_loading_spinner) ProgressBar mProgressBar;
     @InjectView(R.id.sessions_list) RecyclerView mRecyclerView;
@@ -103,7 +103,7 @@ public class SessionListFragment extends BaseFragment {
 
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container, new WorkoutFragment(), Constant.WORKOUT_FRAGMENT_TAG)
+                            .replace(R.id.fragment_container, workoutFragment, Constant.WORKOUT_FRAGMENT_TAG)
                             .commit();
                 });
         builder.create().show();
@@ -173,7 +173,7 @@ public class SessionListFragment extends BaseFragment {
                         Observable.just(sessionReadResult)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> {
-                                    mRecyclerView.setAdapter(new SessionAdapter(getActivity(), result));
+                                    mRecyclerView.setAdapter(new SessionAdapter(mContext, result));
                                     showProgressBar(false);
                                 });
                     }

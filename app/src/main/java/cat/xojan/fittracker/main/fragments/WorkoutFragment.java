@@ -24,17 +24,17 @@ import com.google.android.gms.maps.MapFragment;
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.main.controllers.DistanceController;
 import cat.xojan.fittracker.main.controllers.FitnessController;
-import cat.xojan.fittracker.main.fragments.SessionListFragment;
-import cat.xojan.fittracker.workout.DistanceController;
-import cat.xojan.fittracker.workout.MapController;
-import cat.xojan.fittracker.workout.NotificationController;
-import cat.xojan.fittracker.workout.SpeedController;
-import cat.xojan.fittracker.workout.TimeController;
+import cat.xojan.fittracker.main.controllers.MapController;
+import cat.xojan.fittracker.main.controllers.NotificationController;
+import cat.xojan.fittracker.main.controllers.SpeedController;
+import cat.xojan.fittracker.main.controllers.TimeController;
 
 public class WorkoutFragment extends Fragment {
 
     @Inject FitnessController fitController;
+
     private static View view;
 
     @Override

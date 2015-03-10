@@ -2,16 +2,15 @@ package cat.xojan.fittracker.daggermodules;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import javax.inject.Singleton;
 
 import cat.xojan.fittracker.BaseActivity;
-import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.MainActivity;
-import cat.xojan.fittracker.controller.FitnessController;
-import cat.xojan.fittracker.sessionlist.SessionListFragment;
+import cat.xojan.fittracker.main.MainActivity;
+import cat.xojan.fittracker.main.controllers.FitnessController;
+import cat.xojan.fittracker.main.fragments.SessionListFragment;
+import cat.xojan.fittracker.main.fragments.WorkoutFragment;
+import cat.xojan.fittracker.main.fragments.sessionlist.SessionAdapter;
 import dagger.Module;
 import dagger.Provides;
 
@@ -19,7 +18,8 @@ import dagger.Provides;
         injects = {
                 MainActivity.class,
                 SessionListFragment.class,
-                FitnessController.class
+                FitnessController.class,
+                WorkoutFragment.class
         },
         addsTo = AppModule.class,
         library = true
@@ -50,8 +50,13 @@ public class MainModule {
     }
 
     @Provides @Singleton
-    public SessionListFragment provideHostedFragment() {
+    public SessionListFragment provideSessionListFragment() {
         return new SessionListFragment();
+    }
+
+    @Provides @Singleton
+    public WorkoutFragment workoutFragment() {
+        return new WorkoutFragment();
     }
 
     /*@Provides

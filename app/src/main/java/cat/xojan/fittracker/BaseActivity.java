@@ -17,7 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.controller.FitnessController;
+import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.daggermodules.MainModule;
 import dagger.ObjectGraph;
 
