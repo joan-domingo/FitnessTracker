@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.sessionlist;
+package cat.xojan.fittracker.main.fragments.sessionlist;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.ActivityType;
+import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.util.Utils;

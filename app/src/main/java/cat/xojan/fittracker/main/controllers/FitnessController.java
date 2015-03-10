@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.controller;
+package cat.xojan.fittracker.main.controllers;
 
 import android.content.Context;
 import android.location.Location;

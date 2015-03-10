@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.main.controllers;
 
 import android.app.Activity;
 import android.content.Context;

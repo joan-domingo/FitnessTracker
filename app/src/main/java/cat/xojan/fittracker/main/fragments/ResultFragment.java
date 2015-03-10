@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.result;
+package cat.xojan.fittracker.main.fragments;
 
 import android.app.AlertDialog;
 import android.graphics.Color;
@@ -32,9 +32,9 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.ActivityType;
+import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.controller.FitnessController;
+import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.session.MapLoader;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;

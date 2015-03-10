@@ -1,8 +1,10 @@
-package cat.xojan.fittracker;
+package cat.xojan.fittracker.main;
 
 import android.content.Context;
 
 import com.google.android.gms.fitness.FitnessActivities;
+
+import cat.xojan.fittracker.R;
 
 public enum ActivityType {
     running(FitnessActivities.RUNNING, R.string.running),

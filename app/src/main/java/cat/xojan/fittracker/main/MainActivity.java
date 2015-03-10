@@ -1,4 +1,4 @@
-package cat.xojan.fittracker;
+package cat.xojan.fittracker.main;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,6 +12,9 @@ import android.view.MenuItem;
 
 import javax.inject.Inject;
 
+import cat.xojan.fittracker.BaseActivity;
+import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.menu.AttributionFragment;
 import cat.xojan.fittracker.menu.PreferenceActivity;
 import cat.xojan.fittracker.sessionlist.SessionListFragment;

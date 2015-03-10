@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.main.controllers;
 
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
@@ -11,7 +11,6 @@ import java.util.Calendar;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.controller.FitnessController;
 import cat.xojan.fittracker.util.Utils;
 
 public class SpeedController {

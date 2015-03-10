@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.sessionlist;
+package cat.xojan.fittracker.main.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
@@ -32,11 +31,13 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import cat.xojan.fittracker.ActivityType;
+import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.controller.FitnessController;
+import cat.xojan.fittracker.main.controllers.FitnessController;
+import cat.xojan.fittracker.sessionlist.DatePickerFragment;
+import cat.xojan.fittracker.sessionlist.SessionAdapter;
 import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.workout.WorkoutFragment;
 import rx.Observable;

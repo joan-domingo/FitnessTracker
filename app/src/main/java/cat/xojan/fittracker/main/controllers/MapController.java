@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.main.controllers;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -25,8 +25,7 @@ import javax.inject.Inject;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.controller.FitnessController;
-import cat.xojan.fittracker.result.ResultFragment;
+import cat.xojan.fittracker.main.fragments.ResultFragment;
 
 public class MapController {
 

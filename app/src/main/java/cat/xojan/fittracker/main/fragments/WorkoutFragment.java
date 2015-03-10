@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.main.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,8 +24,13 @@ import com.google.android.gms.maps.MapFragment;
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.controller.FitnessController;
-import cat.xojan.fittracker.sessionlist.SessionListFragment;
+import cat.xojan.fittracker.main.controllers.FitnessController;
+import cat.xojan.fittracker.main.fragments.SessionListFragment;
+import cat.xojan.fittracker.workout.DistanceController;
+import cat.xojan.fittracker.workout.MapController;
+import cat.xojan.fittracker.workout.NotificationController;
+import cat.xojan.fittracker.workout.SpeedController;
+import cat.xojan.fittracker.workout.TimeController;
 
 public class WorkoutFragment extends Fragment {
 
