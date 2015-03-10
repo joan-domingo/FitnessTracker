@@ -25,9 +25,4 @@ public class AppModule {
         return application;
     }
 
-    @Provides @Singleton
-    LocationManager provideLocationManager() {
-        return (LocationManager) application.getSystemService(LOCATION_SERVICE);
-    }
-
 }

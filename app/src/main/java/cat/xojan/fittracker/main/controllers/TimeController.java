@@ -13,33 +13,23 @@ public class TimeController {
     private long mSessionFinish;
     private long mWorkoutDuration;
 
-    private static TimeController instance = null;
     private long mTimeWhenPaused;
     private long mSegmentEnd;
 
-    public TimeController() {}
-
-    public static TimeController getInstance() {
-        if(instance == null) {
-            instance = new TimeController();
-        }
-        return instance;
+    public TimeController() {
     }
 
     public void init(Chronometer chronometer) {
         mChronometer = chronometer;
-        mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer cArg) {
-                long t = SystemClock.elapsedRealtime() - cArg.getBase();
-                int h = (int) (t / 3600000);
-                int m = (int) (t - h * 3600000) / 60000;
-                int s = (int) (t - h * 3600000 - m * 60000) / 1000;
-                String hh = h < 10 ? "0" + h : h + "";
-                String mm = m < 10 ? "0" + m : m + "";
-                String ss = s < 10 ? "0" + s : s + "";
-                cArg.setText(hh + ":" + mm + ":" + ss);
-            }
+        mChronometer.setOnChronometerTickListener(cArg -> {
+            long t = SystemClock.elapsedRealtime() - cArg.getBase();
+            int h = (int) (t / 3600000);
+            int m = (int) (t - h * 3600000) / 60000;
+            int s = (int) (t - h * 3600000 - m * 60000) / 1000;
+            String hh = h < 10 ? "0" + h : h + "";
+            String mm = m < 10 ? "0" + m : m + "";
+            String ss = s < 10 ? "0" + s : s + "";
+            cArg.setText(hh + ":" + mm + ":" + ss);
         });
         mChronometer.setText("00:00");
     }

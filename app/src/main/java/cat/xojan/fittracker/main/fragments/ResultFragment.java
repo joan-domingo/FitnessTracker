@@ -32,22 +32,26 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.main.ActivityType;
+import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.main.ActivityType;
+import cat.xojan.fittracker.main.controllers.DistanceController;
 import cat.xojan.fittracker.main.controllers.FitnessController;
+import cat.xojan.fittracker.main.controllers.MapController;
+import cat.xojan.fittracker.main.controllers.TimeController;
 import cat.xojan.fittracker.session.MapLoader;
 import cat.xojan.fittracker.util.SessionDetailedDataLoader;
 import cat.xojan.fittracker.util.Utils;
-import cat.xojan.fittracker.main.controllers.DistanceController;
-import cat.xojan.fittracker.main.controllers.MapController;
-import cat.xojan.fittracker.main.controllers.TimeController;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ResultFragment extends Fragment {
+public class ResultFragment extends BaseFragment {
 
     @Inject FitnessController fitController;
+    @Inject MapController mapController;
+    @Inject DistanceController distanceController;
+    @Inject TimeController timeController;
 
     private EditText mDescription;
     private EditText mName;
@@ -107,19 +111,19 @@ public class ResultFragment extends Fragment {
                     detailedView.addView(intervalView);
                     totalDistance = distance;
                 } else {
-                    totalDistance = DistanceController.getInstance().getSessionDistance();
+                    totalDistance = distanceController.getSessionDistance();
                 }
-                float speed = (float) (totalDistance / (TimeController.getInstance().getSessionWorkoutTime() / 1000));
+                float speed = (float) (totalDistance / (timeController.getSessionWorkoutTime() / 1000));
 
-                ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.getTimeDifference(TimeController.getInstance().getSessionWorkoutTime(), 0));
-                ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(TimeController.getInstance().getSessionStartTime()));
-                ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(TimeController.getInstance().getSessionEndTime()));
+                ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.getTimeDifference(timeController.getSessionWorkoutTime(), 0));
+                ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(timeController.getSessionStartTime()));
+                ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(timeController.getSessionEndTime()));
                 ((TextView) view.findViewById(R.id.fragment_result_total_distance)).setText(Utils.getRightDistance((float) totalDistance, getActivity()));
 
                 ((TextView) view.findViewById(R.id.fragment_result_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
                 ((TextView) view.findViewById(R.id.fragment_result_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
 
-                Observable.just(MapController.getInstance().getLastPosition())
+                Observable.just(mapController.getLastPosition())
                         .subscribeOn(Schedulers.newThread())
                         .subscribe(pos -> {
                                     String cityName = null;
@@ -136,7 +140,7 @@ public class ResultFragment extends Fragment {
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe(cn -> {
                                                 mName.setText(getText(R.string.workout) + " " +
-                                                        Utils.millisToDay(TimeController.getInstance().getSessionEndTime()));
+                                                        Utils.millisToDay(timeController.getSessionEndTime()));
                                                 if (!TextUtils.isEmpty(cn)) {
                                                     mDescription.setText(getText(ActivityType
                                                             .getRightLanguageString(fitController

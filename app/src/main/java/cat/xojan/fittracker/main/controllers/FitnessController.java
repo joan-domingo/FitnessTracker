@@ -29,6 +29,8 @@ import rx.schedulers.Schedulers;
 
 public class FitnessController {
 
+    private final TimeController timeController;
+
     private GoogleApiClient mClient;
     private final Context mContext;
     private String mFitnessActivity;
@@ -45,8 +47,9 @@ public class FitnessController {
     private DataSource mSegmentDataSource;
     private DataSet mSegmentDataSet;
 
-    public FitnessController(Context mContext) {
+    public FitnessController(Context mContext, TimeController timeController) {
         this.mContext = mContext;
+        this.timeController = timeController;
         mSessionListStartDate = getStartDate();
         mSessionListEndDate = Calendar.getInstance();
     }
@@ -60,15 +63,15 @@ public class FitnessController {
     public void saveSession(final FragmentActivity fragmentActivity, String name, String description, double totalDistance) {
         //summary activity (aggregate)
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
-        summaryDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(), TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
+        summaryDataPoint.setTimeInterval(timeController.getSessionStartTime(), timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
         summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
-        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) TimeController.getInstance().getSessionWorkoutTime());
+        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) timeController.getSessionWorkoutTime());
         summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
 
         //distance
         DataPoint distanceDataPoint = DataPoint.create(mDistanceDataSource);
-        distanceDataPoint.setTimeInterval(TimeController.getInstance().getSessionStartTime(),
-                TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS);
+        distanceDataPoint.setTimeInterval(timeController.getSessionStartTime(),
+                timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
         distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat((float) totalDistance);
         mDistanceDataSet.add(distanceDataPoint);
 
@@ -76,10 +79,10 @@ public class FitnessController {
         Session session = new Session.Builder()
                 .setName(name)
                 .setDescription(description)
-                .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":" + TimeController.getInstance().getSessionStartTime())
+                .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":" + timeController.getSessionStartTime())
                 .setActivity(mFitnessActivity)
-                .setStartTime(TimeController.getInstance().getSessionStartTime(), TimeUnit.MILLISECONDS)
-                .setEndTime(TimeController.getInstance().getSessionEndTime(), TimeUnit.MILLISECONDS)
+                .setStartTime(timeController.getSessionStartTime(), TimeUnit.MILLISECONDS)
+                .setEndTime(timeController.getSessionEndTime(), TimeUnit.MILLISECONDS)
                 .build();
 
         // Build a session insert request
@@ -128,11 +131,11 @@ public class FitnessController {
         long startTimeSegment;
 
         if (isPauseSegment) {
-            endTimeSegment = TimeController.getInstance().getSegmentStartTime();
-            startTimeSegment = TimeController.getInstance().getSegmentEndTime();
+            endTimeSegment = timeController.getSegmentStartTime();
+            startTimeSegment = timeController.getSegmentEndTime();
         } else {
-            endTimeSegment = TimeController.getInstance().getSegmentEndTime();
-            startTimeSegment = TimeController.getInstance().getSegmentStartTime();
+            endTimeSegment = timeController.getSegmentEndTime();
+            startTimeSegment = timeController.getSegmentStartTime();
         }
 
         //segment

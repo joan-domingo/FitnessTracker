@@ -1,13 +1,14 @@
 package cat.xojan.fittracker.main.fragments;
 
 import android.app.AlertDialog;
-import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,13 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import cat.xojan.fittracker.BaseFragment;
+import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.main.controllers.DistanceController;
 import cat.xojan.fittracker.main.controllers.FitnessController;
@@ -31,9 +35,111 @@ import cat.xojan.fittracker.main.controllers.NotificationController;
 import cat.xojan.fittracker.main.controllers.SpeedController;
 import cat.xojan.fittracker.main.controllers.TimeController;
 
-public class WorkoutFragment extends Fragment {
+public class WorkoutFragment extends BaseFragment {
 
     @Inject FitnessController fitController;
+    @Inject MapController mapController;
+    @Inject NotificationController notController;
+    @Inject SessionListFragment sessionListFragment;
+    @Inject ResultFragment resultFragment;
+    @Inject LocationManager mLocationManager;
+    @Inject DistanceController distanceController;
+    @Inject TimeController timeController;
+    @Inject SpeedController speedController;
+
+    @InjectView(R.id.fragment_workout_toolbar) Toolbar toolbar;
+    @InjectView(R.id.workout_chronometer) Chronometer chronometer;
+    @InjectView(R.id.workout_distance) TextView distanceView;
+    @InjectView(R.id.workout_pace) TextView paceView;
+    @InjectView(R.id.workout_speed) TextView speedView;
+    @InjectView(R.id.waiting_gps_bar) LinearLayout gpsBar;
+    @InjectView(R.id.start_bar) LinearLayout startBar;
+    @InjectView(R.id.lap_pause_bar) LinearLayout lapPauseBar;
+    @InjectView(R.id.resume_finish_bar) LinearLayout resumeFinishBar;
+
+    private LocationListener mFirstLocationListener;
+    private LocationListener mLocationListener;
+
+    @OnClick(R.id.workout_button_start)
+    public void onClickStart(Button startButton) {
+        lapPauseBar.setVisibility(View.VISIBLE);
+        startBar.setVisibility(View.GONE);
+
+        fitController.start();
+        timeController.start();
+        mapController.start();
+    }
+
+    @OnClick(R.id.workout_button_lap)
+    public void onClickLap(Button lapButton) {
+        timeController.lapFinish();
+        mapController.lap();
+        fitController.saveSegment(false);
+        timeController.lapStart();
+        distanceController.lap();
+        speedController.reset();
+    }
+
+    @OnClick(R.id.workout_button_pause)
+    public void onClickPause(Button pauseButton) {
+        resumeFinishBar.setVisibility(View.VISIBLE);
+        lapPauseBar.setVisibility(View.GONE);
+
+        mapController.pause();
+        timeController.pause();
+        fitController.saveSegment(false);
+    }
+
+    @OnClick(R.id.workout_button_resume)
+    public void onClickResume(Button resumeButton) {
+        lapPauseBar.setVisibility(View.VISIBLE);
+        resumeFinishBar.setVisibility(View.GONE);
+
+        timeController.resume();
+        fitController.saveSegment(true);
+        mapController.resume();
+        speedController.reset();
+        distanceController.resume();
+    }
+
+    @OnClick(R.id.workout_button_finish)
+    public void onClickFinish(Button finishButton) {
+        notController.dismissNotification();
+        //remove location listener
+        mLocationManager.removeUpdates(mLocationListener);
+        //change buttons visibility
+        resumeFinishBar.setVisibility(View.GONE);
+        //show results
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, resultFragment, Constant.RESULT_FRAGMENT_TAG)
+                .commit();
+
+        timeController.finish();
+    }
+
+    @OnClick(R.id.workout_button_exit)
+    public void onClickExit(Button exitButton) {
+        exit();
+        notController.dismissNotification();
+        //exit
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, sessionListFragment)
+                .commit();
+    }
+
+    @OnClick(R.id.workout_button_exit_gps)
+    public void onClickExitGPS(Button exitGPSButton) {
+        exit();
+        notController.dismissNotification();
+        //exit
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, sessionListFragment)
+                .commit();
+    }
+
 
     private static View view;
 
@@ -47,103 +153,94 @@ public class WorkoutFragment extends Fragment {
         try {
             view = inflater.inflate(R.layout.fragment_workout, container, false);
         } catch (InflateException e) {
-        /* map is already there, just return view as it is */
+         //map is already there, just return view as it is
         }
-        NotificationController.getInstance().showNotification(getActivity());
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_workout_toolbar);
+
+        ButterKnife.inject(this, view);
+        gpsBar.setVisibility(View.VISIBLE);
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
 
-        GoogleMap map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.workout_map)).getMap();
-        Chronometer chronometer = (Chronometer)view.findViewById(R.id.workout_chronometer);
-        TextView distanceView = (TextView)view.findViewById(R.id.workout_distance);
-        Button startButton = (Button) view.findViewById(R.id.workout_button_start);
-        Button lapButton = (Button) view.findViewById(R.id.workout_button_lap);
-        Button pauseButton = (Button) view.findViewById(R.id.workout_button_pause);
-        Button resumeButton = (Button) view.findViewById(R.id.workout_button_resume);
-        Button finishButton = (Button) view.findViewById(R.id.workout_button_finish);
-        Button exitButton = (Button) view.findViewById(R.id.workout_button_exit);
-        Button exitGPSButton = (Button) view.findViewById(R.id.workout_button_exit_gps);
-        TextView paceView = (TextView) view.findViewById(R.id.workout_pace);
-        TextView speedView = (TextView) view.findViewById(R.id.workout_speed);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        notController.showNotification();
 
         //init controllers
-        MapController.getInstance().init(map, getActivity(), view);
-        TimeController.getInstance().init(chronometer);
+        timeController.init(chronometer);
+        distanceController.init(distanceView);
+        speedController.init(paceView, speedView);
 
-        DistanceController.getInstance().init(distanceView, getActivity());
-        SpeedController.getInstance().init(paceView, speedView, getActivity());
+        getFirstLocation();
+    }
 
-        startButton.setOnClickListener(v -> {
-            //start button
-            fitController.start();
-            TimeController.getInstance().start();
-            MapController.getInstance().start();
+    private void getFirstLocation() {
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+                mFirstLocationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.i(Constant.TAG, "Got First Location");
+                mLocationManager.removeUpdates(mFirstLocationListener);
+                mapController.gotFirstLocation(location);
+                startBar.setVisibility(View.VISIBLE);
+                gpsBar.setVisibility(View.GONE);
+                getLocationUpdates();
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
         });
+    }
 
-        lapButton.setOnClickListener(v -> {
-            //lap button
-            TimeController.getInstance().lapFinish();
-            MapController.getInstance().lap();
-            fitController.saveSegment(false);
-            TimeController.getInstance().lapStart();
-            DistanceController.getInstance().lap();
-            SpeedController.getInstance().reset();
+    private void getLocationUpdates() {
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 3,
+                mLocationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                mapController.updateTrack(location);
+                mapController.updateMap(location.getLatitude(), location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
         });
-
-        pauseButton.setOnClickListener(v -> {
-            //pause button
-            MapController.getInstance().pause();
-            TimeController.getInstance().pause();
-            fitController.saveSegment(false);
-        });
-
-        resumeButton.setOnClickListener(v -> {
-            //resume button
-            TimeController.getInstance().resume();
-            fitController.saveSegment(true);
-            MapController.getInstance().resume();
-            SpeedController.getInstance().reset();
-            DistanceController.getInstance().resume();
-
-        });
-
-        finishButton.setOnClickListener(v -> {
-            //finish button
-            NotificationController.getInstance().dismissNotification(getActivity());
-            MapController.getInstance().finish();
-            TimeController.getInstance().finish();
-        });
-
-        exitButton.setOnClickListener(v -> {
-            MapController.getInstance().exit();
-            NotificationController.getInstance().dismissNotification(getActivity());
-            //exit
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new SessionListFragment())
-                    .commit();
-        });
-
-        exitGPSButton.setOnClickListener(v -> {
-            MapController.getInstance().exit();
-            NotificationController.getInstance().dismissNotification(getActivity());
-            //exit
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new SessionListFragment())
-                    .commit();
-        });
-
-        return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        LocationManager manager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
-        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+        if ( !mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.enable_gps);
             builder.setMessage(R.string.enable_gps_desc);
@@ -163,5 +260,11 @@ public class WorkoutFragment extends Fragment {
         attributions.setVisible(false);
         MenuItem music = menu.findItem(R.id.action_music);
         music.setVisible(true);
+    }
+
+    private void exit() {
+        if (mLocationListener != null)
+            mLocationManager.removeUpdates(mLocationListener);
+        mLocationManager.removeUpdates(mFirstLocationListener);
     }
 }

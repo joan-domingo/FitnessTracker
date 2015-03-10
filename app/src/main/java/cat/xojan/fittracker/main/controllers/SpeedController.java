@@ -1,7 +1,6 @@
 package cat.xojan.fittracker.main.controllers;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -9,35 +8,31 @@ import com.google.maps.android.SphericalUtil;
 
 import java.util.Calendar;
 
-import javax.inject.Inject;
-
 import cat.xojan.fittracker.util.Utils;
 
 public class SpeedController {
 
-    @Inject
-    FitnessController fitController;
+    private final FitnessController fitController;
+    private final DistanceController distanceController;
+    private final TimeController timeController;
 
-    private static SpeedController instance = null;
     private TextView mSpeedView;
     private TextView mPaceView;
-    private Context mContext;
+    private final Context mContext;
     private long lastSpeedUpdated;
     private LatLng mOldPosition;
-    /*private double mMaxSpeed;
-    private double mMinSpeed;*/
 
-    public static SpeedController getInstance() {
-        if(instance == null) {
-            instance = new SpeedController();
-        }
-        return instance;
+    public SpeedController(Context context, FitnessController fitnessController,
+                           DistanceController distanceController, TimeController timeController) {
+        mContext = context;
+        this.fitController = fitnessController;
+        this.distanceController = distanceController;
+        this.timeController = timeController;
     }
 
-    public void init(TextView paceView, TextView speedView, FragmentActivity activity) {
+    public void init(TextView paceView, TextView speedView) {
         mPaceView = paceView;
         mSpeedView = speedView;
-        mContext = activity;
 
         mPaceView.setText(Utils.getRightPace(0f, mContext));
         mSpeedView.setText(Utils.getRightSpeed(0f, mContext));
@@ -48,10 +43,10 @@ public class SpeedController {
     }
 
     public void updateSpeed() {
-        long timeInMillis = TimeController.getInstance().getSegmentTime();
+        long timeInMillis = timeController.getSegmentTime();
         long timeInSeconds = timeInMillis / 1000;
 
-        double distanceInMeters = DistanceController.getInstance().getSegmentDistance(); //return meters
+        double distanceInMeters = distanceController.getSegmentDistance(); //return meters
 
         if (timeInSeconds > 0 && distanceInMeters > 0) {
             double speed = distanceInMeters / timeInSeconds;
