@@ -171,6 +171,7 @@ public class SessionListFragment extends BaseFragment {
                     @Override
                     public void onCompleted() {
                         Observable.just(sessionReadResult)
+                                .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> {
                                     mRecyclerView.setAdapter(new SessionAdapter(mContext, result));

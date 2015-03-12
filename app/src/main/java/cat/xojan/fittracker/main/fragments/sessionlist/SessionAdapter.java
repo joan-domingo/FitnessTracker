@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.fitness.HistoryApi;
+import com.google.android.gms.fitness.SessionsApi;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
@@ -54,26 +55,17 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
             itemView.setOnClickListener(v -> {
                 Session session = mSession.get(getPosition());
-                long startTime = session.getStartTime(TimeUnit.MILLISECONDS);
-                long endTime = session.getEndTime(TimeUnit.MILLISECONDS);
 
-                HistoryApi.ViewIntentBuilder intentBuilder = new HistoryApi.ViewIntentBuilder(mContext,
-                        DataType.TYPE_ACTIVITY_SEGMENT)
-                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART);
+                // Pass your activity object to the constructor
+                Intent intent = new SessionsApi.ViewIntentBuilder(mContext)
+                        .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART) // optional
+                        .setSession(session)
+                        .build();
 
-                for (DataSet ds : mSessionReadResult.getDataSet(session, DataType.TYPE_ACTIVITY_SEGMENT)) {
-                    if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT))
-                        intentBuilder.setDataSource(ds.getDataSource());
-                }
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                Intent fitIntent = intentBuilder.build();
-                fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
-                fitIntent.putExtra(Constant.EXTRA_START, startTime);
-                fitIntent.putExtra(Constant.EXTRA_END, endTime);
-                fitIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                mContext.startActivity(fitIntent);
+                // Fire the intent
+                mContext.startActivity(intent);
             });
         }
     }

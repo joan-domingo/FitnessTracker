@@ -40,8 +40,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
@@ -64,9 +62,6 @@ public class SessionActivity extends ActionBarActivity {
     private List<DataPoint> mLocationDataPoints;
     private List<DataPoint> mSegmentDataPoints;
     private GoogleApiClient mClient;
-    private long mStartTime;
-    private long mEndTime;
-    private String mSessionIdentifier;
     private boolean authInProgress = false;
     private GoogleMap map;
     private List<DataPoint> mDistanceDataPoints;
@@ -86,9 +81,7 @@ public class SessionActivity extends ActionBarActivity {
         showProgressBar(true);
 
         Intent intent = getIntent();
-        mStartTime = intent.getLongExtra(Constant.EXTRA_START, 0);
-        mEndTime = intent.getLongExtra(Constant.EXTRA_END, 0);
-        mSessionIdentifier = intent.getStringExtra(Constant.EXTRA_SESSION);
+        mSession = Session.extract(intent);
 
         // Show the session in your app
         buildFitnessClient();
@@ -150,8 +143,9 @@ public class SessionActivity extends ActionBarActivity {
     private void readSessionDataSets() {
         //create read request
         SessionReadRequest readRequest = new SessionReadRequest.Builder()
-                .setTimeInterval(mStartTime, mEndTime, TimeUnit.MILLISECONDS)
-                .setSessionId(mSessionIdentifier)
+                .setTimeInterval(mSession.getStartTime(TimeUnit.MILLISECONDS),
+                        mSession.getEndTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
+                .setSessionId(mSession.getIdentifier())
                 .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
                 .read(DataType.TYPE_DISTANCE_DELTA)
                 .read(DataType.TYPE_LOCATION_SAMPLE)
@@ -168,7 +162,6 @@ public class SessionActivity extends ActionBarActivity {
                             .await(1, TimeUnit.MINUTES);
 
                     if (sessionReadResult != null && sessionReadResult.getSessions().size() > 0) {
-                        mSession = sessionReadResult.getSessions().get(0);
                         mDataSets = sessionReadResult.getDataSet(mSession);
 
                         Observable.just(mSession)

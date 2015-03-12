@@ -9,8 +9,8 @@ android {
         applicationId "cat.xojan.fittracker"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 19
-        versionName "1.26.01"
+        versionCode 20
+        versionName "1.26.10"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
