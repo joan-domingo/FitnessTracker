@@ -3,8 +3,6 @@ package cat.xojan.fittracker.session;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,13 +27,8 @@ import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,9 +37,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.util.SessionDetailedDataLoader;
+import cat.xojan.fittracker.util.SessionDetailedData;
+import cat.xojan.fittracker.util.SessionMapData;
 import cat.xojan.fittracker.util.Utils;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -260,70 +255,95 @@ public class SessionActivity extends ActionBarActivity {
     }
 
     private void fillViewContent() {
-
         getDataPoints();
 
-        new SessionDetailedDataLoader(this) {
+        Observable.just(this)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(new Subscriber<SessionActivity>() {
 
-            public void onResult(LinearLayout intervalView, double totalDistance) {
-                if (intervalView != null) {
-                    LinearLayout detailedView = (LinearLayout) findViewById(R.id.session_intervals);
-                    detailedView.removeAllViews();
-                    detailedView.addView(intervalView);
-                } else {
-                    totalDistance = 0;
-                    for (DataPoint dp : mDistanceDataPoints) {
-                        totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
+                    private LinearLayout intervalView;
+                    private double totalDistance;
+
+                    @Override
+                    public void onCompleted() {
+                        Observable.just("")
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(result -> {
+                                    showDetailedData(intervalView, totalDistance);
+                                });
                     }
-                }
-                //distance
-                ((TextView)findViewById(R.id.fragment_session_total_distance))
-                        .setText(Utils.getRightDistance((float) totalDistance, SessionActivity.this));
-                //name
-                ((TextView) findViewById(R.id.fragment_session_name))
-                        .setText(mSession.getName());
-                //description
-                ((TextView)findViewById(R.id.fragment_session_description))
-                        .setText(mSession.getDescription());
-                //date
-                ((TextView)findViewById(R.id.fragment_session_date))
-                        .setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), SessionActivity.this));
-                //start time
-                ((TextView)findViewById(R.id.fragment_session_start))
-                        .setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
-                //end time
-                ((TextView)findViewById(R.id.fragment_session_end))
-                        .setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
-                //total/duration time
-                ((TextView)findViewById(R.id.fragment_session_total_time))
-                        .setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS),
-                                mSession.getStartTime(TimeUnit.MILLISECONDS)));
 
-                long sessionTime = mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS);
-                sessionTime = mActiveTime > 0 ? mActiveTime : sessionTime;
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(Constant.TAG, "Error getting Datapoints: set detailed data");
+                    }
 
-                if (totalDistance > 0 && sessionTime > 0) {
-                    double speed = totalDistance / (sessionTime / 1000);
-                    //speed
-                    ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed((float) speed, SessionActivity.this));
-                    //pace
-                    ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace((float) speed, SessionActivity.this));
-                } else {
-                    //speed
-                    ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, SessionActivity.this));
-                    //pace
-                    ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, SessionActivity.this));
-                }
-                showProgressBar(false);
-                if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
-                    fillMap(true);
-                } else {
-                    fillMap(false);
-                }
+                    @Override
+                    public void onNext(SessionActivity sessionActivity) {
+                        SessionDetailedData detailedData = new SessionDetailedData(sessionActivity);
+                        detailedData.readDetailedData(mLocationDataPoints, mSegmentDataPoints);
+                        intervalView = detailedData.getIntervalView();
+                        totalDistance = detailedData.getTotalDistance();
+                    }
+                });
+    }
+
+    private void showDetailedData(LinearLayout intervalView, double totalDistance) {
+        if (intervalView != null) {
+            LinearLayout detailedView = (LinearLayout) findViewById(R.id.session_intervals);
+            detailedView.removeAllViews();
+            detailedView.addView(intervalView);
+        } else {
+            totalDistance = 0;
+            for (DataPoint dp : mDistanceDataPoints) {
+                totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                mLocationDataPoints,
-                mSegmentDataPoints);
+        }
+        //distance
+        ((TextView) findViewById(R.id.fragment_session_total_distance))
+                .setText(Utils.getRightDistance((float) totalDistance, SessionActivity.this));
+        //name
+        ((TextView) findViewById(R.id.fragment_session_name))
+                .setText(mSession.getName());
+        //description
+        ((TextView) findViewById(R.id.fragment_session_description))
+                .setText(mSession.getDescription());
+        //date
+        ((TextView) findViewById(R.id.fragment_session_date))
+                .setText(Utils.getRightDate(mSession.getStartTime(TimeUnit.MILLISECONDS), SessionActivity.this));
+        //start time
+        ((TextView) findViewById(R.id.fragment_session_start))
+                .setText(Utils.millisToTime(mSession.getStartTime(TimeUnit.MILLISECONDS)));
+        //end time
+        ((TextView) findViewById(R.id.fragment_session_end))
+                .setText(Utils.millisToTime(mSession.getEndTime(TimeUnit.MILLISECONDS)));
+        //total/duration time
+        ((TextView) findViewById(R.id.fragment_session_total_time))
+                .setText(Utils.getTimeDifference(mSession.getEndTime(TimeUnit.MILLISECONDS),
+                        mSession.getStartTime(TimeUnit.MILLISECONDS)));
+
+        long sessionTime = mSession.getEndTime(TimeUnit.MILLISECONDS) - mSession.getStartTime(TimeUnit.MILLISECONDS);
+        sessionTime = mActiveTime > 0 ? mActiveTime : sessionTime;
+
+        if (totalDistance > 0 && sessionTime > 0) {
+            double speed = totalDistance / (sessionTime / 1000);
+            //speed
+            ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed((float) speed, SessionActivity.this));
+            //pace
+            ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace((float) speed, SessionActivity.this));
+        } else {
+            //speed
+            ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, SessionActivity.this));
+            //pace
+            ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, SessionActivity.this));
+        }
+        showProgressBar(false);
+        if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
+            fillMap(true);
+        } else {
+            fillMap(false);
+        }
     }
 
     private void getDataPoints() {
@@ -340,7 +360,7 @@ public class SessionActivity extends ActionBarActivity {
             } else if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT)) {
                 mSegmentDataPoints = ds.getDataPoints();
             } else if (ds.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
-                if (ds.getDataPoints() != null && ds.getDataPoints().size() > 0) {
+                if (ds.getDataPoints().size() > 0) {
                     mActiveTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
                 }
             }
@@ -351,42 +371,45 @@ public class SessionActivity extends ActionBarActivity {
         final MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.fragment_session_map));
 
         if (fillMap) {
-            mapFragment.getView().setVisibility(View.VISIBLE);
+            if (mapFragment.getView() != null)
+                mapFragment.getView().setVisibility(View.VISIBLE);
 
-            mapFragment.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    map = googleMap;
-                    map.clear();
-                    map.setPadding(40, 80, 40, 0);
-                    map.setMyLocationEnabled(false);
-                    map.getUiSettings().setZoomControlsEnabled(false);
-                    map.getUiSettings().setMyLocationButtonEnabled(false);
-                }
-            });
+            mapFragment.getMapAsync(googleMap -> {
+                map = googleMap;
+                map.clear();
+                map.setPadding(40, 80, 40, 0);
+                map.setMyLocationEnabled(false);
+                map.getUiSettings().setZoomControlsEnabled(false);
+                map.getUiSettings().setMyLocationButtonEnabled(false);
 
-                new MapLoader(map) {
-                    public void onResult(final List<PolylineOptions> mPolyList, final List<MarkerOptions> mMarkerList, final LatLngBounds.Builder mBoundsBuilder) {
-                        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                Observable.just(map)
+                        .subscribeOn(Schedulers.newThread())
+                        .subscribe(new Subscriber<GoogleMap>() {
+                            private SessionMapData mapData;
+
                             @Override
-                            public void onMapLoaded() {
-                                map.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 5));
+                            public void onCompleted() {
+                                Observable.just(map)
+                                        .subscribeOn(Schedulers.newThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(result -> {
+                                            mapData.setDataIntoMap(result, mapData);
+                                            showProgressBar(false);
+                                        });
+                            }
 
-                                for (PolylineOptions pl : mPolyList ) {
-                                    map.addPolyline(pl
-                                            .geodesic(true)
-                                            .width(6)
-                                            .color(Color.BLACK));
-                                }
-                                for (MarkerOptions mo : mMarkerList) {
-                                    map.addMarker(mo);
-                                }
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(Constant.TAG, "Error getting Datapoints: set map polylines");
+                            }
+
+                            @Override
+                            public void onNext(GoogleMap googleMap) {
+                                mapData = new SessionMapData();
+                                mapData.readMapData(mSegmentDataPoints, mLocationDataPoints);
                             }
                         });
-                    }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        mLocationDataPoints, mSegmentDataPoints);
-
+            });
         } else {
             if (mapFragment.getView() != null)
                 mapFragment.getView().setVisibility(View.GONE);

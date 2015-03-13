@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.fitness.HistoryApi;
 import com.google.android.gms.fitness.SessionsApi;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -38,7 +37,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     private final Context mContext;
     private List<Session> mSession = null;
     private List<Float> mDistance;
-    private final SessionReadResult mSessionReadResult;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -72,7 +70,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     // Provide a suitable constructor (depends on the kind of dataset)
     public SessionAdapter(Context context, SessionReadResult sessionReadResult) {
         mContext = context;
-        mSessionReadResult = sessionReadResult;
         mSession = sessionReadResult.getSessions();
         if (mSession.size() > 1 && mSession.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSession.get(mSession.size() - 1).getStartTime(TimeUnit.MILLISECONDS))
             Collections.reverse(mSession);
