@@ -37,6 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.main.MainActivity;
 import cat.xojan.fittracker.util.SessionDetailedData;
 import cat.xojan.fittracker.util.SessionMapData;
 import cat.xojan.fittracker.util.Utils;
@@ -78,7 +79,6 @@ public class SessionActivity extends ActionBarActivity {
         Intent intent = getIntent();
         mSession = Session.extract(intent);
 
-        // Show the session in your app
         buildFitnessClient();
     }
 
@@ -210,7 +210,6 @@ public class SessionActivity extends ActionBarActivity {
                 builder.setMessage(R.string.delete_session)
                         .setPositiveButton(R.string.delete, (dialog, id1) -> {
                             deleteSession();
-                            showProgressBar(true);
                         })
                         .setNegativeButton(R.string.cancel, (dialog, id1) -> {
                             // User cancelled the dialog
@@ -227,6 +226,8 @@ public class SessionActivity extends ActionBarActivity {
     }
 
     private void deleteSession() {
+        showProgressBar(true);
+
         //  Create a delete request object, providing a data type and a time interval
         DataDeleteRequest request = new DataDeleteRequest.Builder()
                 .addSession(mSession)
@@ -245,13 +246,15 @@ public class SessionActivity extends ActionBarActivity {
                             .setResultCallback(status -> {
                                 if (status.isSuccess()) {
                                     Log.i(Constant.TAG, "Successfully deleted data");
+                                    Intent mainActivity = new Intent(this, MainActivity.class);
+                                    startActivity(mainActivity);
+                                    finish();
                                 } else {
                                     // The deletion will fail if the requesting app tries to delete data
                                     // that it did not insert.
                                     Log.i(Constant.TAG, "Failed to delete data");
                                 }
                             });
-                    finish();
                 });
     }
 
