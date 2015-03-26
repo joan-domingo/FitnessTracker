@@ -4,10 +4,6 @@ public class Constant {
 
     public static final String TAG = "cat.xojan.fittracker";
 
-    public static final int MESSAGE_READ_SESSIONS = 0x0001;
-    public static final int MESSAGE_SINGLE_SESSION_READ = 0x1001;
-    public static final int MESSAGE_SESSION_DELETED = 0x1002;
-
     public static final String DISTANCE_MEASURE_KM = "Km";
     public static final String DISTANCE_MEASURE_MILE = "Mi";
 
@@ -26,6 +22,7 @@ public class Constant {
 
     public static final String WORKOUT_FRAGMENT_TAG = "workoutFragment";
     public static final String RESULT_FRAGMENT_TAG = "resultFragment";
+    public static final String LIST_FRAGMENT_TAG = "listFragment";
 
     public static final String AUTH_PENDING = "auth_state_pending";
     public static final int REQUEST_OAUTH = 1;

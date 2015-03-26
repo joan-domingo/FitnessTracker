@@ -76,7 +76,7 @@ ADDED from AndroidManifest.xml:25:9
 		ADDED from AndroidManifest.xml:26:13
 	android:value
 		ADDED from AndroidManifest.xml:27:13
-activity#cat.xojan.fittracker.MainActivity
+activity#cat.xojan.fittracker.main.MainActivity
 ADDED from AndroidManifest.xml:29:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:32:13

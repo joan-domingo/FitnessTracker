@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.main.controllers;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,21 +8,21 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 
+import javax.inject.Inject;
+
 import cat.xojan.fittracker.R;
 
 public class NotificationController {
 
-    private static NotificationController instance = null;
+    private final NotificationManager mNotificationManager;
+    private final Context context;
 
-    public static NotificationController getInstance() {
-        if (instance == null) {
-            return new NotificationController();
-        } else {
-            return instance;
-        }
+    public NotificationController(Context context, NotificationManager notificationManager) {
+        this.context = context;
+        mNotificationManager = notificationManager;
     }
 
-    public void showNotification(Context context) {
+    public void showNotification() {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
@@ -37,18 +37,14 @@ public class NotificationController {
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = ((ActionBarActivity) context).getIntent();
 
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         mNotificationManager.notify(0, mBuilder.build());
     }
 
-    public void dismissNotification(Context context) {
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
+    public void dismissNotification() {
         mNotificationManager.cancel(0);
     }
 }

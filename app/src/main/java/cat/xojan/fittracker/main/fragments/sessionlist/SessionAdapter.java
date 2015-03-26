@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.sessionlist;
+package cat.xojan.fittracker.main.fragments.sessionlist;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.fitness.HistoryApi;
+import com.google.android.gms.fitness.SessionsApi;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
@@ -25,71 +25,51 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.ActivityType;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.util.Utils;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
 
-    private static Context mContext;
-    private static List<Session> mSession = null;
-    private final List<Float> mDistance;
-    private static SessionReadResult mSessionReadResult;
+    private final Context mContext;
+    private List<Session> mSession = null;
+    private List<Float> mDistance;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
-        // each data item is just a string in this case
-        private final TextView mName;
-        private final TextView mDescription;
-        private final ImageView mActivity;
-        private final TextView mSummary;
-        private final TextView mDay;
-        private final ImageView mIcon;
+        @InjectView(R.id.session_name) TextView mName;
+        @InjectView(R.id.session_description) TextView mDescription;
+        @InjectView(R.id.session_activity) ImageView mActivity;
+        @InjectView(R.id.session_summary) TextView mSummary;
+        @InjectView(R.id.session_day) TextView mDay;
+        @InjectView(R.id.app_icon) ImageView mIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            // Define click listener for the ViewHolder's View.
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Log.d(Constant.TAG, "Element " + getPosition() + " clicked.");
-                    Session session = mSession.get(getPosition());
-                    long startTime = session.getStartTime(TimeUnit.MILLISECONDS);
-                    long endTime = session.getEndTime(TimeUnit.MILLISECONDS);
+            ButterKnife.inject(this, itemView);
 
-                    HistoryApi.ViewIntentBuilder intentBuilder = new HistoryApi.ViewIntentBuilder(mContext,
-                            DataType.TYPE_ACTIVITY_SEGMENT)
-                            .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                            .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART);
+            itemView.setOnClickListener(v -> {
+                Session session = mSession.get(getPosition());
 
-                    for (DataSet ds : mSessionReadResult.getDataSet(session, DataType.TYPE_ACTIVITY_SEGMENT)) {
-                        if (ds.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT))
-                            intentBuilder.setDataSource(ds.getDataSource());
-                    }
+                // Pass your activity object to the constructor
+                Intent intent = new SessionsApi.ViewIntentBuilder(mContext)
+                        .setPreferredApplication(Constant.PACKAGE_SPECIFIC_PART) // optional
+                        .setSession(session)
+                        .build();
 
-                    Intent fitIntent = intentBuilder.build();
-                    fitIntent.putExtra(Constant.EXTRA_SESSION, session.getIdentifier());
-                    fitIntent.putExtra(Constant.EXTRA_START, startTime);
-                    fitIntent.putExtra(Constant.EXTRA_END, endTime);
-                    mContext.startActivity(fitIntent);
-                }
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                // Fire the intent
+                mContext.startActivity(intent);
             });
-            mName = (TextView) itemView.findViewById(R.id.session_name);
-            mDescription = (TextView) itemView.findViewById(R.id.session_description);
-            mActivity = (ImageView) itemView.findViewById(R.id.session_activity);
-            mSummary = (TextView) itemView.findViewById(R.id.session_summary);
-            mDay = (TextView) itemView.findViewById(R.id.session_day);
-            mIcon = (ImageView) itemView.findViewById(R.id.app_icon);
         }
     }
     // Provide a suitable constructor (depends on the kind of dataset)
     public SessionAdapter(Context context, SessionReadResult sessionReadResult) {
         mContext = context;
-        mSessionReadResult = sessionReadResult;
         mSession = sessionReadResult.getSessions();
         if (mSession.size() > 1 && mSession.get(0).getStartTime(TimeUnit.MILLISECONDS) < mSession.get(mSession.size() - 1).getStartTime(TimeUnit.MILLISECONDS))
             Collections.reverse(mSession);
@@ -142,7 +122,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
                 Drawable appIcon = pkgManager.getApplicationIcon(mSession.get(position).getAppPackageName());
                 holder.mIcon.setImageDrawable(appIcon);
             } catch (PackageManager.NameNotFoundException e) {
-                Log.i(Constant.TAG, "Not possible to get session package icon");
+                Log.i(Constant.TAG, "Package name not found");
             }
         }
     }

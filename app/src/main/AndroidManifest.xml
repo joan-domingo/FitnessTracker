@@ -17,7 +17,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".FitTrackerApp">
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -27,7 +28,7 @@
             android:value="AIzaSyBWSi7b9pptamEWucwpPp8YGQhqj9H_V5Y"/>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -51,6 +52,9 @@
                 <data android:mimeType="vnd.google.fitness.data_type/com.google.location.sample" />
                 <data android:mimeType="vnd.google.fitness.data_type/com.google.distance.delta" />
                 <data android:mimeType="vnd.google.fitness.data_type/com.google.activity.sample" />
+                <data android:mimeType="vnd.google.fitness.session/biking" />
+                <data android:mimeType="vnd.google.fitness.session/running" />
+                <data android:mimeType="vnd.google.fitness.session/walking" />
             </intent-filter>
         </activity>
 
