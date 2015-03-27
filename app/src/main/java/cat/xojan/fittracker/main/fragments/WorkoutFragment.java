@@ -116,6 +116,7 @@ public class WorkoutFragment extends BaseFragment {
                 .commit();
 
         timeController.finish();
+        mapController.initMap();
     }
 
     @OnClick(R.id.workout_button_exit)
@@ -266,5 +267,6 @@ public class WorkoutFragment extends BaseFragment {
         if (mLocationListener != null)
             mLocationManager.removeUpdates(mLocationListener);
         mLocationManager.removeUpdates(mFirstLocationListener);
+        mapController.initMap();
     }
 }

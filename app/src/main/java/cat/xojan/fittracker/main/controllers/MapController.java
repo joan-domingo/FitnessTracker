@@ -35,16 +35,21 @@ public class MapController {
                          SpeedController speedController) {
 
         mFragmentActivity = activity;
-        isPaused = false;
-        isTracking = false;
-        mLapIndex = 0;
         fitController = fitnessController;
         mLocationManager = locationManager;
         this.distanceController = distanceController;
         this.speedController = speedController;
 
-        //init google map
         mMap = map;
+        initMap();
+    }
+
+    public void initMap() {
+        isPaused = false;
+        isTracking = false;
+        mLapIndex = 0;
+
+        //init google map
         mMap.clear();
         mMap.setPadding(40, 280, 40, 120);
         mMap.setMyLocationEnabled(true);
