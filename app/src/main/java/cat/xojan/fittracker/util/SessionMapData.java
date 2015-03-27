@@ -1,9 +1,10 @@
-package cat.xojan.fittracker.session;
+package cat.xojan.fittracker.util;
 
-import android.os.AsyncTask;
+import android.graphics.Color;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -15,29 +16,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MapLoader extends AsyncTask<List<DataPoint>, Void, Boolean>{
+public class SessionMapData {
 
-    private final GoogleMap mMap;
-    private final LatLngBounds.Builder mBoundsBuilder;
-    private List<DataPoint> mLocationDataPoints;
-    private List<DataPoint> mSegmentDataPoints;
-    private List<PolylineOptions> mPolyList;
-    private List<MarkerOptions> mMarkerList;
+    private LatLngBounds.Builder mBoundsBuilder;
+    private ArrayList<PolylineOptions> mPolyList;
+    private ArrayList<MarkerOptions> mMarkerList;
 
-    public MapLoader(GoogleMap map) {
-        mMap = map;
+    public SessionMapData(){
         mBoundsBuilder = new LatLngBounds.Builder();
         mPolyList = new ArrayList<>();
         mMarkerList = new ArrayList<>();
     }
 
-    @Override
-    protected Boolean doInBackground(List<DataPoint>... params) {
-        if (params[0] == null || params[1] == null) {
-            return false;
-        }
-        mLocationDataPoints = params[0];
-        mSegmentDataPoints = params[1];
+    public LatLngBounds.Builder getBoundsBuilder() {
+        return mBoundsBuilder;
+    }
+
+    public ArrayList<PolylineOptions> getPolyList() {
+        return mPolyList;
+    }
+
+    public ArrayList<MarkerOptions> getMarkerList() {
+        return mMarkerList;
+    }
+
+    public void readMapData(List<DataPoint> mSegmentDataPoints, List<DataPoint> mLocationDataPoints) {
+        mBoundsBuilder = new LatLngBounds.Builder();
+        mPolyList = new ArrayList<>();
+        mMarkerList = new ArrayList<>();
 
         for (DataPoint segment : mSegmentDataPoints) {
             PolylineOptions trackOptions = new PolylineOptions();
@@ -67,17 +73,19 @@ public class MapLoader extends AsyncTask<List<DataPoint>, Void, Boolean>{
             }
             mPolyList.add(trackOptions);
         }
-
-        return true;
     }
 
-    @Override
-    protected void onPostExecute(Boolean result) {
-        if (result) {
-            onResult(mPolyList, mMarkerList, mBoundsBuilder);
+    public void setDataIntoMap(GoogleMap map, SessionMapData mapData) {
+
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(mapData.getBoundsBuilder().build(), 5));
+        for (PolylineOptions pl : mapData.getPolyList()) {
+            map.addPolyline(pl
+                    .geodesic(true)
+                    .width(6)
+                    .color(Color.BLACK));
+        }
+        for (MarkerOptions mo : mapData.getMarkerList()) {
+            map.addMarker(mo);
         }
     }
-
-    public void onResult(List<PolylineOptions> mPolyList, List<MarkerOptions> mMarkerList, LatLngBounds.Builder mBoundsBuilder) {}
-
 }

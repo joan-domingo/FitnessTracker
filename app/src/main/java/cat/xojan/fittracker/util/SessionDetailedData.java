@@ -2,7 +2,6 @@ package cat.xojan.fittracker.util;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -21,27 +20,29 @@ import java.util.concurrent.TimeUnit;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 
-public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, LinearLayout> {
+public class SessionDetailedData {
 
-    private final Context mContext;
+    private LinearLayout intervalView;
     private double mTotalDistance;
+    private Context mContext;
 
-    public SessionDetailedDataLoader(Context context) {
+    public SessionDetailedData(Context context) {
         mContext = context;
+        mTotalDistance = 0;
+        intervalView = new LinearLayout(mContext);
     }
 
-    @Override
-    protected LinearLayout doInBackground(List<DataPoint>... params) {
-        if (params == null) {
-            return null;
-        }
-        if (params[0] == null || params[0].size() == 0 || params[1] == null) {
-            return null;
-        }
-        List<DataPoint> mLocationDataPoints = params[0];
-        List<DataPoint> mSegmentDataPoints = params[1];
+    public LinearLayout getIntervalView() {
+        return this.intervalView;
+    }
 
-        LinearLayout intervalView = new LinearLayout(mContext);
+    public double getTotalDistance() {
+        return mTotalDistance;
+    }
+
+    public void readDetailedData(List<DataPoint> mLocationDataPoints, List<DataPoint> mSegmentDataPoints) {
+        mTotalDistance = 0;
+        intervalView = new LinearLayout(mContext);
         intervalView.setOrientation(LinearLayout.VERTICAL);
 
         for (int i = 0; i < mSegmentDataPoints.size(); i++) {
@@ -123,7 +124,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
             valuesRow.addView(createValue(mContext, Utils.getRightDistance((float) totalDistance, mContext)));
             valuesRow.addView(createValue(mContext, Utils.getTimeDifference(mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
                     mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
-           double speed = totalDistance / ((mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS) -
+            double speed = totalDistance / ((mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS) -
                     mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))/1000);
             valuesRow.addView(createValue(mContext, Utils.getRightPace((float) speed, mContext)));
             valuesRow.addView(createValue(mContext, Utils.getRightSpeed((float) speed, mContext)));
@@ -136,8 +137,6 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
             //5 add table to view
             intervalView.addView(intervalTable);
         }
-
-        return intervalView;
     }
 
     private double getTotalDistance(int unitCounter, double lastDistance, Context context) {
@@ -150,7 +149,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         }
     }
 
-    private static void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, Context context) {
+    private void addRow(TableLayout intervalTable, String unitCounter, long startTime, long endTime, Context context) {
         float seconds = endTime - startTime;
         seconds = seconds / 1000;
 
@@ -173,7 +172,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         intervalTable.addView(row);
     }
 
-    private static void addLastDetailedRow(TableLayout intervalTable, double distance, long startTime, long endTime, Context context) {
+    private void addLastDetailedRow(TableLayout intervalTable, double distance, long startTime, long endTime, Context context) {
         float seconds = endTime - startTime;
         seconds = seconds / 1000;
         double speed = distance / seconds;
@@ -188,7 +187,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         intervalTable.addView(row);
     }
 
-    private static View createValue(Context context, String text) {
+    private View createValue(Context context, String text) {
         TextView textView = new TextView(context);
         textView.setText(text);
         textView.setPadding(10, 2, 10, 2);
@@ -198,7 +197,7 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         return textView;
     }
 
-    private static View createHeader(Context context, CharSequence text) {
+    private View createHeader(Context context, CharSequence text) {
         TextView textView = new TextView(context);
         textView.setText(text);
         textView.setPadding(10, 2, 10, 2);
@@ -208,13 +207,5 @@ public class SessionDetailedDataLoader extends AsyncTask<List<DataPoint>, Void, 
         textView.setTextColor(context.getResources().getColor(R.color.detail_data));
 
         return textView;
-    }
-
-    @Override
-    protected void onPostExecute(LinearLayout intervalView) {
-        onResult(intervalView, mTotalDistance);
-    }
-
-    public void onResult(LinearLayout intervalView, double mTotalDistance) {
     }
 }

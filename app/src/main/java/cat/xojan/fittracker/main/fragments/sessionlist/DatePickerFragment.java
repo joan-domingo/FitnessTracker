@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.sessionlist;
+package cat.xojan.fittracker.main.fragments.sessionlist;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
