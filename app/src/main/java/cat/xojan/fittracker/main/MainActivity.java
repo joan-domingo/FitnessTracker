@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
         Fragment workoutFragment = getSupportFragmentManager().findFragmentByTag(Constant.WORKOUT_FRAGMENT_TAG);
         Fragment resultFragment = getSupportFragmentManager().findFragmentByTag(Constant.RESULT_FRAGMENT_TAG);
 
-        if (workoutFragment == null || resultFragment == null || getSupportFragmentManager().getBackStackEntryCount() == 0) {
+        if (workoutFragment == null && resultFragment == null && getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, sessionListFragment, Constant.LIST_FRAGMENT_TAG)
@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity {
         Fragment workoutFragment = getSupportFragmentManager().findFragmentByTag(Constant.WORKOUT_FRAGMENT_TAG);
         Fragment resultFragment = getSupportFragmentManager().findFragmentByTag(Constant.RESULT_FRAGMENT_TAG);
 
-        if (workoutFragment == null || resultFragment == null) {
+        if (workoutFragment == null && resultFragment == null) {
             super.onBackPressed();
         }
     }

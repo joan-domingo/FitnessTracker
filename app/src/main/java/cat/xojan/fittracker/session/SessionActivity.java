@@ -246,8 +246,6 @@ public class SessionActivity extends ActionBarActivity {
                             .setResultCallback(status -> {
                                 if (status.isSuccess()) {
                                     Log.i(Constant.TAG, "Successfully deleted data");
-                                    Intent mainActivity = new Intent(this, MainActivity.class);
-                                    startActivity(mainActivity);
                                     finish();
                                 } else {
                                     // The deletion will fail if the requesting app tries to delete data
@@ -273,8 +271,19 @@ public class SessionActivity extends ActionBarActivity {
                         Observable.just("")
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(result -> {
-                                    showDetailedData(intervalView, totalDistance);
+                                .subscribe(new Subscriber<String>() {
+                                    @Override
+                                    public void onCompleted() {}
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        Log.e(Constant.TAG, "Error showing detailed data");
+                                    }
+
+                                    @Override
+                                    public void onNext(String s) {
+                                        showDetailedData(intervalView, totalDistance);
+                                    }
                                 });
                     }
 
@@ -374,7 +383,7 @@ public class SessionActivity extends ActionBarActivity {
     private void fillMap(boolean fillMap) {
         final MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.fragment_session_map));
 
-        if (fillMap) {
+        if (fillMap && mapFragment != null) {
             if (mapFragment.getView() != null)
                 mapFragment.getView().setVisibility(View.VISIBLE);
 
@@ -415,7 +424,7 @@ public class SessionActivity extends ActionBarActivity {
                         });
             });
         } else {
-            if (mapFragment.getView() != null)
+            if (mapFragment != null && mapFragment.getView() != null)
                 mapFragment.getView().setVisibility(View.GONE);
         }
     }

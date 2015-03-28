@@ -80,14 +80,9 @@ public class SessionListFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        readSessions();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
+        readSessions();
         mDateEndButton.setText(Utils.getRightDate(fitController.getEndTime(), getActivity()));
         mDateStartButton.setText(Utils.getRightDate(fitController.getStartTime(), getActivity()));
 
