@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,15 +18,23 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.daggermodules.MainModule;
+import cat.xojan.fittracker.main.controllers.FitnessController;
 import dagger.ObjectGraph;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
     private ObjectGraph activityGraph;
+    private static final int REQUEST_OAUTH = 1;
+    /**
+     *  Track whether an authorization activity is stacking over the current activity, i.e. when
+     *  a known auth error is being resolved, such as showing the account chooser or presenting a
+     *  consent dialog. This avoids common duplications as might happen on screen rotations, etc.
+     */
+    private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
-    private GoogleApiClient mClient;
+
+    private GoogleApiClient mClient = null;
 
     @Inject
     FitnessController fitnessController;
@@ -48,6 +57,15 @@ public abstract class BaseActivity extends ActionBarActivity {
         buildFitnessClient();
     }
 
+
+    /**
+     *  Build a {@link GoogleApiClient} that will authenticate the user and allow the application
+     *  to connect to Fitness APIs. The scopes included should match the scopes your app needs
+     *  (see documentation for details). Authentication will occasionally fail intentionally,
+     *  and in those cases, there will be a known resolution, which the OnConnectionFailedListener()
+     *  can address. Examples of this include the user never having signed in before, or having
+     *  multiple accounts on the device and needing to specify which account to use, etc.
+     */
     private void buildFitnessClient() {
         mClient = new GoogleApiClient.Builder(this)
                 .addApi(Fitness.HISTORY_API)
@@ -76,26 +94,30 @@ public abstract class BaseActivity extends ActionBarActivity {
                         }
                 )
                 .addOnConnectionFailedListener(
-                        result -> {
-                            Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
-                            if (!result.hasResolution()) {
-                                // Show the localized error dialog
-                                GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
-                                        BaseActivity.this, 0).show();
-                                return;
-                            }
-                            // The failure has a resolution. Resolve it.
-                            // Called typically when the app is not yet authorized, and an
-                            // authorization dialog is displayed to the user.
-                            if (!authInProgress) {
-                                try {
-                                    Log.i(Constant.TAG, "Attempting to resolve failed connection");
-                                    authInProgress = true;
-                                    result.startResolutionForResult(BaseActivity.this,
-                                            Constant.REQUEST_OAUTH);
-                                } catch (IntentSender.SendIntentException e) {
-                                    Log.e(Constant.TAG,
-                                            "Exception while starting resolution activity", e);
+                        new GoogleApiClient.OnConnectionFailedListener() {
+                            // Called whenever the API client fails to connect.
+                            @Override
+                            public void onConnectionFailed(ConnectionResult result) {
+                                Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
+                                if (!result.hasResolution()) {
+                                    // Show the localized error dialog
+                                    GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
+                                            BaseActivity.this, 0).show();
+                                    return;
+                                }
+                                // The failure has a resolution. Resolve it.
+                                // Called typically when the app is not yet authorized, and an
+                                // authorization dialog is displayed to the user.
+                                if (!authInProgress) {
+                                    try {
+                                        Log.i(Constant.TAG, "Attempting to resolve failed connection");
+                                        authInProgress = true;
+                                        result.startResolutionForResult(BaseActivity.this,
+                                                REQUEST_OAUTH);
+                                    } catch (IntentSender.SendIntentException e) {
+                                        Log.e(Constant.TAG,
+                                                "Exception while starting resolution activity", e);
+                                    }
                                 }
                             }
                         }
