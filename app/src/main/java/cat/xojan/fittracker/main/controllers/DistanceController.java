@@ -38,6 +38,7 @@ public class DistanceController {
 
     public void init(TextView distanceView) {
         mDistanceView = distanceView;
+        mSegmentDistance = mSessionDistance = 0;
         updateDistanceView();
     }
 
