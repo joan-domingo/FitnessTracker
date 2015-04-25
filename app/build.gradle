@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "cat.xojan.fittracker"
         minSdkVersion 16
-        targetSdkVersion 21
-        versionCode 20
-        versionName "1.26.10"
+        targetSdkVersion 22
+        versionCode 23
+        versionName "1.27.2"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
