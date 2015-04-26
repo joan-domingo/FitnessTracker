@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.session;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -47,8 +47,6 @@ import rx.schedulers.Schedulers;
 
 public class SessionActivity extends AppCompatActivity {
 
-    @InjectView(R.id.fragment_loading_spinner) ProgressBar mProgressBar;
-    @InjectView(R.id.fragment_session_container) LinearLayout mSessionView;
     @InjectView(R.id.fragment_session_toolbar) Toolbar toolbar;
 
     private Session mSession;
@@ -61,6 +59,7 @@ public class SessionActivity extends AppCompatActivity {
     private GoogleMap map;
     private List<DataPoint> mDistanceDataPoints;
     private int mActiveTime;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +72,7 @@ public class SessionActivity extends AppCompatActivity {
         }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        showProgressBar(true);
+        mProgressDialog = ProgressDialog.show(this, null, getString(R.string.wait));
 
         Intent intent = getIntent();
         mSession = Session.extract(intent);
@@ -165,20 +164,10 @@ public class SessionActivity extends AppCompatActivity {
                                     if (s.getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART))
                                         mDeleteButton.setVisible(true);
                                     fillViewContent();
+                                    mProgressDialog.dismiss();
                                 });
                     }
                 });
-    }
-
-    private void showProgressBar(boolean b) {
-        if (b) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            mSessionView.setVisibility(View.GONE);
-        }
-        else {
-            mProgressBar.setVisibility(View.GONE);
-            mSessionView.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -225,7 +214,7 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     private void deleteSession() {
-        showProgressBar(true);
+        mProgressDialog.show();
 
         //  Create a delete request object, providing a data type and a time interval
         DataDeleteRequest request = new DataDeleteRequest.Builder()
@@ -245,6 +234,7 @@ public class SessionActivity extends AppCompatActivity {
                             .setResultCallback(status -> {
                                 if (status.isSuccess()) {
                                     Log.i(Constant.TAG, "Successfully deleted data");
+                                    mProgressDialog.dismiss();
                                     finish();
                                 } else {
                                     // The deletion will fail if the requesting app tries to delete data
@@ -350,7 +340,7 @@ public class SessionActivity extends AppCompatActivity {
             //pace
             ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, SessionActivity.this));
         }
-        showProgressBar(false);
+        mProgressDialog.dismiss();
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
         } else {
@@ -406,7 +396,7 @@ public class SessionActivity extends AppCompatActivity {
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(result -> {
                                             mapData.setDataIntoMap(result, mapData);
-                                            showProgressBar(false);
+                                            mProgressDialog.dismiss();
                                         });
                             }
 

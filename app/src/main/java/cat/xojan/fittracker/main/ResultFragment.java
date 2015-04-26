@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main.fragments;
+package cat.xojan.fittracker.main;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -33,7 +33,6 @@ import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.main.controllers.DistanceController;
 import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.main.controllers.MapController;
@@ -96,7 +95,7 @@ public class ResultFragment extends BaseFragment {
         }
         ButterKnife.inject(this, view);
         setHasOptionsMenu(true);
-        showProgressBar(true);
+        showProgressDialog(true);
 
         return view;
     }
@@ -188,20 +187,18 @@ public class ResultFragment extends BaseFragment {
                                                     .getRightLanguageString(fitController
                                                             .getFitnessActivity())));
                                         }
-                                        showProgressBar(false);
+                                        showProgressDialog(false);
                                         setMap();
                                     });
                         }
                 );
     }
 
-    private void showProgressBar(boolean b) {
+    private void showProgressDialog(boolean b) {
         if (b) {
-            (view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.VISIBLE);
-            (view.findViewById(R.id.fragment_result_content)).setVisibility(View.GONE);
+            ((MainActivity) getActivity()).showDialog();
         } else {
-            (view.findViewById(R.id.fragment_result_content)).setVisibility(View.VISIBLE);
-            (view.findViewById(R.id.fragment_result_loading_spinner)).setVisibility(View.GONE);
+            ((MainActivity) getActivity()).dismissDialog();
         }
     }
 
@@ -229,7 +226,7 @@ public class ResultFragment extends BaseFragment {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(result -> {
                                         mapData.setDataIntoMap(result, mapData);
-                                        showProgressBar(false);
+                                        showProgressDialog(false);
                                     });
                         }
 

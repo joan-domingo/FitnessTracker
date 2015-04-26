@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.fragments.SessionListFragment;
+import cat.xojan.fittracker.main.SessionListFragment;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 

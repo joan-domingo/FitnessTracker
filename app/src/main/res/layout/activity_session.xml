@@ -22,13 +22,6 @@
         android:background="@drawable/toolbar_dropshadow"
         android:elevation="1dp"/>
 
-    <ProgressBar
-        android:id="@+id/fragment_loading_spinner"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

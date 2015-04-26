@@ -70,5 +70,6 @@
     <string name="mdy" translatable="false">mdy</string>
     <string name="ymd" translatable="false">ymd</string>
     <string name="delete">Delete</string>
+    <string name="wait">Please wait &#8230;</string>
 
 </resources>

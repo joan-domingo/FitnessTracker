@@ -19,9 +19,9 @@ import cat.xojan.fittracker.main.controllers.MapController;
 import cat.xojan.fittracker.main.controllers.NotificationController;
 import cat.xojan.fittracker.main.controllers.SpeedController;
 import cat.xojan.fittracker.main.controllers.TimeController;
-import cat.xojan.fittracker.main.fragments.ResultFragment;
-import cat.xojan.fittracker.main.fragments.SessionListFragment;
-import cat.xojan.fittracker.main.fragments.WorkoutFragment;
+import cat.xojan.fittracker.main.ResultFragment;
+import cat.xojan.fittracker.main.SessionListFragment;
+import cat.xojan.fittracker.main.WorkoutFragment;
 import dagger.Module;
 import dagger.Provides;
 

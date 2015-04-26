@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main.fragments;
+package cat.xojan.fittracker.main;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.request.SessionReadRequest;
@@ -34,7 +33,6 @@ import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.main.fragments.sessionlist.DatePickerFragment;
 import cat.xojan.fittracker.main.fragments.sessionlist.SessionAdapter;
@@ -48,9 +46,9 @@ public class SessionListFragment extends BaseFragment {
 
     @Inject FitnessController fitController;
     @Inject Context mContext;
-    @Inject WorkoutFragment workoutFragment;
+    @Inject
+    WorkoutFragment workoutFragment;
 
-    @InjectView(R.id.sessions_loading_spinner) ProgressBar mProgressBar;
     @InjectView(R.id.sessions_list) RecyclerView mRecyclerView;
     @InjectView(R.id.date_range_end) Button mDateEndButton;
     @InjectView(R.id.date_range_start) Button mDateStartButton;
@@ -63,7 +61,6 @@ public class SessionListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
         ButterKnife.inject(this, view);
 
-        showProgressBar(true);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
@@ -114,7 +111,7 @@ public class SessionListFragment extends BaseFragment {
                 calendar.set(year, month, day);
                 fitController.setEndTime(calendar);
                 button.setText(Utils.getRightDate(fitController.getEndTime(), getActivity()));
-                showProgressBar(true);
+                showProgressDialog(true);
                 readSessions();
             }
         };
@@ -134,7 +131,7 @@ public class SessionListFragment extends BaseFragment {
                 calendar.set(year, month, day);
                 fitController.setStartTime(calendar);
                 button.setText(Utils.getRightDate(fitController.getStartTime(), getActivity()));
-                showProgressBar(true);
+                showProgressDialog(true);
                 readSessions();
             }
         };
@@ -144,18 +141,17 @@ public class SessionListFragment extends BaseFragment {
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 
-    private void showProgressBar(boolean b) {
+    private void showProgressDialog(boolean b) {
         if (b) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
+            ((MainActivity) getActivity()).showDialog();
         } else {
-            mProgressBar.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+            ((MainActivity) getActivity()).dismissDialog();
             swipeLayout.setRefreshing(false);
         }
     }
 
     private void readSessions() {
+        showProgressDialog(true);
 
         Observable.just(fitController.getSessionsReadRequest())
                 .subscribeOn(Schedulers.newThread())
@@ -170,7 +166,7 @@ public class SessionListFragment extends BaseFragment {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> {
                                     mRecyclerView.setAdapter(new SessionAdapter(mContext, result));
-                                    showProgressBar(false);
+                                    showProgressDialog(false);
                                 });
                     }
 

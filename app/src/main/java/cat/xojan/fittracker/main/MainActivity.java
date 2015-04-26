@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import cat.xojan.fittracker.BaseActivity;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.fragments.SessionListFragment;
 import cat.xojan.fittracker.menu.AttributionFragment;
 import cat.xojan.fittracker.menu.PreferenceActivity;
 
@@ -28,6 +27,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        showDialog();
     }
 
     protected void setFragment() {
@@ -42,6 +42,8 @@ public class MainActivity extends BaseActivity {
     private void addInitialFragment() {
         Fragment workoutFragment = getSupportFragmentManager().findFragmentByTag(Constant.WORKOUT_FRAGMENT_TAG);
         Fragment resultFragment = getSupportFragmentManager().findFragmentByTag(Constant.RESULT_FRAGMENT_TAG);
+
+        dismissDialog();
 
         if (workoutFragment == null && resultFragment == null && getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportFragmentManager()
@@ -139,5 +141,15 @@ public class MainActivity extends BaseActivity {
         if (workoutFragment == null && resultFragment == null) {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void showDialog() {
+        super.showDialog();
+    }
+
+    @Override
+    protected void dismissDialog() {
+        super.dismissDialog();
     }
 }

@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main.fragments;
+package cat.xojan.fittracker.main;
 
 import android.app.AlertDialog;
 import android.location.Location;
@@ -28,6 +28,8 @@ import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.main.ResultFragment;
+import cat.xojan.fittracker.main.SessionListFragment;
 import cat.xojan.fittracker.main.controllers.DistanceController;
 import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.main.controllers.MapController;
@@ -40,8 +42,10 @@ public class WorkoutFragment extends BaseFragment {
     @Inject FitnessController fitController;
     @Inject MapController mapController;
     @Inject NotificationController notController;
-    @Inject SessionListFragment sessionListFragment;
-    @Inject ResultFragment resultFragment;
+    @Inject
+    SessionListFragment sessionListFragment;
+    @Inject
+    ResultFragment resultFragment;
     @Inject LocationManager mLocationManager;
     @Inject DistanceController distanceController;
     @Inject TimeController timeController;

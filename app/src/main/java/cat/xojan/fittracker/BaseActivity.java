@@ -1,5 +1,6 @@
 package cat.xojan.fittracker;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
 
+    private ProgressDialog mProgressDialog;
     private GoogleApiClient mClient = null;
 
     @Inject
@@ -49,6 +51,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         // Inject ourselves so subclasses will have dependencies fulfilled when this method returns.
         activityGraph.inject(this);
+
+        mProgressDialog = ProgressDialog.show(this, null, getString(R.string.wait));
 
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(Constant.AUTH_PENDING);
@@ -176,5 +180,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(Constant.AUTH_PENDING, authInProgress);
+    }
+
+    protected void showDialog() {
+        mProgressDialog.show();
+    }
+
+    protected void dismissDialog() {
+        mProgressDialog.dismiss();
     }
 }
