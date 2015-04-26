@@ -9,6 +9,7 @@
         <item name="android:windowBackground">@color/white</item>
         <item name="android:navigationBarColor">@color/my_darker_color</item>
         <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="RaisedRed">
