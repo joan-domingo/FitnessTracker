@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -31,10 +31,10 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.main.ActivityType;
 import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.main.fragments.sessionlist.DatePickerFragment;
 import cat.xojan.fittracker.main.fragments.sessionlist.SessionAdapter;
@@ -64,8 +64,8 @@ public class SessionListFragment extends BaseFragment {
         ButterKnife.inject(this, view);
 
         showProgressBar(true);
-        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);

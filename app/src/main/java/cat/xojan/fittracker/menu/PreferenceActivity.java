@@ -1,13 +1,13 @@
 package cat.xojan.fittracker.menu;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import cat.xojan.fittracker.R;
 
-public class PreferenceActivity extends ActionBarActivity {
+public class PreferenceActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBarActivity;
-
-import javax.inject.Inject;
+import android.support.v7.app.AppCompatActivity;
 
 import cat.xojan.fittracker.R;
 
@@ -35,7 +33,7 @@ public class NotificationController {
                         .setAutoCancel(false);
 
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = ((ActionBarActivity) context).getIntent();
+        Intent resultIntent = ((AppCompatActivity) context).getIntent();
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);

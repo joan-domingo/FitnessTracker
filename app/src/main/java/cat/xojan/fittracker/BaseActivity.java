@@ -3,7 +3,7 @@ package cat.xojan.fittracker;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -22,7 +22,7 @@ import cat.xojan.fittracker.daggermodules.MainModule;
 import cat.xojan.fittracker.main.controllers.FitnessController;
 import dagger.ObjectGraph;
 
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private ObjectGraph activityGraph;
     private static final int REQUEST_OAUTH = 1;

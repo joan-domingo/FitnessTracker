@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -37,7 +37,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.MainActivity;
 import cat.xojan.fittracker.util.SessionDetailedData;
 import cat.xojan.fittracker.util.SessionMapData;
 import cat.xojan.fittracker.util.Utils;
@@ -46,7 +45,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SessionActivity extends ActionBarActivity {
+public class SessionActivity extends AppCompatActivity {
 
     @InjectView(R.id.fragment_loading_spinner) ProgressBar mProgressBar;
     @InjectView(R.id.fragment_session_container) LinearLayout mSessionView;

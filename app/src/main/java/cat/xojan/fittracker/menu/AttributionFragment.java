@@ -3,7 +3,7 @@ package cat.xojan.fittracker.menu;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,8 +22,8 @@ public class AttributionFragment extends Fragment {
 
         setHasOptionsMenu(true);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_attribution_toolbar);
-        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         WebView webView = (WebView) view.findViewById(R.id.fragment_attribution_webview);
         String firstAttribution = "<h1>App Icon</h1><a href=\"http://www.freepik.com/free-photos-vectors/design\">Design vector designed by Freepik</a>";

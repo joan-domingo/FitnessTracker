@@ -6,7 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.InflateException;
@@ -159,7 +159,7 @@ public class WorkoutFragment extends BaseFragment {
 
         ButterKnife.inject(this, view);
         gpsBar.setVisibility(View.VISIBLE);
-        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
 
         return view;
