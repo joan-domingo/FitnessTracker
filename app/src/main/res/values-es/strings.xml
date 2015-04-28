@@ -51,4 +51,5 @@
     <string name="enable_gps">GPS desactivado</string>
     <string name="enable_gps_desc">Por favor active el GPS en la configuración de su teléfono.</string>
     <string name="delete">Eliminar</string>
+    <string name="wait">Espere por favor&#8230;</string>
 </resources>

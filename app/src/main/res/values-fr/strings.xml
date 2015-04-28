@@ -51,4 +51,5 @@
     <string name="waiting_gps">ATTENTE POUR GPS</string>
     <string name="walking">Marcher</string>
     <string name="workout">Activité</string>
+    <string name="wait">S\'il vous plaît patienter</string>
 </resources>

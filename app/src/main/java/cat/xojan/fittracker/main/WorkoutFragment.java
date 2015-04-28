@@ -28,8 +28,6 @@ import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.ResultFragment;
-import cat.xojan.fittracker.main.SessionListFragment;
 import cat.xojan.fittracker.main.controllers.DistanceController;
 import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.main.controllers.MapController;

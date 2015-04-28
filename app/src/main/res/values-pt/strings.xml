@@ -51,4 +51,5 @@
     <string name="walking">Andar</string>
     <string name="workout">Atividade</string>
     <string name="yyyymmdd">AAAA-MM-DD</string>
+    <string name="wait">Aguarde por favor&#8230;</string>
 </resources>

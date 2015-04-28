@@ -64,11 +64,7 @@ public class FitnessController {
         //summary activity (aggregate)
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
         summaryDataPoint.setTimeInterval(timeController.getSessionStartTime(), timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
-        //summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
-        /**
-         * should be fixed again on google play services 7.2
-         */
-        summaryDataPoint.getValue(Field.zzZz).setInt(mNumSegments);
+        summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
         summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) timeController.getSessionWorkoutTime());
         summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
 
