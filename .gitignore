@@ -5,3 +5,7 @@
 .DS_Store
 /build
 app/app-release.apk
+wear/wear.iml
+.idea/vcs.xml
+.idea/
+*.iml
