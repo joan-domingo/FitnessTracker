@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="activities">
+        <item>@string/running</item>
+        <item>@string/walking</item>
+        <item>@string/biking</item>
+    </string-array>
+</resources>
