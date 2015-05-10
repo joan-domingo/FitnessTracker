@@ -4,12 +4,14 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 
+import cat.xojan.fittracker.fragment.HistoryFragment;
 import cat.xojan.fittracker.fragment.OpenAppFragment;
 import cat.xojan.fittracker.fragment.StartFragment;
 
 public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
 
     private StartFragment mStartFragment;
+    private HistoryFragment mHistoryFragment;
     private OpenAppFragment mOpenAppFragment;
 
     public MainGridPagerAdapter(FragmentManager fm) {
@@ -19,6 +21,7 @@ public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
 
     private void initFragments() {
         mStartFragment = mStartFragment == null ? new StartFragment() : mStartFragment;
+        mHistoryFragment = mHistoryFragment == null ? new HistoryFragment() : mHistoryFragment;
         mOpenAppFragment = mOpenAppFragment == null ? new OpenAppFragment() : mOpenAppFragment;
     }
 
@@ -26,6 +29,8 @@ public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
     public Fragment getFragment(int row, int col) {
         if (col == 0) {
             return mStartFragment;
+        } else if (col == 1) {
+            return mHistoryFragment;
         } else {
             return mOpenAppFragment;
         }
@@ -38,6 +43,6 @@ public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int i) {
-        return 2;
+        return 3;
     }
 }
