@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="android_wear_capabilities" translatable="false">
+        <!-- declaring that phone has the capability to show details -->
+        <item>@string/start_handheld_app_capability_name</item>
+    </string-array>
+    <string name="start_handheld_app_capability_name">start_handheld_app</string>
+</resources>
