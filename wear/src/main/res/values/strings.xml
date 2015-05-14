@@ -2,7 +2,6 @@
     <string name="app_name">Fitness Tracker</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
-    <string name="msg_sent">Message sent</string>
     <string name="start_handheld_app_capability_name">start_handheld_app</string>
 
     <string name="running">Running</string>

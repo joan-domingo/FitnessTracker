@@ -1,11 +1,15 @@
 package cat.xojan.fittracker.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.wearable.activity.ConfirmationActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import cat.xojan.fittracker.R;
@@ -18,17 +22,15 @@ public class OpenAppFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.open_app_fragment, container, false);
 
-        TextView text = (TextView) view.findViewById(R.id.text);
-        text.setOnClickListener(new View.OnClickListener() {
+        ImageButton onAppButton = (ImageButton) view.findViewById(R.id.open_on_app_button);
+        onAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UtilityService.startDeviceActivity(getActivity(), UtilityService.LAUNCH_HANDHELD_APP);
-                /*Intent intent = new Intent(getActivity(), ConfirmationActivity.class);
+                Intent intent = new Intent(getActivity(), ConfirmationActivity.class);
                 intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
-                        ConfirmationActivity.SUCCESS_ANIMATION);
-                intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE,
-                        getString(R.string.msg_sent));
-                startActivity(intent);*/
+                        ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
+                startActivity(intent);
             }
         });
 
