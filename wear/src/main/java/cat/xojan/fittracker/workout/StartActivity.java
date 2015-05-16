@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -127,7 +128,7 @@ public class StartActivity extends Activity implements
                     .removeLocationUpdates(mGoogleApiClient, this);
         }
         mGoogleApiClient.disconnect();
-
+        mTextView.setVisibility(View.GONE);
         getFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, new FragmentStart())
                 .commit();
