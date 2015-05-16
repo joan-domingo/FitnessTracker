@@ -1,8 +1,7 @@
-package cat.xojan.fittracker.fragment;
+package cat.xojan.fittracker.main.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.wearable.activity.ConfirmationActivity;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.service.UtilityService;

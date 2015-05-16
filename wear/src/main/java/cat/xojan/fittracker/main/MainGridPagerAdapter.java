@@ -1,12 +1,12 @@
-package cat.xojan.fittracker;
+package cat.xojan.fittracker.main;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 
-import cat.xojan.fittracker.fragment.HistoryFragment;
-import cat.xojan.fittracker.fragment.OpenAppFragment;
-import cat.xojan.fittracker.fragment.StartFragment;
+import cat.xojan.fittracker.main.fragment.HistoryFragment;
+import cat.xojan.fittracker.main.fragment.OpenAppFragment;
+import cat.xojan.fittracker.main.fragment.StartFragment;
 
 public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
 

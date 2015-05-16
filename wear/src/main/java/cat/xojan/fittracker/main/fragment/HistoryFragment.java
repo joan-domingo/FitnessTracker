@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.fragment;
+package cat.xojan.fittracker.main.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

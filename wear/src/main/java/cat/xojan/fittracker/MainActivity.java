@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import cat.xojan.fittracker.main.MainGridPagerAdapter;
+
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
@@ -48,13 +50,5 @@ public class MainActivity extends Activity {
         pager.setAdapter(new MainGridPagerAdapter(getFragmentManager()));
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
-
-        /*
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(stub1 -> {
-            mTextView = (TextView) stub1.findViewById(R.id.text);
-
-        });*/
-
     }
 }

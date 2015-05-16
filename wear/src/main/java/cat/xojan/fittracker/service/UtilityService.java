@@ -18,7 +18,7 @@ import cat.xojan.fittracker.R;
 
 public class UtilityService extends IntentService {
 
-    private static final String TAG = UtilityService.class.getSimpleName();
+    private static final String TAG = "UtilityService";
 
     public static final String LAUNCH_HANDHELD_APP = "/launch_handheld_app";
 
@@ -37,6 +37,7 @@ public class UtilityService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.i(TAG, "wear: Handling Intent");
         String action = intent != null ? intent.getAction() : null;
         if (ACTION_START_DEVICE_ACTIVITY.equals(action)) {
             startDeviceActivityInternal(intent.getStringExtra(EXTRA_START_PATH));

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:deviceIds="wear_round"
+    tools:context=".StartFragment" >
+
+    <cat.xojan.fittracker.main.customview.Triangle
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:direction="down"/>
+
+    <cat.xojan.fittracker.main.customview.Triangle
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:direction="left"/>
+
+    <cat.xojan.fittracker.main.customview.Triangle
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:direction="right"/>
+
+    <cat.xojan.fittracker.main.customview.Triangle
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:direction="up"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_walking3"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="80dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_running30"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_biking2"
+        android:layout_marginEnd="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="80dp"/>
+
+</RelativeLayout>

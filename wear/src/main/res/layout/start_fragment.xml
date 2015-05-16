@@ -1,47 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.wearable.view.WatchViewStub
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/text_header"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="Start Activity"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="bottom"
-        android:textSize="20sp"/>
-
-    <LinearLayout
-        android:id="@+id/row1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/text_header"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="10dp">
-
-        <ImageButton
-            android:id="@+id/walk_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_walking3"/>
-
-        <ImageButton
-            android:id="@+id/run_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_running30"/>
-
-    </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/bike_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_biking2"
-        android:layout_below="@+id/row1"
-        android:layout_centerHorizontal="true"/>
-
-</RelativeLayout>
+    android:id="@+id/watch_view_stub"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:rectLayout="@layout/start_fragment_rect"
+    app:roundLayout="@layout/start_fragment_round"
+    tools:context=".StartFragment"
+    tools:deviceIds="wear" />
