@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import cat.xojan.fittracker.BaseActivity;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.SaveSessionActivity;
 import cat.xojan.fittracker.main.MainActivity;
 import cat.xojan.fittracker.main.controllers.DistanceController;
 import cat.xojan.fittracker.main.controllers.FitnessController;
@@ -36,7 +37,8 @@ import dagger.Provides;
                 ResultFragment.class,
                 DistanceController.class,
                 SpeedController.class,
-                TimeController.class
+                TimeController.class,
+                SaveSessionActivity.class
         },
         addsTo = AppModule.class,
         library = true

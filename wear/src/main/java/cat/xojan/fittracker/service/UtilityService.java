@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.service;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.wearable.CapabilityApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
@@ -15,15 +17,19 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.util.Serializer;
 
 public class UtilityService extends IntentService {
 
     private static final String TAG = "UtilityService";
 
     public static final String LAUNCH_HANDHELD_APP = "/launch_handheld_app";
+    public static final String SAVE_SESSION = "/save_session";
 
     private static final String ACTION_START_DEVICE_ACTIVITY = "start_device_activity";
+
     private static final String EXTRA_START_PATH = "start_path";
+
     private static final long GET_CAPABILITY_TIMEOUT_S = 10;
 
     public static final int GOOGLE_API_CLIENT_TIMEOUT_S = 10; // 10 seconds
@@ -89,5 +95,18 @@ public class UtilityService extends IntentService {
 
             googleApiClient.disconnect();
         }
+    }
+
+    /**
+     * Trigger a message that asks the master device to save a session
+     *
+     * @param context the context
+     * @param path the path that will be sent via the wearable message API
+     */
+    public static void saveSession(Context context, String path) {
+        Intent intent = new Intent(context, UtilityService.class);
+        intent.setAction(UtilityService.ACTION_START_DEVICE_ACTIVITY);
+        intent.putExtra(EXTRA_START_PATH, path);
+        context.startService(intent);
     }
 }

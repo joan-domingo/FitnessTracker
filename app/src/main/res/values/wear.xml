@@ -3,6 +3,8 @@
     <string-array name="android_wear_capabilities" translatable="false">
         <!-- declaring that phone has the capability to show details -->
         <item>@string/start_handheld_app_capability_name</item>
+        <item>@string/start_handheld_app_save_session</item>
     </string-array>
     <string name="start_handheld_app_capability_name">start_handheld_app</string>
+    <string name="start_handheld_app_save_session">save_session_app</string>
 </resources>

@@ -3,21 +3,83 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/chrono"
+    <LinearLayout
+        android:id="@+id/container_data"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:text="00:00"
-        android:textSize="50sp"
-        android:gravity="center"/>
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button_exit"
+        <Chronometer
+            android:id="@+id/chrono"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="40sp"
+            android:gravity="bottom|center_horizontal"/>
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="0,00 km"
+            android:gravity="center"
+            android:textSize="40sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bar_lap_pause"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/button_lap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/green"
+            android:text="@string/lap"/>
+
+        <Button
+            android:id="@+id/button_pause"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/grey"
+            android:text="@string/pause"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bar_resume_finish"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
         android:layout_weight="1"
-        android:background="@color/red"
-        android:text="@string/pause"/>
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/button_resume"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/green"
+            android:text="@string/resume"/>
+
+        <Button
+            android:id="@+id/button_finish"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/red"
+            android:text="@string/finish"/>
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

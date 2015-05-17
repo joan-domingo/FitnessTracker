@@ -18,6 +18,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.wearable.Wearable;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.workout.controller.DistanceController;
+import cat.xojan.fittracker.workout.controller.FitnessController;
 
 public class StartActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -43,6 +45,7 @@ public class StartActivity extends Activity implements
             finish();//TODO
         }
         String activityType = getIntent().getStringExtra("EXTRA_ACTIVITY_TYPE");
+        FitnessController.getInstance().setFitnessActivity(activityType);
 
         // Build a new GoogleApiClient
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -77,6 +80,7 @@ public class StartActivity extends Activity implements
 
     @Override
     public void onConnected(Bundle bundle) {
+        FitnessController.getInstance().setClient(mGoogleApiClient);
         LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL_MS)
@@ -118,7 +122,8 @@ public class StartActivity extends Activity implements
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) { }
+    public void onConnectionFailed(ConnectionResult result) {
+    }
 
     @Override
     public void onLocationChanged(Location location){
@@ -126,8 +131,9 @@ public class StartActivity extends Activity implements
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi
                     .removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
         }
-        mGoogleApiClient.disconnect();
+        DistanceController.getInstance().setFirstLocation(location);
         mTextView.setVisibility(View.GONE);
         getFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, new FragmentStart())

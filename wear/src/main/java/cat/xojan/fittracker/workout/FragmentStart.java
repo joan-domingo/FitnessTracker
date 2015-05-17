@@ -10,14 +10,21 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.workout.controller.TimeController;
 
 public class FragmentStart extends Fragment {
 
     @OnClick(R.id.button_start)
     public void goToWorkoutFragment() {
+        TimeController.getInstance().setSessionStart();
         getActivity().getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new WorkoutFragment())
                 .commit();
+    }
+
+    @OnClick(R.id.button_exit)
+    public void exitWorkout() {
+        getActivity().finish();
     }
 
     @Nullable

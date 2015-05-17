@@ -30,6 +30,8 @@ dependencies {
     compile 'com.google.android.support:wearable:1.1.0'
     compile 'com.google.android.gms:play-services-wearable:7.3.0'
     compile 'com.google.android.gms:play-services-location:7.3.0'
+    compile 'com.google.android.gms:play-services-fitness:7.3.0'
+    compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile 'com.jakewharton:butterknife:6.1.0'
 }
