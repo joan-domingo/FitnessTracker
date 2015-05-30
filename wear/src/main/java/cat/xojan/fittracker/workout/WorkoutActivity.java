@@ -1,9 +1,9 @@
 package cat.xojan.fittracker.workout;
 
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -20,7 +20,7 @@ import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.workout.controller.DistanceController;
 import cat.xojan.fittracker.workout.controller.FitnessController;
 
-public class WorkoutActivity extends Activity implements
+public class WorkoutActivity extends WearableActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
@@ -36,7 +36,6 @@ public class WorkoutActivity extends Activity implements
     private TextView mTextView;
     private boolean isFirstLocation = true;
     private boolean mIsTracking = false;
-    private LatLng mOldPosition;
     private DistanceController mDistanceController;
     private FitnessController mFitnessController;
     private Location mOldLocation;
@@ -44,6 +43,7 @@ public class WorkoutActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAmbientEnabled();
         setContentView(R.layout.activity_start);
         if (!hasGps()) {
             Log.d(TAG, "This hardware doesn't have GPS.");
@@ -155,10 +155,13 @@ public class WorkoutActivity extends Activity implements
     public void updateTrack(Location location) {
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         if (mIsTracking) {
-            mDistanceController.updateDistance(mOldPosition, currentPosition);
+            mDistanceController.updateDistance(getOldPosition(mOldLocation), currentPosition);
             mFitnessController.storeLocation(location);
         }
-        mOldPosition = currentPosition;
+    }
+
+    private LatLng getOldPosition(Location location) {
+        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     @Override
@@ -179,6 +182,8 @@ public class WorkoutActivity extends Activity implements
     public void notifyWorkoutStart() {
         //first location
         mFitnessController.storeLocation(mOldLocation);
+        //start tracking
+        mIsTracking = true;
     }
 
     /*private void addLocationEntry(double latitude, double longitude) {

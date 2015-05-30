@@ -3,6 +3,7 @@ package cat.xojan.fittracker;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.view.View;
@@ -13,7 +14,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import cat.xojan.fittracker.main.MainGridPagerAdapter;
 
-public class MainActivity extends Activity {
+public class MainActivity extends WearableActivity {
 
     private static final String TAG = "MainActivity";
 
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAmbientEnabled();
         setContentView(R.layout.activity_main);
         final Resources res = getResources();
 
