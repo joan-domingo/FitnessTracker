@@ -6,9 +6,6 @@ import javax.inject.Inject;
 
 import cat.xojan.fittracker.main.controllers.FitnessController;
 
-/**
- * Created by Joan on 17/05/2015.
- */
 public class SaveSessionActivity extends BaseActivity {
 
     public static final String PARAM_INSERT_REQUEST = "session_insert_request";

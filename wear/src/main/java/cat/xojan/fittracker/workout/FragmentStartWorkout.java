@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.workout;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,11 +13,18 @@ import butterknife.OnClick;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.workout.controller.TimeController;
 
-public class FragmentStart extends Fragment {
+public class FragmentStartWorkout extends Fragment {
+
+    private WorkoutStartListener mCallback;
+
+    public interface WorkoutStartListener {
+        public void notifyWorkoutStart();
+    }
 
     @OnClick(R.id.button_start)
     public void goToWorkoutFragment() {
         TimeController.getInstance().setSessionStart();
+        mCallback.notifyWorkoutStart();
         getActivity().getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new WorkoutFragment())
                 .commit();
@@ -25,6 +33,12 @@ public class FragmentStart extends Fragment {
     @OnClick(R.id.button_exit)
     public void exitWorkout() {
         getActivity().finish();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallback = (WorkoutStartListener) activity;
     }
 
     @Nullable

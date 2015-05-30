@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.workout;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -25,10 +25,14 @@ import cat.xojan.fittracker.workout.controller.DistanceController;
 import cat.xojan.fittracker.workout.controller.FitnessController;
 import cat.xojan.fittracker.workout.controller.TimeController;
 
-public class WorkoutFragment extends Fragment implements LocationListener {
+public class WorkoutFragment extends Fragment {
 
-    private static final long UPDATE_INTERVAL_MS = 3 * 1000;
-    private static final long FASTEST_INTERVAL_MS = 3 * 1000;
+    public TrackingStateListener mCallback;
+
+    public interface TrackingStateListener {
+        public void isTracking(boolean isTracking);
+        public void removeLocationUpdates();
+    }
 
     @InjectView(R.id.chrono)
     Chronometer mChronometerView;
@@ -45,11 +49,8 @@ public class WorkoutFragment extends Fragment implements LocationListener {
     private TimeController mTimeController;
     private FitnessController mFitnessController;
     private DistanceController mDistanceController;
-    private GoogleApiClient mGoogleApiClient;
 
     private static final String TAG = "WorkoutFragment";
-    private boolean isTracking = false;
-    private LatLng mOldPosition;
 
     @OnClick(R.id.button_lap)
     public void onLapButtonClicked(Button lapButton){
@@ -62,7 +63,7 @@ public class WorkoutFragment extends Fragment implements LocationListener {
     @OnClick(R.id.button_pause)
     public void onPauseButtonClicked(Button lapButton){
         showLapPause(false);
-        isTracking = false;
+        mCallback.isTracking(false);
 
         mTimeController.pause();
         mFitnessController.saveSegment(false);
@@ -71,7 +72,7 @@ public class WorkoutFragment extends Fragment implements LocationListener {
     @OnClick(R.id.button_resume)
     public void onResumeClicked(Button resumeButton) {
         showLapPause(true);
-        isTracking = true;
+        mCallback.isTracking(false);
 
         mTimeController.resume();
         mFitnessController.saveSegment(true);
@@ -79,13 +80,10 @@ public class WorkoutFragment extends Fragment implements LocationListener {
     }
 
     @OnClick(R.id.button_finish)
-    public void onFinishButtonClicked(Button finishButton){
+    public void onFinishButtonClicked(Button finishButton) {
         //remove location listener
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi
-                    .removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
+        mCallback.removeLocationUpdates();
+
         //show results
         getActivity().getFragmentManager()
                 .beginTransaction()
@@ -93,6 +91,12 @@ public class WorkoutFragment extends Fragment implements LocationListener {
                 .commit();
 
         mTimeController.finish();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallback = (TrackingStateListener) activity;
     }
 
     @Nullable
@@ -109,13 +113,6 @@ public class WorkoutFragment extends Fragment implements LocationListener {
         mDistanceController.init(getActivity(), mDistanceView);
 
         mFitnessController = FitnessController.getInstance();
-        mFitnessController.init(getActivity());
-
-        //first location
-        mGoogleApiClient = FitnessController.getClient();
-        Location firstLocation = mDistanceController.getFirstLocation();
-        mFitnessController.storeLocation(firstLocation);
-        mOldPosition = new LatLng(firstLocation.getLatitude(), firstLocation.getLongitude());
 
         return view;
     }
@@ -128,19 +125,5 @@ public class WorkoutFragment extends Fragment implements LocationListener {
             mLapPauseView.setVisibility(View.GONE);
             mResumeFinishView.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        updateTrack(location);
-    }
-
-    public void updateTrack(Location location) {
-        LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-        if (isTracking) {
-            mDistanceController.updateDistance(mOldPosition, currentPosition);
-            mFitnessController.storeLocation(location);
-        }
-        mOldPosition = currentPosition;
     }
 }

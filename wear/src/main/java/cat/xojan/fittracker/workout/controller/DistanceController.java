@@ -13,7 +13,6 @@ public class DistanceController {
 
     private static DistanceController instance;
     private Context mContext;
-    private Location mFirstLocation;
 
     public static DistanceController getInstance() {
         if (instance == null) {
@@ -89,13 +88,5 @@ public class DistanceController {
 
         //update view
         updateDistanceView();
-    }
-
-    public void setFirstLocation(Location location) {
-        mFirstLocation = location;
-    }
-
-    public Location getFirstLocation() {
-        return mFirstLocation;
     }
 }

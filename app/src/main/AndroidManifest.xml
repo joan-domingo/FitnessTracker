@@ -63,6 +63,11 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".SaveSessionActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
+
         <service android:name=".service.WearableListener">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />

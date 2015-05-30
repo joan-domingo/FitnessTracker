@@ -22,12 +22,8 @@ public class ResultFragment extends Fragment {
     @OnClick(R.id.save_button)
     public void onSaveButtonClicked() {
         SessionInsertRequest insertRequest = FitnessController.getInstance().saveSession();
-        sendIntentToSaveSessionInApp(insertRequest);
+        UtilityService.saveSession(getActivity(), UtilityService.SAVE_SESSION);
         getActivity().finish();
-    }
-
-    private void sendIntentToSaveSessionInApp(SessionInsertRequest insertRequest) {
-        UtilityService.saveSession(getActivity(), UtilityService.SAVE_SESSION, insertRequest);
     }
 
     @Nullable

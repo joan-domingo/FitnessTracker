@@ -3,7 +3,6 @@ package cat.xojan.fittracker.workout.controller;
 import android.content.Context;
 import android.location.Location;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
@@ -30,7 +29,6 @@ public class FitnessController {
     private DataSet mDistanceDataSet;
     private DataSet mLocationDataSet;
     private DataSet mSegmentDataSet;
-    private static GoogleApiClient mClient;
 
     public static FitnessController getInstance() {
         if (instance == null) {
@@ -149,13 +147,5 @@ public class FitnessController {
         locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
         locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
         mLocationDataSet.add(locationDataPoint);
-    }
-
-    public static GoogleApiClient getClient() {
-        return mClient;
-    }
-
-    public void setClient(GoogleApiClient mGoogleApiClient) {
-        mClient = mGoogleApiClient;
     }
 }
