@@ -11,22 +11,19 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.fitness.request.SessionInsertRequest;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -44,13 +41,14 @@ public class WorkoutActivity extends WearableActivity implements
         WorkoutFragment.TrackingStateListener,
         FragmentStartWorkout.WorkoutStartListener,
         ResultFragment.SaveButtonListener,
-        DataApi.DataListener {
+        DataApi.DataListener,
+        MessageApi.MessageListener {
 
     private static final String TAG = "WorkoutActivity";
 
     private static final long UPDATE_INTERVAL_MS = 3 * 1000;
     private static final long FASTEST_INTERVAL_MS = 3 * 1000;
-    private static final String INSERT_REQUEST = "cat.xojan.fittracker.insertrequest";
+    public static final String SEND_CLIENT = "/send_client";
 
     @InjectView(R.id.text) TextView mTextView;
 
@@ -227,4 +225,32 @@ public class WorkoutActivity extends WearableActivity implements
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {}
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        Log.v(TAG, "onMessageReceived: " + messageEvent);
+
+        if (SEND_CLIENT.equals(messageEvent.getPath())) {
+            GoogleApiClient fitnessClient = new GoogleApiClient.Builder(this)
+                    .addApi(Fitness.HISTORY_API)
+                    .addApi(Fitness.SESSIONS_API)
+                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+                    .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
+                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                        @Override
+                        public void onConnected(Bundle bundle) {
+                            Log.d(TAG, "wear: Connected to fitness API");
+
+                        }
+
+                        @Override
+                        public void onConnectionSuspended(int i) {
+                            Log.d(TAG, "wear: Connected suspended to fitness API");
+                        }
+                    })
+                    .addOnConnectionFailedListener(connectionResult -> Log.d(TAG,
+                            "Connection failed: " + connectionResult.getErrorCode()))
+                    .build();
+        }
+    }
 }

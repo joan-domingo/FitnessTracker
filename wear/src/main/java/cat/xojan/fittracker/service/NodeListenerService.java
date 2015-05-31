@@ -1,8 +1,14 @@
 package cat.xojan.fittracker.service;
 
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.WearableListenerService;
 

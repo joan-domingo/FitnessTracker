@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.concurrent.TimeUnit;
 
+import cat.xojan.fittracker.service.UtilityService;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -66,6 +67,7 @@ public class GoogleFitClientActivity extends Activity implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(Constant.TAG, "Connected!!!");
+        UtilityService.sendGoogleApiClient(this, UtilityService.SEND_CLIENT, mGoogleApiClient);
     }
 
     @Override

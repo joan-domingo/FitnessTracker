@@ -25,7 +25,6 @@ public class ResultFragment extends Fragment {
         //SessionInsertRequest insertRequest = FitnessController.getInstance().saveSession();
         //UtilityService.saveSession(getActivity(), UtilityService.SAVE_SESSION);
         mCallback.saveSessionData();
-        getActivity().finish();
     }
 
     @Override
