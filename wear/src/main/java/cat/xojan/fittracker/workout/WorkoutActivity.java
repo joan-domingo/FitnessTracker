@@ -12,17 +12,28 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.service.UtilityService;
 import cat.xojan.fittracker.workout.controller.DistanceController;
 import cat.xojan.fittracker.workout.controller.FitnessController;
 
@@ -31,12 +42,15 @@ public class WorkoutActivity extends WearableActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         WorkoutFragment.TrackingStateListener,
-        FragmentStartWorkout.WorkoutStartListener {
+        FragmentStartWorkout.WorkoutStartListener,
+        ResultFragment.SaveButtonListener,
+        DataApi.DataListener {
 
     private static final String TAG = "WorkoutActivity";
 
     private static final long UPDATE_INTERVAL_MS = 3 * 1000;
     private static final long FASTEST_INTERVAL_MS = 3 * 1000;
+    private static final String INSERT_REQUEST = "cat.xojan.fittracker.insertrequest";
 
     @InjectView(R.id.text) TextView mTextView;
 
@@ -198,45 +212,19 @@ public class WorkoutActivity extends WearableActivity implements
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         SharedPreferences prefs = getSharedPreferences(Constant.SHARED_PREFERENCES,
                 Context.MODE_PRIVATE);
         prefs.edit().putString(Constant.LAST_ACTIVITY, MainActivity.class.getName()).apply();
+        super.onDestroy();
     }
 
-    /*private void addLocationEntry(double latitude, double longitude) {
-        if (!mSaveGpsLocation || !mGoogleApiClient.isConnected()) {
-            return;
-        }
+    @Override
+    public void saveSessionData() {
+        UtilityService.saveSession(this, UtilityService.SAVE_SESSION);
 
-        mCalendar.setTimeInMillis(System.currentTimeMillis());
+        //TODO
+    }
 
-        // Set the path of the data map
-        String path = Constants.PATH + "/" + mCalendar.getTimeInMillis();
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
-
-        // Set the location values in the data map
-        putDataMapRequest.getDataMap()
-                .putDouble(Constants.KEY_LATITUDE, latitude);
-        putDataMapRequest.getDataMap()
-                .putDouble(Constants.KEY_LONGITUDE, longitude);
-        putDataMapRequest.getDataMap()
-                .putLong(Constants.KEY_TIME, mCalendar.getTimeInMillis());
-
-        // Prepare the data map for the request
-        PutDataRequest request = putDataMapRequest.asPutDataRequest();
-
-        // Request the system to create the data item
-        Wearable.DataApi.putDataItem(mGoogleApiClient, request)
-                .setResultCallback(new ResultCallback() {
-                    @Override
-                    public void onResult(DataApi.DataItemResult dataItemResult) {
-                        if (!dataItemResult.getStatus().isSuccess()) {
-                            Log.e(TAG, "Failed to set the data, "
-                                    + "status: " + dataItemResult.getStatus()
-                                    .getStatusCode());
-                        }
-                    }
-                });
-    }*/
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {}
 }

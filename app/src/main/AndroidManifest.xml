@@ -64,7 +64,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".SaveSessionActivity"
+            android:name=".GoogleFitClientActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
 

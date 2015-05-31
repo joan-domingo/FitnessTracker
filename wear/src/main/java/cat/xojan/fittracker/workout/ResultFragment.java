@@ -1,29 +1,37 @@
 package cat.xojan.fittracker.workout;
 
+import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.wearable.activity.ConfirmationActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.fitness.request.SessionInsertRequest;
-
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.service.UtilityService;
-import cat.xojan.fittracker.workout.controller.FitnessController;
 
 public class ResultFragment extends Fragment {
 
+    private SaveButtonListener mCallback;
+
+    public interface SaveButtonListener {
+        void saveSessionData();
+    }
+
     @OnClick(R.id.save_button)
     public void onSaveButtonClicked() {
-        SessionInsertRequest insertRequest = FitnessController.getInstance().saveSession();
-        UtilityService.saveSession(getActivity(), UtilityService.SAVE_SESSION);
+        //SessionInsertRequest insertRequest = FitnessController.getInstance().saveSession();
+        //UtilityService.saveSession(getActivity(), UtilityService.SAVE_SESSION);
+        mCallback.saveSessionData();
         getActivity().finish();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallback = (SaveButtonListener) activity;
     }
 
     @Nullable

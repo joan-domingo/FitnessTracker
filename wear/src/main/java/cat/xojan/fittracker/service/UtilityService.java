@@ -1,6 +1,5 @@
 package cat.xojan.fittracker.service;
 
-import android.app.Activity;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.wearable.CapabilityApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
@@ -17,7 +15,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.util.Serializer;
 
 public class UtilityService extends IntentService {
 
