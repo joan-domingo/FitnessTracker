@@ -1,6 +1,7 @@
 package cat.xojan.fittracker;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
@@ -26,6 +27,7 @@ public class MainActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setAmbientEnabled();
         setContentView(R.layout.activity_main);
+
         final Resources res = getResources();
 
         final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
@@ -52,5 +54,22 @@ public class MainActivity extends WearableActivity {
         pager.setAdapter(new MainGridPagerAdapter(getFragmentManager()));
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityDispatcher();
+    }
+
+    private void ActivityDispatcher() {
+        Class<?> activityClass;
+        SharedPreferences prefs = getSharedPreferences(Constant.SHARED_PREFERENCES, MODE_PRIVATE);
+        try {
+            activityClass = Class.forName(prefs.getString(Constant.LAST_ACTIVITY, ""));
+            if (!activityClass.getName().equals(MainActivity.class.getName())) {
+                startActivity(new Intent(this, activityClass));
+            }
+        } catch (ClassNotFoundException e) {}
     }
 }

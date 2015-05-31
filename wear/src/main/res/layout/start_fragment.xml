@@ -31,7 +31,7 @@
         android:layout_marginTop="5dp"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="Choose\nActivity"
+        android:text="@string/choose_activity"
         android:gravity="center_horizontal"
         android:textSize="20sp"/>
 

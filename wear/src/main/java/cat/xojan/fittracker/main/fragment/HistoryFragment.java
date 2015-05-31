@@ -22,8 +22,8 @@ public class HistoryFragment extends Fragment implements WearableListView.OnClic
         listView.setGreedyTouchMode(true);
 
         // Assign an adapter to the list
-        ListAdapter adapter = new ListAdapter(getActivity());
-        listView.setAdapter(adapter);
+        /*ListAdapter adapter = new ListAdapter(getActivity());
+        listView.setAdapter(adapter);*/
 
         // Set a click listener
         listView.setOnClickListener(this);

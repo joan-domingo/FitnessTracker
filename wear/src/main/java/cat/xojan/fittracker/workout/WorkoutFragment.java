@@ -2,6 +2,8 @@ package cat.xojan.fittracker.workout;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +22,8 @@ import com.google.android.gms.maps.model.LatLng;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.workout.controller.DistanceController;
 import cat.xojan.fittracker.workout.controller.FitnessController;
@@ -30,8 +34,8 @@ public class WorkoutFragment extends Fragment {
     public TrackingStateListener mCallback;
 
     public interface TrackingStateListener {
-        public void isTracking(boolean isTracking);
-        public void removeLocationUpdates();
+        void isTracking(boolean isTracking);
+        void removeLocationUpdates();
     }
 
     @InjectView(R.id.chrono)

@@ -31,4 +31,6 @@ public class Constant {
     public static final String EXTRA_START = "extra_start_time";
     public static final String EXTRA_END = "extra_end_time";
     public static final String ACTIVITY_LOADED = "activity_loaded";
+
+    public static final String LAST_ACTIVITY = "last_activity";
 }

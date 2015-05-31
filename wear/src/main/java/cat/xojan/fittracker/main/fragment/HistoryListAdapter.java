@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import cat.xojan.fittracker.R;
 
-public class ListAdapter extends WearableListView.Adapter {
+public class HistoryListAdapter extends WearableListView.Adapter {
 
     private static final String RUNNING = "Running";
     private static final String BIKING = "Biking";
@@ -20,7 +20,7 @@ public class ListAdapter extends WearableListView.Adapter {
     private LayoutInflater  mInflater;
     private String[] mDataSet;
 
-    public ListAdapter(Context context) {
+    public HistoryListAdapter(Context context) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mDataSet = context.getResources().getStringArray(R.array.activities);

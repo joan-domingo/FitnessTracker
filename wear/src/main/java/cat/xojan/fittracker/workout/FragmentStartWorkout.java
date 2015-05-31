@@ -2,6 +2,8 @@ package cat.xojan.fittracker.workout;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,6 +12,8 @@ import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.workout.controller.TimeController;
 
@@ -18,7 +22,7 @@ public class FragmentStartWorkout extends Fragment {
     private WorkoutStartListener mCallback;
 
     public interface WorkoutStartListener {
-        public void notifyWorkoutStart();
+        void notifyWorkoutStart();
     }
 
     @OnClick(R.id.button_start)

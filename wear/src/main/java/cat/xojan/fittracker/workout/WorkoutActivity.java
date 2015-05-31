@@ -1,5 +1,7 @@
 package cat.xojan.fittracker.workout;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -16,6 +18,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.wearable.Wearable;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.workout.controller.DistanceController;
 import cat.xojan.fittracker.workout.controller.FitnessController;
@@ -32,8 +38,9 @@ public class WorkoutActivity extends WearableActivity implements
     private static final long UPDATE_INTERVAL_MS = 3 * 1000;
     private static final long FASTEST_INTERVAL_MS = 3 * 1000;
 
+    @InjectView(R.id.text) TextView mTextView;
+
     private GoogleApiClient mGoogleApiClient;
-    private TextView mTextView;
     private boolean isFirstLocation = true;
     private boolean mIsTracking = false;
     private DistanceController mDistanceController;
@@ -45,11 +52,12 @@ public class WorkoutActivity extends WearableActivity implements
         super.onCreate(savedInstanceState);
         setAmbientEnabled();
         setContentView(R.layout.activity_start);
+        ButterKnife.inject(this);
+
         if (!hasGps()) {
-            Log.d(TAG, "This hardware doesn't have GPS.");
-            // Fall back to functionality that does not use location or
-            // warn the user that location function is not available.
-            finish();//TODO
+            mTextView.setText(R.string.gps_not_found);
+        } else {
+            mTextView.setText(R.string.waiting_gps);
         }
         String activityType = getIntent().getStringExtra("EXTRA_ACTIVITY_TYPE");
         FitnessController.getInstance().setFitnessActivity(activityType);
@@ -62,13 +70,15 @@ public class WorkoutActivity extends WearableActivity implements
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        mTextView = (TextView) findViewById(R.id.text);
-
         mDistanceController = DistanceController.getInstance();
         mFitnessController = FitnessController.getInstance();
 
         mFitnessController = FitnessController.getInstance();
         mFitnessController.init(this);
+
+        SharedPreferences prefs = getSharedPreferences(Constant.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE);
+        prefs.edit().putString(Constant.LAST_ACTIVITY, WorkoutActivity.class.getName()).apply();
     }
 
     private boolean hasGps() {
@@ -184,6 +194,14 @@ public class WorkoutActivity extends WearableActivity implements
         mFitnessController.storeLocation(mOldLocation);
         //start tracking
         mIsTracking = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences prefs = getSharedPreferences(Constant.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE);
+        prefs.edit().putString(Constant.LAST_ACTIVITY, MainActivity.class.getName()).apply();
     }
 
     /*private void addLocationEntry(double latitude, double longitude) {

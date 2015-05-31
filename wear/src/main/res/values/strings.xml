@@ -15,6 +15,9 @@
     <string name="lap">lap</string>
     <string name="resume">resume</string>
     <string name="finish">finish</string>
+    <string name="gps_not_found">This device doesn\'t have GPS</string>
+    <string name="waiting_gps">Waiting for GPS...</string>
+    <string name="choose_activity">Choose\nActivity</string>
 
 
 </resources>
