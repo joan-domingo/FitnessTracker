@@ -25,7 +25,10 @@
             android:name="android.support.wearable.activity.ConfirmationActivity" />
         <activity
             android:name=".workout.WorkoutActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
+
+        <activity android:name=".SaveSessionActivity"
+            android:launchMode="singleInstance" />
 
         <service android:name=".service.UtilityService"/>
 

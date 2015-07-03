@@ -40,15 +40,12 @@ public class WorkoutActivity extends WearableActivity implements
         LocationListener,
         WorkoutFragment.TrackingStateListener,
         FragmentStartWorkout.WorkoutStartListener,
-        ResultFragment.SaveButtonListener,
-        DataApi.DataListener,
-        MessageApi.MessageListener {
+        ResultFragment.SaveButtonListener {
 
     private static final String TAG = "WorkoutActivity";
 
     private static final long UPDATE_INTERVAL_MS = 3 * 1000;
     private static final long FASTEST_INTERVAL_MS = 3 * 1000;
-    public static final String SEND_CLIENT = "/send_client";
 
     @InjectView(R.id.text) TextView mTextView;
 
@@ -219,38 +216,5 @@ public class WorkoutActivity extends WearableActivity implements
     @Override
     public void saveSessionData() {
         UtilityService.saveSession(this, UtilityService.SAVE_SESSION);
-
-        //TODO
-    }
-
-    @Override
-    public void onDataChanged(DataEventBuffer dataEventBuffer) {}
-
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        Log.v(TAG, "onMessageReceived: " + messageEvent);
-
-        if (SEND_CLIENT.equals(messageEvent.getPath())) {
-            GoogleApiClient fitnessClient = new GoogleApiClient.Builder(this)
-                    .addApi(Fitness.HISTORY_API)
-                    .addApi(Fitness.SESSIONS_API)
-                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                    .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
-                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                        @Override
-                        public void onConnected(Bundle bundle) {
-                            Log.d(TAG, "wear: Connected to fitness API");
-
-                        }
-
-                        @Override
-                        public void onConnectionSuspended(int i) {
-                            Log.d(TAG, "wear: Connected suspended to fitness API");
-                        }
-                    })
-                    .addOnConnectionFailedListener(connectionResult -> Log.d(TAG,
-                            "Connection failed: " + connectionResult.getErrorCode()))
-                    .build();
-        }
     }
 }
