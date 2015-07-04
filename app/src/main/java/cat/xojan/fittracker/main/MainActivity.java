@@ -6,19 +6,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.BaseActivity;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.menu.AttributionFragment;
 import cat.xojan.fittracker.menu.PreferenceActivity;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Inject
     SessionListFragment sessionListFragment;
@@ -27,7 +27,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showDialog();
+        //showDialog();
     }
 
     protected void setFragment() {
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
         Fragment workoutFragment = getSupportFragmentManager().findFragmentByTag(Constant.WORKOUT_FRAGMENT_TAG);
         Fragment resultFragment = getSupportFragmentManager().findFragmentByTag(Constant.RESULT_FRAGMENT_TAG);
 
-        dismissDialog();
+        //dismissDialog();
 
         if (workoutFragment == null && resultFragment == null && getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportFragmentManager()
@@ -142,7 +142,7 @@ public class MainActivity extends BaseActivity {
             super.onBackPressed();
         }
     }
-
+/*
     @Override
     protected void showDialog() {
         super.showDialog();
@@ -151,5 +151,5 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void dismissDialog() {
         super.dismissDialog();
-    }
+    }*/
 }

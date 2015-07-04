@@ -18,25 +18,23 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 
-import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.main.controllers.FitnessController;
 import cat.xojan.fittracker.main.fragments.sessionlist.DatePickerFragment;
-import cat.xojan.fittracker.main.fragments.sessionlist.SessionAdapter;
 import cat.xojan.fittracker.util.Utils;
+import cat.xojan.fittracker.view.SessionAdapter;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -49,17 +47,17 @@ public class SessionListFragment extends BaseFragment {
     @Inject
     WorkoutFragment workoutFragment;
 
-    @InjectView(R.id.sessions_list) RecyclerView mRecyclerView;
-    @InjectView(R.id.date_range_end) Button mDateEndButton;
-    @InjectView(R.id.date_range_start) Button mDateStartButton;
-    @InjectView(R.id.swipe_container) SwipeRefreshLayout swipeLayout;
-    @InjectView(R.id.my_awesome_toolbar) Toolbar toolbar;
+    @Bind(R.id.sessions_list) RecyclerView mRecyclerView;
+    @Bind(R.id.date_range_end) Button mDateEndButton;
+    @Bind(R.id.date_range_start) Button mDateStartButton;
+    @Bind(R.id.swipe_container) SwipeRefreshLayout swipeLayout;
+    @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_session_list, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -143,9 +141,9 @@ public class SessionListFragment extends BaseFragment {
 
     private void showProgressDialog(boolean b) {
         if (b) {
-            ((MainActivity) getActivity()).showDialog();
+            //((MainActivity) getActivity()).showDialog();
         } else {
-            ((MainActivity) getActivity()).dismissDialog();
+            //((MainActivity) getActivity()).dismissDialog();
             swipeLayout.setRefreshing(false);
         }
     }
@@ -177,9 +175,7 @@ public class SessionListFragment extends BaseFragment {
 
                     @Override
                     public void onNext(SessionReadRequest sessionReadRequest) {
-                        sessionReadResult = Fitness.SessionsApi
-                                .readSession(fitController.getClient(), sessionReadRequest)
-                                .await(1, TimeUnit.MINUTES);
+                        //sessionReadResult =
                     }
                 });
     }

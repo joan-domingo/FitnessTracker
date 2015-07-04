@@ -21,7 +21,7 @@ public class FitTrackerApp extends Application {
         return Arrays.asList(new AppModule(this));
     }
 
-    ObjectGraph getApplicationGraph() {
+    public ObjectGraph getApplicationGraph() {
         return applicationGraph;
     }
 

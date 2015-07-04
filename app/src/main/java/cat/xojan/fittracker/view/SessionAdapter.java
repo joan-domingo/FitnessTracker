@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main.fragments.sessionlist;
+package cat.xojan.fittracker.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.main.ActivityType;
@@ -40,16 +40,16 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @InjectView(R.id.session_name) TextView mName;
-        @InjectView(R.id.session_description) TextView mDescription;
-        @InjectView(R.id.session_activity) ImageView mActivity;
-        @InjectView(R.id.session_summary) TextView mSummary;
-        @InjectView(R.id.session_day) TextView mDay;
-        @InjectView(R.id.app_icon) ImageView mIcon;
+        @Bind(R.id.session_name) TextView mName;
+        @Bind(R.id.session_description) TextView mDescription;
+        @Bind(R.id.session_activity) ImageView mActivity;
+        @Bind(R.id.session_summary) TextView mSummary;
+        @Bind(R.id.session_day) TextView mDay;
+        @Bind(R.id.app_icon) ImageView mIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.inject(this, itemView);
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(v -> {
                 Session session = mSession.get(getPosition());

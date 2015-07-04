@@ -33,8 +33,8 @@ import com.google.android.gms.maps.MapFragment;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.util.SessionDetailedData;
@@ -47,7 +47,7 @@ import rx.schedulers.Schedulers;
 
 public class SessionActivity extends AppCompatActivity {
 
-    @InjectView(R.id.fragment_session_toolbar) Toolbar toolbar;
+    @Bind(R.id.fragment_session_toolbar) Toolbar toolbar;
 
     private Session mSession;
     private MenuItem mDeleteButton;
@@ -65,7 +65,7 @@ public class SessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(Constant.AUTH_PENDING);
@@ -230,18 +230,7 @@ public class SessionActivity extends AppCompatActivity {
         Observable.just(request)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(r -> {
-                    Fitness.HistoryApi.deleteData(mClient, request)
-                            .setResultCallback(status -> {
-                                if (status.isSuccess()) {
-                                    Log.i(Constant.TAG, "Successfully deleted data");
-                                    mProgressDialog.dismiss();
-                                    finish();
-                                } else {
-                                    // The deletion will fail if the requesting app tries to delete data
-                                    // that it did not insert.
-                                    Log.i(Constant.TAG, "Failed to delete data");
-                                }
-                            });
+
                 });
     }
 

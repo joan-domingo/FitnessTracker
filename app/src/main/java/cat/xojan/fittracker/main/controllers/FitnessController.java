@@ -100,17 +100,10 @@ public class FitnessController {
 
         SessionInsertRequest insertRequest = insertRequestBuilder.build();
 
-        Observable.just(insertRequest)
+        /*Observable.just(insertRequest)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(request -> {
-                    Status insertStatus = Fitness.SessionsApi.insertSession(mClient, insertRequest)
-                            .await(1, TimeUnit.MINUTES);
 
-                    if (!insertStatus.isSuccess()) {
-                        Log.i(Constant.TAG, "There was a problem inserting the session: " +
-                                insertStatus.getStatusMessage());
-                    } else {
-                        Log.i(Constant.TAG, "Session insert was successful!");
                         // At this point, the session has been inserted and can be read.
                         setEndTime(Calendar.getInstance());
 
@@ -119,7 +112,7 @@ public class FitnessController {
                                 .commit();
                     }
 
-                });
+                });*/
     }
 
     public void setFitnessActivity(String activity) {

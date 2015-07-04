@@ -27,8 +27,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
@@ -53,8 +53,8 @@ public class ResultFragment extends BaseFragment {
     @Inject TimeController timeController;
     @Inject Context context;
 
-    @InjectView(R.id.result_description) EditText mDescription;
-    @InjectView(R.id.result_name) EditText mName;
+    @Bind(R.id.result_description) EditText mDescription;
+    @Bind(R.id.result_name) EditText mName;
 
     private static View view;
     private GoogleMap map;
@@ -93,7 +93,7 @@ public class ResultFragment extends BaseFragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
         showProgressDialog(true);
 
@@ -196,9 +196,9 @@ public class ResultFragment extends BaseFragment {
 
     private void showProgressDialog(boolean b) {
         if (b) {
-            ((MainActivity) getActivity()).showDialog();
+            //((MainActivity) getActivity()).showDialog();
         } else {
-            ((MainActivity) getActivity()).dismissDialog();
+            //((MainActivity) getActivity()).dismissDialog();
         }
     }
 

@@ -22,8 +22,8 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
@@ -49,15 +49,15 @@ public class WorkoutFragment extends BaseFragment {
     @Inject TimeController timeController;
     @Inject SpeedController speedController;
 
-    @InjectView(R.id.fragment_workout_toolbar) Toolbar toolbar;
-    @InjectView(R.id.workout_chronometer) Chronometer chronometer;
-    @InjectView(R.id.workout_distance) TextView distanceView;
-    @InjectView(R.id.workout_pace) TextView paceView;
-    @InjectView(R.id.workout_speed) TextView speedView;
-    @InjectView(R.id.waiting_gps_bar) LinearLayout gpsBar;
-    @InjectView(R.id.start_bar) LinearLayout startBar;
-    @InjectView(R.id.lap_pause_bar) LinearLayout lapPauseBar;
-    @InjectView(R.id.resume_finish_bar) LinearLayout resumeFinishBar;
+    @Bind(R.id.fragment_workout_toolbar) Toolbar toolbar;
+    @Bind(R.id.workout_chronometer) Chronometer chronometer;
+    @Bind(R.id.workout_distance) TextView distanceView;
+    @Bind(R.id.workout_pace) TextView paceView;
+    @Bind(R.id.workout_speed) TextView speedView;
+    @Bind(R.id.waiting_gps_bar) LinearLayout gpsBar;
+    @Bind(R.id.start_bar) LinearLayout startBar;
+    @Bind(R.id.lap_pause_bar) LinearLayout lapPauseBar;
+    @Bind(R.id.resume_finish_bar) LinearLayout resumeFinishBar;
 
     private LocationListener mFirstLocationListener;
     private LocationListener mLocationListener;
@@ -159,7 +159,7 @@ public class WorkoutFragment extends BaseFragment {
          //map is already there, just return view as it is
         }
 
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         gpsBar.setVisibility(View.VISIBLE);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);

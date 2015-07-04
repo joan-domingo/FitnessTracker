@@ -10,9 +10,10 @@ import com.google.android.gms.maps.MapFragment;
 
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.BaseActivity;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.MainActivity;
+import cat.xojan.fittracker.data.GoogleFitSessionStorage;
+import cat.xojan.fittracker.domain.SessionDataInteractor;
+import cat.xojan.fittracker.domain.SessionRepository;
 import cat.xojan.fittracker.main.ResultFragment;
 import cat.xojan.fittracker.main.SessionListFragment;
 import cat.xojan.fittracker.main.WorkoutFragment;
@@ -22,31 +23,29 @@ import cat.xojan.fittracker.main.controllers.MapController;
 import cat.xojan.fittracker.main.controllers.NotificationController;
 import cat.xojan.fittracker.main.controllers.SpeedController;
 import cat.xojan.fittracker.main.controllers.TimeController;
+import cat.xojan.fittracker.view.BaseActivity;
+import cat.xojan.fittracker.view.StartUpActivity;
+import cat.xojan.fittracker.view.presenter.SessionPresenter;
 import dagger.Module;
 import dagger.Provides;
 
 @Module(
         injects = {
-                MainActivity.class,
-                SessionListFragment.class,
-                FitnessController.class,
-                WorkoutFragment.class,
-                NotificationController.class,
-                MapController.class,
-                ResultFragment.class,
-                DistanceController.class,
-                SpeedController.class,
-                TimeController.class
+                SessionRepository.class,
+                SessionDataInteractor.class,
+                SessionPresenter.class,
+                StartUpActivity.class
         },
         addsTo = AppModule.class,
         library = true
 )
-public class MainModule {
+public class SessionModule {
 
     private final BaseActivity activity;
 
-    public MainModule(BaseActivity activity) {
-        this.activity = activity;
+    public SessionModule(BaseActivity baseActivity) {
+        this.activity = baseActivity;
+
     }
 
     @Provides
@@ -59,6 +58,22 @@ public class MainModule {
     @Singleton
     public Activity provideActivity() {
         return activity;
+    }
+
+    @Provides
+    @Singleton
+    public SessionRepository provideSessionRepository() {
+        return new GoogleFitSessionStorage();
+    }
+
+    @Provides
+    public SessionDataInteractor provideSessionDataInteractor(SessionRepository sessionRepository) {
+        return new SessionDataInteractor(sessionRepository);
+    }
+
+    @Provides
+    public SessionPresenter provideSessionPresenter(SessionDataInteractor sessionDataInteractor) {
+        return new SessionPresenter(sessionDataInteractor);
     }
 
     @Provides @Singleton
