@@ -28,6 +28,7 @@ public class StartUpActivity extends BaseActivity implements UiContentUpdater {
         setContentView(R.layout.activity_startup);
         ButterKnife.bind(this);
 
+        showProgress();
         setUpView();
     }
 
@@ -43,5 +44,6 @@ public class StartUpActivity extends BaseActivity implements UiContentUpdater {
 
     public void setSessionData(SessionReadResult sessionReadResult) {
         mRecyclerView.setAdapter(new SessionAdapter(getBaseContext(), sessionReadResult));
+        dismissProgress();
     }
 }

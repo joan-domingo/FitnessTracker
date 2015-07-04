@@ -1,10 +1,12 @@
 package cat.xojan.fittracker.view;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.FitTrackerApp;
+import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.daggermodules.SessionModule;
 import dagger.ObjectGraph;
 
@@ -35,6 +38,7 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean authInProgress = false;
     private GoogleApiClient mFitnessClient;
     private ObjectGraph activityGraph;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +155,14 @@ public class BaseActivity extends AppCompatActivity implements
 
     protected List<Object> getModules() {
         return Collections.singletonList(new SessionModule(this));
+    }
+
+    protected void showProgress() {
+        mProgressDialog = ProgressDialog.show(this, null, getString(R.string.wait));
+    }
+
+    protected void dismissProgress() {
+        mProgressDialog.dismiss();
     }
 
     public void inject(Object object) {
