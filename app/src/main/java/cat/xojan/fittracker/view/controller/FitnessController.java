@@ -34,16 +34,12 @@ public class FitnessController {
     private DataSource mSummaryDataSource;
     private DataSource mLocationDataSource;
     private DataSet mLocationDataSet;
-    private Calendar mSessionListStartDate;
-    private Calendar mSessionListEndDate;
     private DataSource mSegmentDataSource;
     private DataSet mSegmentDataSet;
 
     public FitnessController(Context mContext, TimeController timeController) {
         this.mContext = mContext;
         this.timeController = timeController;
-        mSessionListStartDate = getStartDate();
-        mSessionListEndDate = Calendar.getInstance();
     }
 
     public void saveSession(final FragmentActivity fragmentActivity, String name, String description,
@@ -178,22 +174,6 @@ public class FitnessController {
         mLocationDataSet.add(locationDataPoint);
     }
 
-    public long getEndTime() {
-        return mSessionListEndDate.getTimeInMillis();
-    }
-
-    public void setEndTime(Calendar calendar) {
-        mSessionListEndDate = calendar;
-    }
-
-    public long getStartTime() {
-        return mSessionListStartDate.getTimeInMillis();
-    }
-
-    public void setStartTime(Calendar calendar) {
-        mSessionListStartDate = calendar;
-    }
-
     public List<DataPoint> getSegmentDataPoints() {
         return mSegmentDataSet.getDataPoints();
     }
@@ -216,17 +196,5 @@ public class FitnessController {
 
     public GoogleApiClient getClient() {
         return mClient;
-    }
-
-    public SessionReadRequest getSessionsReadRequest() {
-        return new SessionReadRequest.Builder()
-                .setTimeInterval(getStartTime(),
-                        getEndTime(),
-                        TimeUnit.MILLISECONDS)
-                .read(DataType.TYPE_DISTANCE_DELTA)
-                .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                .readSessionsFromAllApps()
-                .enableServerQueries()
-                .build();
     }
 }
