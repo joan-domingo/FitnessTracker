@@ -4,9 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ProgressBar;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -22,6 +24,8 @@ import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.daggermodules.SessionModule;
+import cat.xojan.fittracker.menu.AttributionFragment;
+import cat.xojan.fittracker.menu.PreferenceActivity;
 import dagger.ObjectGraph;
 
 public class BaseActivity extends AppCompatActivity implements
@@ -165,9 +169,40 @@ public class BaseActivity extends AppCompatActivity implements
         mProgressDialog.dismiss();
     }
 
-    public void inject(Object object) {
-        activityGraph.inject(object);
+    protected GoogleApiClient getFitnessCient() {
+        return mFitnessClient;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        switch (id) {
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, PreferenceActivity.class);
+                startActivity(settingsIntent);
+                break;
+            case android.R.id.home:
+                getSupportFragmentManager().popBackStack();
+                break;
+            case R.id.action_attributions:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new AttributionFragment())
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.action_music:
+                long eventtime = SystemClock.uptimeMillis();
+                Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+                KeyEvent downEvent = new KeyEvent(eventtime, eventtime, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, 0);
+                downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
+                sendOrderedBroadcast(downIntent, null);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

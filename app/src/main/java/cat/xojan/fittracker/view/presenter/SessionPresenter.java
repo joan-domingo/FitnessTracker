@@ -21,6 +21,8 @@ import rx.schedulers.Schedulers;
 public class SessionPresenter {
 
     private final SessionDataInteractor mSessionDataInteractor;
+    private long mStartTime;
+    private long mEndTime;
 
     public SessionPresenter(SessionDataInteractor sessionDataInteractor) {
         mSessionDataInteractor = sessionDataInteractor;
@@ -38,15 +40,20 @@ public class SessionPresenter {
         return mSessionDataInteractor.getSessionsData(sessionReadRequest, googleApiClient);
     }
 
-    private long getEndTime() {
-        Calendar date = Calendar.getInstance();
-        return date.getTimeInMillis();
+    public long getEndTime() {
+        if (mEndTime == 0) {
+            mEndTime = Calendar.getInstance().getTimeInMillis();
+        }
+        return mEndTime;
     }
 
-    private long getStartTime() {
-        Calendar date = Calendar.getInstance();
-        date.add(Calendar.MONTH, -1);
-        return date.getTimeInMillis();
+    public long getStartTime() {
+        if (mStartTime == 0) {
+            Calendar date = Calendar.getInstance();
+            date.add(Calendar.MONTH, -1);
+            mStartTime = date.getTimeInMillis();
+        }
+        return mStartTime;
     }
 
     public void readSessions(GoogleApiClient fitnessClient, UiContentUpdater uiContentUpdater) {
@@ -73,5 +80,13 @@ public class SessionPresenter {
                         sessionReadResult = getSessionsData(googleApiClient);
                     }
                 });
+    }
+
+    public void setStartTime(long timeInMillis) {
+        mStartTime = timeInMillis;
+    }
+
+    public void setEndTime(long timeInMillis) {
+        mEndTime = timeInMillis;
     }
 }
