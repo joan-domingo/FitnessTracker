@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.view;
+package cat.xojan.fittracker.view.listener;
 
 import com.google.android.gms.fitness.result.SessionReadResult;
 

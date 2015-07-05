@@ -94,7 +94,7 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:35:17
 	android:name
 		ADDED from AndroidManifest.xml:35:27
-activity#cat.xojan.fittracker.session.SessionActivity
+activity#cat.xojan.fittracker.view.activity.SessionActivity
 ADDED from AndroidManifest.xml:39:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:41:13
@@ -114,7 +114,7 @@ data
 ADDED from AndroidManifest.xml:45:17
 	android:mimeType
 		ADDED from AndroidManifest.xml:45:23
-activity#cat.xojan.fittracker.menu.PreferenceActivity
+activity#cat.xojan.fittracker.view.menu.PreferenceActivity
 ADDED from AndroidManifest.xml:57:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:60:13

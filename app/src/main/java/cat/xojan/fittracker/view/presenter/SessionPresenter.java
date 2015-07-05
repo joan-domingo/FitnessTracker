@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
-import cat.xojan.fittracker.view.UiContentUpdater;
+import cat.xojan.fittracker.view.listener.UiContentUpdater;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;

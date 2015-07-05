@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.view;
+package cat.xojan.fittracker.view.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -23,9 +23,8 @@ import java.util.List;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.daggermodules.SessionModule;
-import cat.xojan.fittracker.menu.AttributionFragment;
-import cat.xojan.fittracker.menu.PreferenceActivity;
+import cat.xojan.fittracker.view.menu.AttributionFragment;
+import cat.xojan.fittracker.view.menu.PreferenceActivity;
 import dagger.ObjectGraph;
 
 public class BaseActivity extends AppCompatActivity implements
@@ -158,7 +157,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     protected List<Object> getModules() {
-        return Collections.singletonList(new SessionModule(this));
+        return Collections.emptyList();
     }
 
     protected void showProgress() {
@@ -204,5 +203,9 @@ public class BaseActivity extends AppCompatActivity implements
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void inject(Object object) {
+        activityGraph.inject(object);
     }
 }

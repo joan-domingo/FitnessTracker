@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.menu;
+package cat.xojan.fittracker.view.menu;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.view;
+package cat.xojan.fittracker.view.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +29,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.ActivityType;
+import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.Utils;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {

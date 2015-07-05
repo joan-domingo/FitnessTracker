@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.session;
+package cat.xojan.fittracker.view.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;

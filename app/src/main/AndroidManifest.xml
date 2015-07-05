@@ -28,7 +28,7 @@
             android:value="AIzaSyBWSi7b9pptamEWucwpPp8YGQhqj9H_V5Y"/>
 
         <activity
-            android:name=".view.StartUpActivity"
+            android:name=".view.activity.StartUpActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -37,7 +37,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".session.SessionActivity"
+        <activity
+            android:name=".view.activity.WorkoutActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".view.activity.SessionActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:exported="true">
@@ -59,12 +64,7 @@
         </activity>
 
         <activity
-            android:name=".menu.PreferenceActivity"
-            android:launchMode="singleInstance"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".GoogleFitClientActivity"
+            android:name=".view.menu.PreferenceActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
 

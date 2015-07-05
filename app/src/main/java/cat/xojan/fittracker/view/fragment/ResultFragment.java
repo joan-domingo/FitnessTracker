@@ -1,6 +1,8 @@
-package cat.xojan.fittracker.main;
+package cat.xojan.fittracker.view.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -30,22 +33,26 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cat.xojan.fittracker.BaseFragment;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.controllers.DistanceController;
-import cat.xojan.fittracker.main.controllers.FitnessController;
-import cat.xojan.fittracker.main.controllers.MapController;
-import cat.xojan.fittracker.main.controllers.TimeController;
+import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.SessionDetailedData;
 import cat.xojan.fittracker.util.SessionMapData;
 import cat.xojan.fittracker.util.Utils;
+import cat.xojan.fittracker.view.activity.BaseActivity;
+import cat.xojan.fittracker.view.activity.WorkoutActivity;
+import cat.xojan.fittracker.view.controller.DistanceController;
+import cat.xojan.fittracker.view.controller.FitnessController;
+import cat.xojan.fittracker.view.controller.MapController;
+import cat.xojan.fittracker.view.controller.TimeController;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ResultFragment extends BaseFragment {
+
+    public static final String TAG = "result_fragment";
 
     @Inject FitnessController fitController;
     @Inject MapController mapController;
@@ -59,21 +66,21 @@ public class ResultFragment extends BaseFragment {
     private static View view;
     private GoogleMap map;
     private double totalDistance;
+    private ProgressDialog mProgressDialog;
 
     @OnClick(R.id.result_button_save)
     public void onClickSave(Button save) {
+        String fitnessActivity = (String) getActivity().getIntent().getExtras()
+                .get(WorkoutActivity.FITNESS_ACTIVITY);
         fitController.saveSession(getActivity(), mName.getText().toString(),
-                mDescription.getText().toString(), totalDistance);
+                mDescription.getText().toString(), totalDistance, fitnessActivity);
     }
 
     @OnClick(R.id.result_button_exit)
     public void onClickExit(Button exit) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.save_activity)
-                .setPositiveButton(R.string.exit, (dialog, id) -> getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new SessionListFragment())
-                        .commit())
+                .setPositiveButton(R.string.exit, (dialog, id) -> getActivity().finish())
                 .setNegativeButton(R.string.cancel, (dialog, id) -> {
                     // User cancelled the dialog
                 });
@@ -94,7 +101,6 @@ public class ResultFragment extends BaseFragment {
         /* map is already there, just return view as it is */
         }
         ButterKnife.bind(this, view);
-        setHasOptionsMenu(true);
         showProgressDialog(true);
 
         return view;
@@ -113,7 +119,6 @@ public class ResultFragment extends BaseFragment {
                 .subscribe(new Subscriber<Context>() {
 
                     private LinearLayout intervalView;
-                    private double distance;
 
                     @Override
                     public void onCompleted() {
@@ -196,9 +201,9 @@ public class ResultFragment extends BaseFragment {
 
     private void showProgressDialog(boolean b) {
         if (b) {
-            //((MainActivity) getActivity()).showDialog();
+            mProgressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.wait));
         } else {
-            //((MainActivity) getActivity()).dismissDialog();
+            mProgressDialog.dismiss();
         }
     }
 

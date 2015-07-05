@@ -1,9 +1,8 @@
-package cat.xojan.fittracker.menu;
+package cat.xojan.fittracker.view.menu;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import cat.xojan.fittracker.R;
 

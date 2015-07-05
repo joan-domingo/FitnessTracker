@@ -6,8 +6,7 @@ import android.util.Log;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
-import cat.xojan.fittracker.GoogleFitClientActivity;
-import cat.xojan.fittracker.main.MainActivity;
+import cat.xojan.fittracker.view.activity.StartUpActivity;
 
 public class WearableListener extends WearableListenerService {
 
@@ -22,12 +21,12 @@ public class WearableListener extends WearableListenerService {
 
         if (LAUNCH_HANDHELD_APP.equals(messageEvent.getPath())) {
             Intent i = new Intent();
-            i.setClass(this, MainActivity.class);
+            i.setClass(this, StartUpActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         } else if (SAVE_SESSION.equals(messageEvent.getPath())) {
             Intent i = new Intent();
-            i.setClass(this, GoogleFitClientActivity.class);
+            i.setClass(this, StartUpActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         }

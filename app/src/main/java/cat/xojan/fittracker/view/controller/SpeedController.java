@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main.controllers;
+package cat.xojan.fittracker.view.controller;
 
 import android.content.Context;
 import android.widget.TextView;

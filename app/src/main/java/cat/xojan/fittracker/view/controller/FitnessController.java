@@ -1,13 +1,10 @@
-package cat.xojan.fittracker.main.controllers;
+package cat.xojan.fittracker.view.controller;
 
 import android.content.Context;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
@@ -22,10 +19,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.SessionListFragment;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 public class FitnessController {
 
@@ -33,7 +26,6 @@ public class FitnessController {
 
     private GoogleApiClient mClient;
     private final Context mContext;
-    private String mFitnessActivity;
     private int mNumSegments;
     private DataSource mSpeedDataSource;
     private DataSet mSpeedDataSet;
@@ -54,19 +46,14 @@ public class FitnessController {
         mSessionListEndDate = Calendar.getInstance();
     }
 
-    private Calendar getStartDate() {
-        Calendar date = Calendar.getInstance();
-        date.add(Calendar.MONTH, -1);
-        return date;
-    }
-
-    public void saveSession(final FragmentActivity fragmentActivity, String name, String description, double totalDistance) {
+    public void saveSession(final FragmentActivity fragmentActivity, String name, String description,
+                            double totalDistance, String fitnessActivity) {
         //summary activity (aggregate)
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
         summaryDataPoint.setTimeInterval(timeController.getSessionStartTime(), timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
         summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
         summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) timeController.getSessionWorkoutTime());
-        summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
+        summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(fitnessActivity);
 
         //distance
         DataPoint distanceDataPoint = DataPoint.create(mDistanceDataSource);
@@ -80,7 +67,7 @@ public class FitnessController {
                 .setName(name)
                 .setDescription(description)
                 .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":" + timeController.getSessionStartTime())
-                .setActivity(mFitnessActivity)
+                .setActivity(fitnessActivity)
                 .setStartTime(timeController.getSessionStartTime(), TimeUnit.MILLISECONDS)
                 .setEndTime(timeController.getSessionEndTime(), TimeUnit.MILLISECONDS)
                 .build();
@@ -113,10 +100,6 @@ public class FitnessController {
                     }
 
                 });*/
-    }
-
-    public void setFitnessActivity(String activity) {
-        mFitnessActivity = activity;
     }
 
     public void saveSegment(boolean isPauseSegment) {
@@ -193,10 +176,6 @@ public class FitnessController {
         locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
         locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
         mLocationDataSet.add(locationDataPoint);
-    }
-
-    public String getFitnessActivity() {
-        return mFitnessActivity;
     }
 
     public long getEndTime() {

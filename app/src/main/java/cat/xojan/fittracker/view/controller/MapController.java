@@ -1,9 +1,9 @@
-package cat.xojan.fittracker.main.controllers;
+package cat.xojan.fittracker.view.controller;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,10 +27,10 @@ public class MapController {
     private boolean isTracking;
     private boolean isPaused;
     private LatLng oldPosition;
-    private final FragmentActivity mFragmentActivity;
+    private final Activity mFragmentActivity;
     private int mLapIndex;
 
-    public MapController(FragmentActivity activity, GoogleMap map, FitnessController fitnessController,
+    public MapController(Activity activity, GoogleMap map, FitnessController fitnessController,
                          LocationManager locationManager, DistanceController distanceController,
                          SpeedController speedController) {
 

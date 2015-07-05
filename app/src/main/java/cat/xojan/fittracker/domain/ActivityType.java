@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main;
+package cat.xojan.fittracker.domain;
 
 import android.content.Context;
 
@@ -20,7 +20,7 @@ public enum ActivityType {
     }
 
     public static String[] getStringArray(Context context) {
-        ActivityType[] tmp = ActivityType.values();
+        ActivityType[] tmp = values();
         String[] result = new String[tmp.length];
         for (int i = 0; i < tmp.length; i++) {
             result[i] = context.getResources().getString(tmp[i].activityString);

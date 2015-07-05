@@ -1,6 +1,8 @@
-package cat.xojan.fittracker.view;
+package cat.xojan.fittracker.view.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +16,9 @@ import android.widget.ImageButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -21,8 +26,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.ActivityType;
+import cat.xojan.fittracker.daggermodules.SessionModule;
+import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.Utils;
+import cat.xojan.fittracker.view.fragment.DatePickerFragment;
+import cat.xojan.fittracker.view.listener.DateSelectedListener;
+import cat.xojan.fittracker.view.adapter.SessionAdapter;
+import cat.xojan.fittracker.view.listener.UiContentUpdater;
 import cat.xojan.fittracker.view.presenter.SessionPresenter;
 
 public class StartUpActivity extends BaseActivity
@@ -48,8 +58,17 @@ public class StartUpActivity extends BaseActivity
         setContentView(R.layout.activity_startup);
         ButterKnife.bind(this);
 
+        /*if (mSessionPresenter.isFirstRun()) {
+        TODO
+        }*/
+
         showProgress();
         setUpView();
+    }
+
+    @Override
+    protected List<Object> getModules() {
+        return Collections.singletonList(new SessionModule(this));
     }
 
     @Override
@@ -87,11 +106,15 @@ public class StartUpActivity extends BaseActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_activity)
                 .setItems(ActivityType.getStringArray(getBaseContext()), (dialog, which) -> {
-                    String activity = ActivityType.values()[which].getActivity();
-                    //TODO set fitness activity
-                    //GOTO workout activity
+                    startWorkoutActivity(ActivityType.values()[which].getActivity());
                 });
         builder.create().show();
+    }
+
+    private void startWorkoutActivity(String activity) {
+        Intent intent = new Intent(this, WorkoutActivity.class);
+        intent.putExtra(WorkoutActivity.FITNESS_ACTIVITY, activity);
+        startActivity(intent);
     }
 
     private void showFragment(long time, Button button) {
@@ -123,5 +146,37 @@ public class StartUpActivity extends BaseActivity
         music.setVisible(false);
 
         return true;
+    }
+
+    private void showSettingsDialog() {
+        String[] unitArray = getResources().getStringArray(R.array.measure_unit_entries);
+        final String[] unitArrayValues = getResources().getStringArray(R.array.measure_unit_entries_values);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.choose_unit)
+                .setItems(unitArray, (dialog, which) -> {
+                    String unit = unitArrayValues[which];
+                    getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                            .edit()
+                            .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)
+                            .commit();
+                    showDateFormatDialog();
+                });
+        builder.create().show();
+    }
+
+    private void showDateFormatDialog() {
+        String[] dateFormatEntries = getResources().getStringArray(R.array.date_format_entries);
+        final String[] dateFormatEntriesValues = getResources().getStringArray(R.array.date_format_entries_values);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.select_date_format)
+                .setItems(dateFormatEntries, (dialog, which) -> {
+                    String dateFormat = dateFormatEntriesValues[which];
+                    getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                            .edit()
+                            .putBoolean(Constant.PREFERENCE_FIRST_RUN, false)
+                            .putString(Constant.PREFERENCE_DATE_FORMAT, dateFormat)
+                            .commit();
+                });
+        builder.create().show();
     }
 }
