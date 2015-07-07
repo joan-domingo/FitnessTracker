@@ -11,15 +11,16 @@ import com.google.android.gms.maps.MapFragment;
 import javax.inject.Singleton;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.view.activity.WorkoutActivity;
 import cat.xojan.fittracker.view.controller.DistanceController;
 import cat.xojan.fittracker.view.controller.FitnessController;
 import cat.xojan.fittracker.view.controller.MapController;
 import cat.xojan.fittracker.view.controller.NotificationController;
 import cat.xojan.fittracker.view.controller.SpeedController;
 import cat.xojan.fittracker.view.controller.TimeController;
-import cat.xojan.fittracker.view.activity.WorkoutActivity;
+import cat.xojan.fittracker.view.fragment.ResultFragment;
 import cat.xojan.fittracker.view.fragment.WorkoutMapFragment;
-import cat.xojan.fittracker.view.presenter.WorkoutPresenter;
+import cat.xojan.fittracker.view.presenter.SessionPresenter;
 import dagger.Module;
 import dagger.Provides;
 
@@ -27,13 +28,16 @@ import dagger.Provides;
         injects = {
                 WorkoutActivity.class,
                 WorkoutMapFragment.class,
+                ResultFragment.class,
                 NotificationController.class,
                 TimeController.class,
                 SpeedController.class,
                 MapController.class,
                 DistanceController.class,
-                FitnessController.class
+                FitnessController.class,
+                SessionPresenter.class
         },
+        includes = SessionModule.class,
         addsTo = AppModule.class,
         library = true
 )
@@ -59,12 +63,6 @@ public class WorkoutModule {
     @Provides
     public LocationManager provideLocationManager(Context context) {
         return (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    }
-
-    @Provides
-    @Singleton
-    public WorkoutPresenter provideWorkoutPresenter() {
-        return new WorkoutPresenter();
     }
 
     @Provides @Singleton

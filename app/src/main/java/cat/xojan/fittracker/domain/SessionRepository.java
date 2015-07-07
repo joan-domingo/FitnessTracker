@@ -10,9 +10,9 @@ import java.io.IOException;
 
 public interface SessionRepository {
     /*package*/ void saveSession(SessionInsertRequest sessionInsertRequest,
-                                 GoogleApiClient googleApiClient) throws IOException;
+                                 GoogleApiClient googleApiClient);
     /*package*/ void deleteSession(DataDeleteRequest dataDeleteRequest,
-                                   GoogleApiClient googleApiClient) throws IOException;
+                                   GoogleApiClient googleApiClient);
     /*package*/ SessionReadResult getSessions(SessionReadRequest sessionReadRequest,
                                           GoogleApiClient googleApiClient);
     //TODO daily Totals?

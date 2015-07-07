@@ -20,12 +20,12 @@ public class GoogleFitSessionStorage implements SessionRepository {
 
     @Override
     public void saveSession(SessionInsertRequest sessionInsertRequest,
-                            GoogleApiClient googleApiClient) throws IOException {
+                            GoogleApiClient googleApiClient) {
         Status insertStatus = Fitness.SessionsApi.insertSession(googleApiClient,
                 sessionInsertRequest).await(1, TimeUnit.MINUTES);
 
         if (!insertStatus.isSuccess()) {
-            throw new IOException(insertStatus.getStatusMessage());
+            Log.i(Constant.TAG, insertStatus.getStatusMessage());
         } else {
             Log.i(Constant.TAG, "Session insert was successful!");
         }
@@ -33,7 +33,7 @@ public class GoogleFitSessionStorage implements SessionRepository {
 
     @Override
     public void deleteSession(DataDeleteRequest dataDeleteRequest,
-                              GoogleApiClient googleApiClient) throws IOException {
+                              GoogleApiClient googleApiClient) {
         Fitness.HistoryApi.deleteData(googleApiClient, dataDeleteRequest)
                 .setResultCallback(status -> {
                     if (status.isSuccess()) {

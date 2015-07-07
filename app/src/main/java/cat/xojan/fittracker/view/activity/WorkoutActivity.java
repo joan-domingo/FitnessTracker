@@ -7,6 +7,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +20,6 @@ import cat.xojan.fittracker.daggermodules.WorkoutModule;
 import cat.xojan.fittracker.view.fragment.WorkoutMapFragment;
 import cat.xojan.fittracker.view.listener.LocationUpdateListener;
 import cat.xojan.fittracker.view.listener.RemoveLocationUpdateListener;
-import cat.xojan.fittracker.view.presenter.WorkoutPresenter;
 
 public class WorkoutActivity extends BaseActivity
         implements LocationListener,
@@ -34,15 +35,16 @@ public class WorkoutActivity extends BaseActivity
 
     @Inject
     LocationManager mLocationManager;
-    @Inject
-    WorkoutPresenter mWorkoutPresenter;
+
     private LocationUpdateListener mLocationUpdateListener;
+    private boolean mIsFirstLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mIsFirstLocation = true;
         setUpLocationListener();
         setUpView();
     }
@@ -70,11 +72,11 @@ public class WorkoutActivity extends BaseActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        if (mWorkoutPresenter.getIsFirstLocation()) {
+        if (mIsFirstLocation) {
             Log.i(Constant.TAG, "Got First Location");
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-            mWorkoutPresenter.gotFirstLocation();
+            mIsFirstLocation = false;
             notifyFirstLocationToFragment(location);
         } else {
             notifyUpdateLocationToFragment(location);
@@ -121,5 +123,9 @@ public class WorkoutActivity extends BaseActivity
     @Override
     public void notifyRemoveLocationUpdate() {
         mLocationManager.removeUpdates(this);
+    }
+
+    public GoogleApiClient getFitnessClient() {
+        return getFitnessCient();
     }
 }

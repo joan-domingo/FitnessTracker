@@ -12,7 +12,6 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
-import com.google.android.gms.fitness.request.SessionReadRequest;
 
 import java.util.Calendar;
 import java.util.List;
@@ -42,13 +41,15 @@ public class FitnessController {
         this.timeController = timeController;
     }
 
-    public void saveSession(final FragmentActivity fragmentActivity, String name, String description,
-                            double totalDistance, String fitnessActivity) {
+    public SessionInsertRequest saveSession(String name, String description,
+                                            double totalDistance, String fitnessActivity) {
         //summary activity (aggregate)
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
-        summaryDataPoint.setTimeInterval(timeController.getSessionStartTime(), timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
+        summaryDataPoint.setTimeInterval(timeController.getSessionStartTime(),
+                timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
         summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
-        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) timeController.getSessionWorkoutTime());
+        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) timeController
+                .getSessionWorkoutTime());
         summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(fitnessActivity);
 
         //distance
@@ -62,7 +63,8 @@ public class FitnessController {
         Session session = new Session.Builder()
                 .setName(name)
                 .setDescription(description)
-                .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":" + timeController.getSessionStartTime())
+                .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":"
+                        + timeController.getSessionStartTime())
                 .setActivity(fitnessActivity)
                 .setStartTime(timeController.getSessionStartTime(), TimeUnit.MILLISECONDS)
                 .setEndTime(timeController.getSessionEndTime(), TimeUnit.MILLISECONDS)
@@ -81,21 +83,7 @@ public class FitnessController {
                     .addDataSet(mSpeedDataSet);
         }
 
-        SessionInsertRequest insertRequest = insertRequestBuilder.build();
-
-        /*Observable.just(insertRequest)
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(request -> {
-
-                        // At this point, the session has been inserted and can be read.
-                        setEndTime(Calendar.getInstance());
-
-                        fragmentActivity.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new SessionListFragment())
-                                .commit();
-                    }
-
-                });*/
+        return insertRequestBuilder.build();
     }
 
     public void saveSegment(boolean isPauseSegment) {
@@ -114,7 +102,7 @@ public class FitnessController {
         mNumSegments++;
         DataPoint segmentDataPoint = DataPoint.create(mSegmentDataSource);
         segmentDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
-        segmentDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
+        //segmentDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
         mSegmentDataSet.add(segmentDataPoint);
     }
 

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
@@ -88,5 +89,10 @@ public class SessionPresenter {
 
     public void setEndTime(long timeInMillis) {
         mEndTime = timeInMillis;
+    }
+
+    public void insertSession(SessionInsertRequest sessionInsertRequest,
+                              GoogleApiClient googleApiClient) {
+        mSessionDataInteractor.insertSessionInsertRequest(sessionInsertRequest, googleApiClient);
     }
 }

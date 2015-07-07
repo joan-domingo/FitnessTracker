@@ -27,6 +27,7 @@ import butterknife.OnClick;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.daggermodules.SessionModule;
+import cat.xojan.fittracker.daggermodules.StartUpModule;
 import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.Utils;
 import cat.xojan.fittracker.view.fragment.DatePickerFragment;
@@ -68,7 +69,7 @@ public class StartUpActivity extends BaseActivity
 
     @Override
     protected List<Object> getModules() {
-        return Collections.singletonList(new SessionModule(this));
+        return Collections.singletonList(new StartUpModule(this));
     }
 
     @Override

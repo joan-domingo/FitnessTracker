@@ -18,9 +18,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
@@ -39,12 +40,12 @@ import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.SessionDetailedData;
 import cat.xojan.fittracker.util.SessionMapData;
 import cat.xojan.fittracker.util.Utils;
-import cat.xojan.fittracker.view.activity.BaseActivity;
 import cat.xojan.fittracker.view.activity.WorkoutActivity;
 import cat.xojan.fittracker.view.controller.DistanceController;
 import cat.xojan.fittracker.view.controller.FitnessController;
 import cat.xojan.fittracker.view.controller.MapController;
 import cat.xojan.fittracker.view.controller.TimeController;
+import cat.xojan.fittracker.view.presenter.SessionPresenter;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,11 +55,18 @@ public class ResultFragment extends BaseFragment {
 
     public static final String TAG = "result_fragment";
 
-    @Inject FitnessController fitController;
-    @Inject MapController mapController;
-    @Inject DistanceController distanceController;
-    @Inject TimeController timeController;
-    @Inject Context context;
+    @Inject
+    FitnessController fitController;
+    @Inject
+    MapController mapController;
+    @Inject
+    DistanceController distanceController;
+    @Inject
+    TimeController timeController;
+    @Inject
+    Context context;
+    @Inject
+    SessionPresenter mSessionPresenter;
 
     @Bind(R.id.result_description) EditText mDescription;
     @Bind(R.id.result_name) EditText mName;
@@ -67,13 +75,15 @@ public class ResultFragment extends BaseFragment {
     private GoogleMap map;
     private double totalDistance;
     private ProgressDialog mProgressDialog;
+    private String mFitnessActivity;
+    private GoogleApiClient mFitnessClient;
 
     @OnClick(R.id.result_button_save)
     public void onClickSave(Button save) {
-        String fitnessActivity = (String) getActivity().getIntent().getExtras()
-                .get(WorkoutActivity.FITNESS_ACTIVITY);
-        fitController.saveSession(getActivity(), mName.getText().toString(),
-                mDescription.getText().toString(), totalDistance, fitnessActivity);
+        SessionInsertRequest sessionInsertRequest = fitController.saveSession(mName.getText()
+                        .toString(), mDescription.getText().toString(), totalDistance,
+                mFitnessActivity);
+        mSessionPresenter.insertSession(sessionInsertRequest, mFitnessClient);
     }
 
     @OnClick(R.id.result_button_exit)
@@ -86,6 +96,12 @@ public class ResultFragment extends BaseFragment {
                 });
         // Create the AlertDialog object and return it
         builder.create().show();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mFitnessClient = ((WorkoutActivity) activity).getFitnessClient();
     }
 
     @Override
@@ -109,6 +125,8 @@ public class ResultFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mFitnessActivity = (String) getActivity().getIntent().getExtras()
+                .get(WorkoutActivity.FITNESS_ACTIVITY);
         setContent();
     }
 
@@ -185,12 +203,10 @@ public class ResultFragment extends BaseFragment {
                                                 Utils.millisToDay(timeController.getSessionEndTime()));
                                         if (!TextUtils.isEmpty(cn)) {
                                             mDescription.setText(getText(ActivityType
-                                                    .getRightLanguageString(fitController
-                                                            .getFitnessActivity())) + " @ " + cn);
+                                                    .getRightLanguageString(mFitnessActivity)) + " @ " + cn);
                                         } else {
                                             mDescription.setText(getText(ActivityType
-                                                    .getRightLanguageString(fitController
-                                                            .getFitnessActivity())));
+                                                    .getRightLanguageString(mFitnessActivity)));
                                         }
                                         showProgressDialog(false);
                                         setMap();
