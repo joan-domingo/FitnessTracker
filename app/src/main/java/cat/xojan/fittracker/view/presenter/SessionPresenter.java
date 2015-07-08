@@ -29,7 +29,7 @@ public class SessionPresenter {
         mSessionDataInteractor = sessionDataInteractor;
     }
 
-    public SessionReadResult getSessionsData(GoogleApiClient googleApiClient) {
+    private SessionReadResult getSessionsData(GoogleApiClient googleApiClient) {
         SessionReadRequest sessionReadRequest = new SessionReadRequest.Builder()
                 .setTimeInterval(getStartTime(), getEndTime(), TimeUnit.MILLISECONDS)
                 .read(DataType.TYPE_DISTANCE_DELTA)
@@ -93,6 +93,24 @@ public class SessionPresenter {
 
     public void insertSession(SessionInsertRequest sessionInsertRequest,
                               GoogleApiClient googleApiClient) {
-        mSessionDataInteractor.insertSessionInsertRequest(sessionInsertRequest, googleApiClient);
+        Observable.just(googleApiClient)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(new Subscriber<GoogleApiClient>() {
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(Constant.TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(GoogleApiClient googleApiClient) {
+                        mSessionDataInteractor.insertSessionInsertRequest(sessionInsertRequest,
+                                googleApiClient);
+                    }
+                });
     }
 }

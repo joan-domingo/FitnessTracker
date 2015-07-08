@@ -26,13 +26,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.daggermodules.SessionModule;
 import cat.xojan.fittracker.daggermodules.StartUpModule;
 import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.Utils;
+import cat.xojan.fittracker.view.adapter.SessionAdapter;
 import cat.xojan.fittracker.view.fragment.DatePickerFragment;
 import cat.xojan.fittracker.view.listener.DateSelectedListener;
-import cat.xojan.fittracker.view.adapter.SessionAdapter;
 import cat.xojan.fittracker.view.listener.UiContentUpdater;
 import cat.xojan.fittracker.view.presenter.SessionPresenter;
 

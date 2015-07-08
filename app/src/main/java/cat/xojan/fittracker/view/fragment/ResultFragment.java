@@ -84,6 +84,7 @@ public class ResultFragment extends BaseFragment {
                         .toString(), mDescription.getText().toString(), totalDistance,
                 mFitnessActivity);
         mSessionPresenter.insertSession(sessionInsertRequest, mFitnessClient);
+        getActivity().finish();
     }
 
     @OnClick(R.id.result_button_exit)
@@ -263,12 +264,5 @@ public class ResultFragment extends BaseFragment {
                         }
                     });
         });
-    }
-
-        @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        menu.clear();
     }
 }
