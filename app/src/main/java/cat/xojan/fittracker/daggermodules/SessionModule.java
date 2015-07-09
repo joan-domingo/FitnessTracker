@@ -25,11 +25,13 @@ public class SessionModule {
     }
 
     @Provides
+    @Singleton
     public SessionDataInteractor provideSessionDataInteractor(SessionRepository sessionRepository) {
         return new SessionDataInteractor(sessionRepository);
     }
 
     @Provides
+    @Singleton
     public SessionPresenter provideSessionPresenter(SessionDataInteractor sessionDataInteractor) {
         return new SessionPresenter(sessionDataInteractor);
     }

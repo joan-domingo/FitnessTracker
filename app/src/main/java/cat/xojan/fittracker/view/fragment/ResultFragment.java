@@ -45,13 +45,14 @@ import cat.xojan.fittracker.view.controller.DistanceController;
 import cat.xojan.fittracker.view.controller.FitnessController;
 import cat.xojan.fittracker.view.controller.MapController;
 import cat.xojan.fittracker.view.controller.TimeController;
+import cat.xojan.fittracker.view.listener.OnSessionInsertListener;
 import cat.xojan.fittracker.view.presenter.SessionPresenter;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ResultFragment extends BaseFragment {
+public class ResultFragment extends BaseFragment implements OnSessionInsertListener {
 
     public static final String TAG = "result_fragment";
 
@@ -83,8 +84,8 @@ public class ResultFragment extends BaseFragment {
         SessionInsertRequest sessionInsertRequest = fitController.saveSession(mName.getText()
                         .toString(), mDescription.getText().toString(), totalDistance,
                 mFitnessActivity);
-        mSessionPresenter.insertSession(sessionInsertRequest, mFitnessClient);
-        getActivity().finish();
+        mSessionPresenter.insertSession(sessionInsertRequest, mFitnessClient, this);
+        showProgressDialog(true);
     }
 
     @OnClick(R.id.result_button_exit)
@@ -264,5 +265,11 @@ public class ResultFragment extends BaseFragment {
                         }
                     });
         });
+    }
+
+    @Override
+    public void insertCompleted() {
+        showProgressDialog(false);
+        getActivity().finish();
     }
 }

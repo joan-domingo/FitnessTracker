@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
+import cat.xojan.fittracker.view.listener.OnSessionInsertListener;
 import cat.xojan.fittracker.view.listener.UiContentUpdater;
 import rx.Observable;
 import rx.Subscriber;
@@ -92,13 +93,14 @@ public class SessionPresenter {
     }
 
     public void insertSession(SessionInsertRequest sessionInsertRequest,
-                              GoogleApiClient googleApiClient) {
+                              GoogleApiClient googleApiClient, OnSessionInsertListener listener) {
         Observable.just(googleApiClient)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(new Subscriber<GoogleApiClient>() {
 
                     @Override
                     public void onCompleted() {
+                        listener.insertCompleted();
                     }
 
                     @Override

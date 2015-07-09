@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,6 +74,7 @@ public class StartUpActivity extends BaseActivity
 
     @Override
     protected void onFitnessClientConnected(GoogleApiClient fitnessClient) {
+        mSessionPresenter.setEndTime(Calendar.getInstance().getTimeInMillis());
         mSessionPresenter.readSessions(fitnessClient, this);
     }
 
