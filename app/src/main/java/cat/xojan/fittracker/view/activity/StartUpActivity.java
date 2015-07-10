@@ -1,7 +1,6 @@
 package cat.xojan.fittracker.view.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -25,7 +24,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.daggermodules.StartUpModule;
 import cat.xojan.fittracker.domain.ActivityType;
@@ -34,6 +32,7 @@ import cat.xojan.fittracker.view.adapter.SessionAdapter;
 import cat.xojan.fittracker.view.fragment.DatePickerFragment;
 import cat.xojan.fittracker.view.listener.DateSelectedListener;
 import cat.xojan.fittracker.view.listener.UiContentUpdater;
+import cat.xojan.fittracker.view.presenter.FirstRunPresenter;
 import cat.xojan.fittracker.view.presenter.SessionPresenter;
 
 public class StartUpActivity extends BaseActivity
@@ -42,6 +41,8 @@ public class StartUpActivity extends BaseActivity
 
     @Inject
     SessionPresenter mSessionPresenter;
+    @Inject
+    FirstRunPresenter mFirstRunPresenter;
 
     @Bind(R.id.startup_recycler_view)
     RecyclerView mRecyclerView;
@@ -59,9 +60,10 @@ public class StartUpActivity extends BaseActivity
         setContentView(R.layout.activity_startup);
         ButterKnife.bind(this);
 
-        /*if (mSessionPresenter.isFirstRun()) {
-        TODO
-        }*/
+        if (mFirstRunPresenter.showFirstRunSettingsDialogs(this)) {
+            showSettingsDialog();
+            mFirstRunPresenter.FirstRunDone(this);
+        }
 
         showProgress();
         setUpView();
@@ -156,11 +158,7 @@ public class StartUpActivity extends BaseActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_unit)
                 .setItems(unitArray, (dialog, which) -> {
-                    String unit = unitArrayValues[which];
-                    getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                            .edit()
-                            .putString(Constant.PREFERENCE_MEASURE_UNIT, unit)
-                            .commit();
+                    mFirstRunPresenter.saveMeasureUnit(unitArrayValues[which]);
                     showDateFormatDialog();
                 });
         builder.create().show();
@@ -172,12 +170,7 @@ public class StartUpActivity extends BaseActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.select_date_format)
                 .setItems(dateFormatEntries, (dialog, which) -> {
-                    String dateFormat = dateFormatEntriesValues[which];
-                    getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                            .edit()
-                            .putBoolean(Constant.PREFERENCE_FIRST_RUN, false)
-                            .putString(Constant.PREFERENCE_DATE_FORMAT, dateFormat)
-                            .commit();
+                    mFirstRunPresenter.saveDateFormat(dateFormatEntriesValues[which]);
                 });
         builder.create().show();
     }

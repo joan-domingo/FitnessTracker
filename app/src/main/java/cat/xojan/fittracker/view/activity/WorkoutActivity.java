@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.daggermodules.WorkoutModule;
 import cat.xojan.fittracker.view.fragment.WorkoutMapFragment;
@@ -24,6 +23,7 @@ import cat.xojan.fittracker.view.listener.RemoveLocationUpdateListener;
 public class WorkoutActivity extends BaseActivity
         implements LocationListener,
         RemoveLocationUpdateListener {
+    private static final String TAG = WorkoutActivity.class.getSimpleName();
 
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 3; // 3 meters
@@ -73,7 +73,7 @@ public class WorkoutActivity extends BaseActivity
     @Override
     public void onLocationChanged(Location location) {
         if (mIsFirstLocation) {
-            Log.i(Constant.TAG, "Got First Location");
+            Log.i(TAG, "Got First Location");
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
             mIsFirstLocation = false;

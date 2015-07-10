@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.util.SessionDetailedData;
 import cat.xojan.fittracker.util.SessionMapData;
@@ -46,6 +45,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class SessionActivity extends AppCompatActivity {
+
+    private static final String TAG = SessionActivity.class.getSimpleName();
+    private static final java.lang.String AUTH_PENDING = "auth_state_pending";;
+    private static final String PACKAGE_SPECIFIC_PART = "cat.xojan.fittracker";
+    private static final int REQUEST_OAUTH = 1;
 
     @Bind(R.id.fragment_session_toolbar) Toolbar toolbar;
 
@@ -68,10 +72,11 @@ public class SessionActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
-            authInProgress = savedInstanceState.getBoolean(Constant.AUTH_PENDING);
+            authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
         }
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mProgressDialog = ProgressDialog.show(this, null, getString(R.string.wait));
 
         Intent intent = getIntent();
@@ -90,7 +95,7 @@ public class SessionActivity extends AppCompatActivity {
                         new GoogleApiClient.ConnectionCallbacks() {
                             @Override
                             public void onConnected(Bundle bundle) {
-                                Log.i(Constant.TAG, "Connected!!!");
+                                Log.i(TAG, "Connected!!!");
                                 readSessionDataSets();
                             }
 
@@ -99,16 +104,16 @@ public class SessionActivity extends AppCompatActivity {
                                 // If your connection to the sensor gets lost at some point,
                                 // you'll be able to determine the reason and react to it here.
                                 if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-                                    Log.i(Constant.TAG, "Connection lost.  Cause: Network Lost.");
+                                    Log.i(TAG, "Connection lost.  Cause: Network Lost.");
                                 } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-                                    Log.i(Constant.TAG, "Connection lost.  Reason: Service Disconnected");
+                                    Log.i(TAG, "Connection lost.  Reason: Service Disconnected");
                                 }
                             }
                         }
                 )
                 .addOnConnectionFailedListener(
                         result -> {
-                            Log.i(Constant.TAG, "Connection failed. Cause: " + result.toString());
+                            Log.i(TAG, "Connection failed. Cause: " + result.toString());
                             if (!result.hasResolution()) {
                                 // Show the localized error dialog
                                 GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
@@ -120,13 +125,12 @@ public class SessionActivity extends AppCompatActivity {
                             // authorization dialog is displayed to the user.
                             if (!authInProgress) {
                                 try {
-                                    Log.i(Constant.TAG, "Attempting to resolve failed connection");
+                                    Log.i(TAG, "Attempting to resolve failed connection");
                                     authInProgress = true;
                                     result.startResolutionForResult(SessionActivity.this,
-                                            Constant.REQUEST_OAUTH);
+                                            REQUEST_OAUTH);
                                 } catch (IntentSender.SendIntentException e) {
-                                    Log.e(Constant.TAG,
-                                            "Exception while starting resolution activity", e);
+                                    Log.e(TAG, "Exception while starting resolution activity", e);
                                 }
                             }
                         }
@@ -161,7 +165,7 @@ public class SessionActivity extends AppCompatActivity {
                         Observable.just(mSession)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(s -> {
-                                    if (s.getAppPackageName().equals(Constant.PACKAGE_SPECIFIC_PART))
+                                    if (s.getAppPackageName().equals(PACKAGE_SPECIFIC_PART))
                                         mDeleteButton.setVisible(true);
                                     fillViewContent();
                                     mProgressDialog.dismiss();
@@ -255,7 +259,7 @@ public class SessionActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        Log.e(Constant.TAG, "Error showing detailed data");
+                                        Log.e(TAG, "Error showing detailed data");
                                     }
 
                                     @Override
@@ -267,7 +271,7 @@ public class SessionActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(Constant.TAG, "Error getting Datapoints: set detailed data");
+                        Log.e(TAG, "Error getting Datapoints: set detailed data");
                     }
 
                     @Override
@@ -391,7 +395,7 @@ public class SessionActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(Constant.TAG, "Error getting Datapoints: set map polylines");
+                                Log.e(TAG, "Error getting Datapoints: set map polylines");
                             }
 
                             @Override
@@ -411,7 +415,7 @@ public class SessionActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Connect to the Fitness API
-        Log.i(Constant.TAG, "Connecting...");
+        Log.i(TAG, "Connecting...");
         mClient.connect();
     }
 
@@ -425,7 +429,7 @@ public class SessionActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constant.REQUEST_OAUTH) {
+        if (requestCode == REQUEST_OAUTH) {
             authInProgress = false;
             if (resultCode == RESULT_OK) {
                 // Make sure the app is not already connected or attempting to connect
@@ -441,6 +445,6 @@ public class SessionActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(Constant.AUTH_PENDING, authInProgress);
+        outState.putBoolean(AUTH_PENDING, authInProgress);
     }
 }

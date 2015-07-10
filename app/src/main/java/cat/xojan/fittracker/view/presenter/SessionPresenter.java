@@ -11,7 +11,6 @@ import com.google.android.gms.fitness.result.SessionReadResult;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
 import cat.xojan.fittracker.view.listener.OnSessionInsertListener;
 import cat.xojan.fittracker.view.listener.UiContentUpdater;
@@ -22,6 +21,7 @@ import rx.schedulers.Schedulers;
 
 public class SessionPresenter {
 
+    private static final String TAG = SessionPresenter.class.getSimpleName();
     private final SessionDataInteractor mSessionDataInteractor;
     private long mStartTime;
     private long mEndTime;
@@ -74,7 +74,7 @@ public class SessionPresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(Constant.TAG, e.getMessage());
+                        Log.e(TAG, e.getMessage());
                     }
 
                     @Override
@@ -105,7 +105,7 @@ public class SessionPresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(Constant.TAG, e.getMessage());
+                        Log.e(TAG, e.getMessage());
                     }
 
                     @Override

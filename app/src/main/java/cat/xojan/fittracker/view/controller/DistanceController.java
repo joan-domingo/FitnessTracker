@@ -11,8 +11,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
-import cat.xojan.fittracker.Constant;
-
 public class DistanceController {
 
     private final Context mContext;
@@ -43,8 +41,8 @@ public class DistanceController {
     }
 
     private void updateDistanceView() {
-        String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+        String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE).getString(Constant.PREFERENCE_MEASURE_UNIT, "");
 
         float distance = mSegmentDistance + mAuxDistance;
 

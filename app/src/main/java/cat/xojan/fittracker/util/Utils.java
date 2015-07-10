@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 
 public class Utils {

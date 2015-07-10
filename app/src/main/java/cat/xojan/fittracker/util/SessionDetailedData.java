@@ -17,7 +17,6 @@ import com.google.maps.android.SphericalUtil;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 
 public class SessionDetailedData {

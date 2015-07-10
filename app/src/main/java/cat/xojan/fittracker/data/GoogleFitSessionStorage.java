@@ -10,13 +10,13 @@ import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.domain.SessionRepository;
 
 public class GoogleFitSessionStorage implements SessionRepository {
+
+    private static final String TAG = GoogleFitSessionStorage.class.getSimpleName();
 
     @Override
     public void saveSession(SessionInsertRequest sessionInsertRequest,
@@ -25,9 +25,9 @@ public class GoogleFitSessionStorage implements SessionRepository {
                 sessionInsertRequest).await(1, TimeUnit.MINUTES);
 
         if (!insertStatus.isSuccess()) {
-            Log.i(Constant.TAG, insertStatus.getStatusMessage());
+            Log.i(TAG, insertStatus.getStatusMessage());
         } else {
-            Log.i(Constant.TAG, "Session insert was successful!");
+            Log.i(TAG, "Session insert was successful!");
         }
     }
 
@@ -37,9 +37,9 @@ public class GoogleFitSessionStorage implements SessionRepository {
         Fitness.HistoryApi.deleteData(googleApiClient, dataDeleteRequest)
                 .setResultCallback(status -> {
                     if (status.isSuccess()) {
-                        Log.i(Constant.TAG, "Successfully deleted data");
+                        Log.i(TAG, "Successfully deleted data");
                     } else {
-                        Log.i(Constant.TAG, "Failed to delete data");
+                        Log.i(TAG, "Failed to delete data");
                     }
                 });
     }

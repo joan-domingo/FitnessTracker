@@ -20,7 +20,6 @@ import com.google.android.gms.fitness.Fitness;
 import java.util.Collections;
 import java.util.List;
 
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.view.menu.AttributionFragment;
@@ -30,6 +29,8 @@ import dagger.ObjectGraph;
 public class BaseActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
+
+    private static final String TAG = BaseActivity.class.getSimpleName();
 
     private static final int REQUEST_OAUTH = 1;
     /**
@@ -73,7 +74,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i(Constant.TAG, "Fitness client Connected!!!");
+        Log.i(TAG, "Fitness client Connected!!!");
         onFitnessClientConnected(mFitnessClient);
     }
 
@@ -84,15 +85,15 @@ public class BaseActivity extends AppCompatActivity implements
         // If your connection to the sensor gets lost at some point,
         // you'll be able to determine the reason and react to it here.
         if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-            Log.i(Constant.TAG, "Connection lost.  Cause: Network Lost.");
+            Log.i(TAG, "Connection lost.  Cause: Network Lost.");
         } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-            Log.i(Constant.TAG, "Connection lost.  Reason: Service Disconnected");
+            Log.i(TAG, "Connection lost.  Reason: Service Disconnected");
         }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.i(Constant.TAG, "Connection failed. Cause: " + connectionResult.toString());
+        Log.i(TAG, "Connection failed. Cause: " + connectionResult.toString());
         if (!connectionResult.hasResolution()) {
             // Show the localized error dialog
             GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
@@ -104,12 +105,12 @@ public class BaseActivity extends AppCompatActivity implements
         // authorization dialog is displayed to the user.
         if (!authInProgress) {
             try {
-                Log.i(Constant.TAG, "Attempting to resolve failed connection");
+                Log.i(TAG, "Attempting to resolve failed connection");
                 authInProgress = true;
                 connectionResult.startResolutionForResult(BaseActivity.this,
                         REQUEST_OAUTH);
             } catch (IntentSender.SendIntentException e) {
-                Log.e(Constant.TAG,
+                Log.e(TAG,
                         "Exception while starting resolution activity", e);
             }
         }
@@ -119,7 +120,7 @@ public class BaseActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         // Connect to the Fitness API
-        Log.i(Constant.TAG, "Connecting...");
+        Log.i(TAG, "Connecting...");
         mFitnessClient.connect();
     }
 

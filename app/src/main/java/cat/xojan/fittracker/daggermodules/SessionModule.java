@@ -31,7 +31,6 @@ public class SessionModule {
     }
 
     @Provides
-    @Singleton
     public SessionPresenter provideSessionPresenter(SessionDataInteractor sessionDataInteractor) {
         return new SessionPresenter(sessionDataInteractor);
     }

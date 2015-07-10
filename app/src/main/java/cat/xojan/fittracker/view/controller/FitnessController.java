@@ -2,7 +2,6 @@ package cat.xojan.fittracker.view.controller;
 
 import android.content.Context;
 import android.location.Location;
-import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -17,10 +16,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.Constant;
-
 public class FitnessController {
 
+    private static final String PACKAGE_SPECIFIC_PART = "cat.xojan.fittracker";
     private final TimeController timeController;
 
     private GoogleApiClient mClient;
@@ -63,7 +61,7 @@ public class FitnessController {
         Session session = new Session.Builder()
                 .setName(name)
                 .setDescription(description)
-                .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":"
+                .setIdentifier(PACKAGE_SPECIFIC_PART + ":"
                         + timeController.getSessionStartTime())
                 .setActivity(fitnessActivity)
                 .setStartTime(timeController.getSessionStartTime(), TimeUnit.MILLISECONDS)

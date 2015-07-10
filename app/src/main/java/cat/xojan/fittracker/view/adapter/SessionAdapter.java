@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cat.xojan.fittracker.Constant;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.Utils;

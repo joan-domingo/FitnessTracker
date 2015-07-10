@@ -29,7 +29,10 @@ import dagger.Provides;
         injects = {
                 StartUpActivity.class
         },
-        includes = SessionModule.class,
+        includes = {
+                SessionModule.class,
+                FirstRunModule.class
+        },
         addsTo = AppModule.class,
         library = true
 )
