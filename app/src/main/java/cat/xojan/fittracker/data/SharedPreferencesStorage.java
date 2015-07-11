@@ -2,22 +2,14 @@ package cat.xojan.fittracker.data;
 
 import android.content.Context;
 
-import cat.xojan.fittracker.domain.FirstRunRepository;
+import cat.xojan.fittracker.domain.UnitDataRepository;
 
-public class SharedPreferencesStorage implements FirstRunRepository {
+public class SharedPreferencesStorage implements UnitDataRepository {
 
-    private static final String SHARED_PREFERENCES = "cat.xojan.fittracker_preferences";
+    public static final String SHARED_PREFERENCES = "cat.xojan.fittracker_preferences";
     private static final String PREFERENCE_FIRST_RUN = "first_run";
-
-    private static final String DISTANCE_MEASURE_KM = "Km";
-    private static final String DISTANCE_MEASURE_MILE = "Mi";
-
-    private static final String DATE_FORMAT_DMY = "dmy";
-    private static final String DATE_FORMAT_MDY = "mdy";
-    private static final String DATE_FORMAT_YMD = "ymd";
-
-    private static final String PREFERENCE_MEASURE_UNIT = "unit_measure";
-    private static final String PREFERENCE_DATE_FORMAT = "date_format";
+    public static final String PREFERENCE_MEASURE_UNIT = "unit_measure";
+    public static final String PREFERENCE_DATE_FORMAT = "date_format";
 
     @Override
     public boolean getIsFirstRun(Context context) {

@@ -18,17 +18,21 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.ui.controller.DistanceController;
+import cat.xojan.fittracker.ui.presenter.UnitDataPresenter;
 
 public class SessionDetailedData {
 
+    private final UnitDataPresenter mUnitDataPresenter;
     private LinearLayout intervalView;
     private double mTotalDistance;
     private Context mContext;
 
-    public SessionDetailedData(Context context) {
+    public SessionDetailedData(Context context, UnitDataPresenter unitDataPresenter) {
         mContext = context;
         mTotalDistance = 0;
         intervalView = new LinearLayout(mContext);
+        mUnitDataPresenter = unitDataPresenter;
     }
 
     public LinearLayout getIntervalView() {
@@ -73,8 +77,7 @@ public class SessionDetailedData {
             double lastDistance = 0;
             int unitCounter = 1;
             long startTime = 0;
-            String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                    .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+            String measureUnit = mUnitDataPresenter.getMeasureUnit(mContext);
 
             for (DataPoint dp : mLocationDataPoints) {
                 if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
@@ -86,7 +89,7 @@ public class SessionDetailedData {
                         distance = distance + SphericalUtil.computeDistanceBetween(oldPosition, currentPosition);
                         lastDistance = lastDistance + SphericalUtil.computeDistanceBetween(oldPosition, currentPosition);
 
-                        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+                        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
                             double miles = distance / 1609.344;
                             if (miles >= unitCounter) {
                                 addRow(intervalTable, mContext.getText(R.string.mi) + " " + unitCounter, startTime,
@@ -139,9 +142,8 @@ public class SessionDetailedData {
     }
 
     private double getTotalDistance(int unitCounter, double lastDistance, Context context) {
-        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
-        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+        String measureUnit = mUnitDataPresenter.getMeasureUnit(context);
+        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             return ((1609.344 * unitCounter) + lastDistance);
         } else {
             return ((1000 * unitCounter) + lastDistance);
@@ -152,10 +154,9 @@ public class SessionDetailedData {
         float seconds = endTime - startTime;
         seconds = seconds / 1000;
 
-        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+        String measureUnit = mUnitDataPresenter.getMeasureUnit(context);
         double speed;
-        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             speed = 1609.344 / seconds;
         } else {
             speed = 1000 / seconds;

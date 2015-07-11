@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import cat.xojan.fittracker.data.GoogleFitSessionStorage;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
 import cat.xojan.fittracker.domain.SessionRepository;
-import cat.xojan.fittracker.view.presenter.SessionPresenter;
+import cat.xojan.fittracker.ui.presenter.SessionPresenter;
 import dagger.Module;
 import dagger.Provides;
 

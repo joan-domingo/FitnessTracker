@@ -11,16 +11,17 @@ import com.google.android.gms.maps.MapFragment;
 import javax.inject.Singleton;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.view.activity.WorkoutActivity;
-import cat.xojan.fittracker.view.controller.DistanceController;
-import cat.xojan.fittracker.view.controller.FitnessController;
-import cat.xojan.fittracker.view.controller.MapController;
-import cat.xojan.fittracker.view.controller.NotificationController;
-import cat.xojan.fittracker.view.controller.SpeedController;
-import cat.xojan.fittracker.view.controller.TimeController;
-import cat.xojan.fittracker.view.fragment.ResultFragment;
-import cat.xojan.fittracker.view.fragment.WorkoutMapFragment;
-import cat.xojan.fittracker.view.presenter.SessionPresenter;
+import cat.xojan.fittracker.ui.activity.WorkoutActivity;
+import cat.xojan.fittracker.ui.controller.DistanceController;
+import cat.xojan.fittracker.ui.controller.FitnessController;
+import cat.xojan.fittracker.ui.controller.MapController;
+import cat.xojan.fittracker.ui.controller.NotificationController;
+import cat.xojan.fittracker.ui.controller.SpeedController;
+import cat.xojan.fittracker.ui.controller.TimeController;
+import cat.xojan.fittracker.ui.fragment.ResultFragment;
+import cat.xojan.fittracker.ui.fragment.WorkoutMapFragment;
+import cat.xojan.fittracker.ui.presenter.SessionPresenter;
+import cat.xojan.fittracker.ui.presenter.UnitDataPresenter;
 import dagger.Module;
 import dagger.Provides;
 
@@ -37,7 +38,10 @@ import dagger.Provides;
                 FitnessController.class,
                 SessionPresenter.class
         },
-        includes = SessionModule.class,
+        includes = {
+                SessionModule.class,
+                UnitDataModule.class,
+        },
         addsTo = AppModule.class,
         library = true
 )
@@ -83,8 +87,10 @@ public class WorkoutModule {
 
     @Provides
     @Singleton
-    public DistanceController provideDistanceController(GoogleMap map, LocationManager locationManager) {
-        return new DistanceController(mActivity, map, locationManager);
+    public DistanceController provideDistanceController(GoogleMap map,
+                                                        LocationManager locationManager,
+                                                        UnitDataPresenter unitDataPresenter) {
+        return new DistanceController(mActivity, map, locationManager, unitDataPresenter);
     }
 
     @Provides @Singleton

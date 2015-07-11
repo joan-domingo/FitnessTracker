@@ -28,7 +28,7 @@
             android:value="AIzaSyBWSi7b9pptamEWucwpPp8YGQhqj9H_V5Y"/>
 
         <activity
-            android:name=".view.activity.StartUpActivity"
+            android:name=".ui.activity.StartUpActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -38,11 +38,11 @@
         </activity>
 
         <activity
-            android:name=".view.activity.WorkoutActivity"
+            android:name=".ui.activity.WorkoutActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".view.activity.SessionActivity"
+        <activity android:name=".ui.activity.SessionActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:exported="true">
@@ -64,7 +64,7 @@
         </activity>
 
         <activity
-            android:name=".view.menu.PreferenceActivity"
+            android:name=".ui.menu.PreferenceActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
 

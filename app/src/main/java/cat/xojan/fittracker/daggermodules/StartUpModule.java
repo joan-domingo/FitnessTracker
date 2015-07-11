@@ -1,27 +1,11 @@
 package cat.xojan.fittracker.daggermodules;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.location.LocationManager;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.view.activity.StartUpActivity;
-import cat.xojan.fittracker.view.activity.WorkoutActivity;
-import cat.xojan.fittracker.view.controller.DistanceController;
-import cat.xojan.fittracker.view.controller.FitnessController;
-import cat.xojan.fittracker.view.controller.MapController;
-import cat.xojan.fittracker.view.controller.NotificationController;
-import cat.xojan.fittracker.view.controller.SpeedController;
-import cat.xojan.fittracker.view.controller.TimeController;
-import cat.xojan.fittracker.view.fragment.ResultFragment;
-import cat.xojan.fittracker.view.fragment.WorkoutMapFragment;
-import cat.xojan.fittracker.view.presenter.SessionPresenter;
+import cat.xojan.fittracker.ui.activity.StartUpActivity;
 import dagger.Module;
 import dagger.Provides;
 
@@ -31,7 +15,7 @@ import dagger.Provides;
         },
         includes = {
                 SessionModule.class,
-                FirstRunModule.class
+                UnitDataModule.class
         },
         addsTo = AppModule.class,
         library = true

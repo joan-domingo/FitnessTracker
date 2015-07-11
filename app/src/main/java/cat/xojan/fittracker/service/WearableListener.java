@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
-import cat.xojan.fittracker.view.activity.StartUpActivity;
+import cat.xojan.fittracker.ui.activity.StartUpActivity;
 
 public class WearableListener extends WearableListenerService {
 

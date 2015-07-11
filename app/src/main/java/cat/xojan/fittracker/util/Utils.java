@@ -7,8 +7,15 @@ import java.util.Date;
 import java.util.Locale;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.SharedPreferencesStorage;
+import cat.xojan.fittracker.ui.controller.DistanceController;
 
 public class Utils {
+
+    private static final String DATE_FORMAT_DMY = "dmy";
+    private static final String DATE_FORMAT_MDY = "mdy";
+    private static final String DATE_FORMAT_YMD = "ymd";
+
     public static String millisToTime(long millis) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         return sdf.format(new Date(millis));
@@ -30,10 +37,11 @@ public class Utils {
      * @return string
      */
     public static String getRightSpeed(float value, Context context) {
-        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+       String measureUnit = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
+               Context.MODE_PRIVATE)
+                .getString(SharedPreferencesStorage.PREFERENCE_MEASURE_UNIT, "");
 
-        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             return String.format("%.2f", Utils.ms2Mph(value)) + " " + context.getString(R.string.mph);
         } else {
             return String.format("%.2f", Utils.ms2KmH(value)) + " " + context.getString(R.string.kph);
@@ -73,10 +81,11 @@ public class Utils {
      * @return string
      */
     public static String getRightPace(float value, Context context) {
-        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+        String measureUnit = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE)
+                .getString(SharedPreferencesStorage.PREFERENCE_MEASURE_UNIT, "");
 
-        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             return Utils.speedToPaceInMi(value) + " " + context.getString(R.string.pmi);
         } else {
             return Utils.speedToPaceInKm(value) + " " + context.getString(R.string.pkm);
@@ -105,10 +114,11 @@ public class Utils {
 
     public static String getRightDistance(float value, Context context) {
         double distance = value;
-        String measureUnit = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+        String measureUnit = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE)
+                .getString(SharedPreferencesStorage.PREFERENCE_MEASURE_UNIT, "");
 
-        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             distance = distance / 1609.344;
             return String.format("%.2f", distance) + " " + context.getString(R.string.mi);
         } else {
@@ -118,13 +128,14 @@ public class Utils {
     }
 
     public static String getRightDate(long dateInMillis, Context context) {
-        String dateFormat = context.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_DATE_FORMAT, "");
+        String dateFormat = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
+                Context.MODE_PRIVATE)
+                .getString(SharedPreferencesStorage.PREFERENCE_DATE_FORMAT, "");
 
-        if (dateFormat.equals(Constant.DATE_FORMAT_DMY)) {
+        if (dateFormat.equals(DATE_FORMAT_DMY)) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
             return sdf.format(dateInMillis);
-        } else if (dateFormat.equals(Constant.DATE_FORMAT_MDY)) {
+        } else if (dateFormat.equals(DATE_FORMAT_MDY)) {
             SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
             return sdf.format(dateInMillis);
         } else {
