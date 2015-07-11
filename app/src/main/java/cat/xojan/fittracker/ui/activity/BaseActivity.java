@@ -22,7 +22,7 @@ import java.util.List;
 
 import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.ui.menu.AttributionFragment;
+import cat.xojan.fittracker.ui.menu.AttributionActivity;
 import cat.xojan.fittracker.ui.menu.PreferenceActivity;
 import dagger.ObjectGraph;
 
@@ -189,10 +189,8 @@ public class BaseActivity extends AppCompatActivity implements
                 getSupportFragmentManager().popBackStack();
                 break;
             case R.id.action_attributions:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new AttributionFragment())
-                        .addToBackStack(null)
-                        .commit();
+                Intent attributionIntent = new Intent(this, AttributionActivity.class);
+                startActivity(attributionIntent);
                 break;
             case R.id.action_music:
                 long eventtime = SystemClock.uptimeMillis();
