@@ -63,10 +63,9 @@ public class StartUpActivity extends BaseActivity
         if (mUnitDataPresenter.showFirstRunSettingsDialogs(this)) {
             showSettingsDialog();
             mUnitDataPresenter.FirstRunDone(this);
+        } else {
+            setUpView();
         }
-
-        showProgress();
-        setUpView();
     }
 
     @Override
@@ -78,6 +77,7 @@ public class StartUpActivity extends BaseActivity
     protected void onFitnessClientConnected(GoogleApiClient fitnessClient) {
         mSessionPresenter.setEndTime(Calendar.getInstance().getTimeInMillis());
         mSessionPresenter.readSessions(fitnessClient, this);
+        showProgress();
     }
 
     private void setUpView() {
@@ -171,6 +171,7 @@ public class StartUpActivity extends BaseActivity
         builder.setTitle(R.string.select_date_format)
                 .setItems(dateFormatEntries, (dialog, which) -> {
                     mUnitDataPresenter.saveDateFormat(dateFormatEntriesValues[which], this);
+                    setUpView();
                 });
         builder.create().show();
     }

@@ -14,7 +14,7 @@ import dagger.Provides;
                 StartUpActivity.class
         },
         includes = {
-                SessionModule.class,
+                SessionDataModule.class,
                 UnitDataModule.class
         },
         addsTo = AppModule.class,

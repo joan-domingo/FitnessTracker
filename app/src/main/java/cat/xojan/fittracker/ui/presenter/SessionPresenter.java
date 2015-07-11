@@ -1,9 +1,14 @@
 package cat.xojan.fittracker.ui.presenter;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
@@ -11,6 +16,7 @@ import com.google.android.gms.fitness.result.SessionReadResult;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
 import cat.xojan.fittracker.ui.listener.OnSessionInsertListener;
 import cat.xojan.fittracker.ui.listener.UiContentUpdater;
@@ -114,5 +120,64 @@ public class SessionPresenter {
                                 googleApiClient);
                     }
                 });
+    }
+
+    public void getSessionExtendedData(Session session, GoogleApiClient googleApiClient,
+                                       UiContentUpdater uiContentUpdater) {
+        //create read request
+        SessionReadRequest readRequest = new SessionReadRequest.Builder()
+                .setTimeInterval(session.getStartTime(TimeUnit.MILLISECONDS),
+                        session.getEndTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
+                .setSessionId(session.getIdentifier())
+                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .read(DataType.TYPE_DISTANCE_DELTA)
+                .read(DataType.TYPE_LOCATION_SAMPLE)
+                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                .readSessionsFromAllApps()
+                .build();
+
+        Observable.just(googleApiClient)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(new Subscriber<GoogleApiClient>() {
+                    public SessionReadResult sessionReadResult;
+
+                    @Override
+                    public void onCompleted() {
+                        Observable.just(sessionReadResult)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(uiContentUpdater::setSessionData);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(GoogleApiClient googleApiClient) {
+                        sessionReadResult = mSessionDataInteractor
+                                .getSessionsData(readRequest, googleApiClient);
+                    }
+                });
+    }
+
+    public void deleteSession(Session session, GoogleApiClient googleApiClient, Activity activity) {
+        //  Create a delete request object, providing a data type and a time interval
+        DataDeleteRequest request = new DataDeleteRequest.Builder()
+                .addSession(session)
+                .deleteAllData()
+                .setTimeInterval(session.getStartTime(TimeUnit.MILLISECONDS),
+                        session.getEndTime(TimeUnit.MILLISECONDS),
+                        TimeUnit.MILLISECONDS)
+                .build();
+
+        // Invoke the History API with the Google API client object and delete request, and then
+        // specify a callback that will check the result.
+        Observable.just(request)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(r -> {
+                    mSessionDataInteractor.deleteSessionRequest(r, googleApiClient);
+                });
+        activity.finish();
     }
 }

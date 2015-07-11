@@ -1,11 +1,8 @@
 package cat.xojan.fittracker.ui.activity;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -14,29 +11,29 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
-import com.google.android.gms.fitness.request.SessionReadRequest;
 import com.google.android.gms.fitness.result.SessionReadResult;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.daggermodules.SessionModule;
+import cat.xojan.fittracker.ui.listener.UiContentUpdater;
+import cat.xojan.fittracker.ui.presenter.SessionPresenter;
 import cat.xojan.fittracker.ui.presenter.UnitDataPresenter;
 import cat.xojan.fittracker.util.SessionDetailedData;
 import cat.xojan.fittracker.util.SessionMapData;
@@ -46,27 +43,26 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SessionActivity extends AppCompatActivity {
+public class SessionActivity extends BaseActivity
+        implements UiContentUpdater{
 
     private static final String TAG = SessionActivity.class.getSimpleName();
-    private static final java.lang.String AUTH_PENDING = "auth_state_pending";;
-    private static final String PACKAGE_SPECIFIC_PART = BuildConfig.APPLICATION_ID;
-    private static final int REQUEST_OAUTH = 1;
 
     @Bind(R.id.fragment_session_toolbar) Toolbar toolbar;
+
+    @Inject
+    UnitDataPresenter mUnitDataPresenter;
+    @Inject
+    SessionPresenter mSessionPresenter;
 
     private Session mSession;
     private MenuItem mDeleteButton;
     private List<DataSet> mDataSets;
     private List<DataPoint> mLocationDataPoints;
     private List<DataPoint> mSegmentDataPoints;
-    private GoogleApiClient mClient;
-    private boolean authInProgress = false;
     private GoogleMap map;
     private List<DataPoint> mDistanceDataPoints;
     private int mActiveTime;
-    private ProgressDialog mProgressDialog;
-    private UnitDataPresenter mUnitDataPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,107 +70,23 @@ public class SessionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_session);
         ButterKnife.bind(this);
 
-        if (savedInstanceState != null) {
-            authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
-        }
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mProgressDialog = ProgressDialog.show(this, null, getString(R.string.wait));
 
         Intent intent = getIntent();
         mSession = Session.extract(intent);
-
-        buildFitnessClient();
+        showProgress();
     }
 
-    private void buildFitnessClient() {
-        mClient = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.HISTORY_API)
-                .addApi(Fitness.SESSIONS_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
-                .addConnectionCallbacks(
-                        new GoogleApiClient.ConnectionCallbacks() {
-                            @Override
-                            public void onConnected(Bundle bundle) {
-                                Log.i(TAG, "Connected!!!");
-                                readSessionDataSets();
-                            }
-
-                            @Override
-                            public void onConnectionSuspended(int i) {
-                                // If your connection to the sensor gets lost at some point,
-                                // you'll be able to determine the reason and react to it here.
-                                if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-                                    Log.i(TAG, "Connection lost.  Cause: Network Lost.");
-                                } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-                                    Log.i(TAG, "Connection lost.  Reason: Service Disconnected");
-                                }
-                            }
-                        }
-                )
-                .addOnConnectionFailedListener(
-                        result -> {
-                            Log.i(TAG, "Connection failed. Cause: " + result.toString());
-                            if (!result.hasResolution()) {
-                                // Show the localized error dialog
-                                GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
-                                        SessionActivity.this, 0).show();
-                                return;
-                            }
-                            // The failure has a resolution. Resolve it.
-                            // Called typically when the app is not yet authorized, and an
-                            // authorization dialog is displayed to the user.
-                            if (!authInProgress) {
-                                try {
-                                    Log.i(TAG, "Attempting to resolve failed connection");
-                                    authInProgress = true;
-                                    result.startResolutionForResult(SessionActivity.this,
-                                            REQUEST_OAUTH);
-                                } catch (IntentSender.SendIntentException e) {
-                                    Log.e(TAG, "Exception while starting resolution activity", e);
-                                }
-                            }
-                        }
-                )
-                .build();
+    @Override
+    protected List<Object> getModules() {
+        return Collections.singletonList(new SessionModule(this));
     }
 
-    private void readSessionDataSets() {
-        //create read request
-        SessionReadRequest readRequest = new SessionReadRequest.Builder()
-                .setTimeInterval(mSession.getStartTime(TimeUnit.MILLISECONDS),
-                        mSession.getEndTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
-                .setSessionId(mSession.getIdentifier())
-                .read(DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                .read(DataType.TYPE_DISTANCE_DELTA)
-                .read(DataType.TYPE_LOCATION_SAMPLE)
-                .read(DataType.TYPE_ACTIVITY_SEGMENT)
-                .readSessionsFromAllApps()
-                .build();
-
-        //read session and datasets
-        Observable.just(readRequest)
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(request -> {
-                    SessionReadResult sessionReadResult = Fitness.SessionsApi
-                            .readSession(mClient, readRequest)
-                            .await(1, TimeUnit.MINUTES);
-
-                    if (sessionReadResult != null && sessionReadResult.getSessions().size() > 0) {
-                        mDataSets = sessionReadResult.getDataSet(mSession);
-
-                        Observable.just(mSession)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(s -> {
-                                    if (s.getAppPackageName().equals(PACKAGE_SPECIFIC_PART))
-                                        mDeleteButton.setVisible(true);
-                                    fillViewContent();
-                                    mProgressDialog.dismiss();
-                                });
-                    }
-                });
+    @Override
+    protected void onFitnessClientConnected(GoogleApiClient mFitnessClient) {
+        mSessionPresenter.getSessionExtendedData(mSession, mFitnessClient, this);
     }
 
     @Override
@@ -204,7 +116,7 @@ public class SessionActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.delete_session)
                         .setPositiveButton(R.string.delete, (dialog, id1) -> {
-                            deleteSession();
+                            mSessionPresenter.deleteSession(mSession, getFitnessCient(), this);
                         })
                         .setNegativeButton(R.string.cancel, (dialog, id1) -> {
                             // User cancelled the dialog
@@ -218,27 +130,6 @@ public class SessionActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void deleteSession() {
-        mProgressDialog.show();
-
-        //  Create a delete request object, providing a data type and a time interval
-        DataDeleteRequest request = new DataDeleteRequest.Builder()
-                .addSession(mSession)
-                .deleteAllData()
-                .setTimeInterval(mSession.getStartTime(TimeUnit.MILLISECONDS),
-                        mSession.getEndTime(TimeUnit.MILLISECONDS),
-                        TimeUnit.MILLISECONDS)
-                .build();
-
-        // Invoke the History API with the Google API client object and delete request, and then
-        // specify a callback that will check the result.
-        Observable.just(request)
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(r -> {
-
-                });
     }
 
     private void fillViewContent() {
@@ -337,7 +228,7 @@ public class SessionActivity extends AppCompatActivity {
             //pace
             ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, SessionActivity.this));
         }
-        mProgressDialog.dismiss();
+        dismissProgress();
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
         } else {
@@ -393,7 +284,7 @@ public class SessionActivity extends AppCompatActivity {
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(result -> {
                                             mapData.setDataIntoMap(result, mapData);
-                                            mProgressDialog.dismiss();
+                                            dismissProgress();
                                         });
                             }
 
@@ -416,39 +307,16 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        // Connect to the Fitness API
-        Log.i(TAG, "Connecting...");
-        mClient.connect();
-    }
+    public void setSessionData(SessionReadResult sessionReadResult) {
+        if (sessionReadResult != null && sessionReadResult.getSessions().size() > 0) {
+            mDataSets = sessionReadResult.getDataSet(mSession);
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mClient.isConnected()) {
-            mClient.disconnect();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_OAUTH) {
-            authInProgress = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!mClient.isConnecting() && !mClient.isConnected()) {
-                    mClient.connect();
-                }
-            } else if (!mClient.isConnected()) {
-                finish();
+            if (mSession.getAppPackageName().equals(BuildConfig.APPLICATION_ID)) {
+                mDeleteButton.setVisible(true);
             }
-        }
-    }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(AUTH_PENDING, authInProgress);
+            fillViewContent();
+            dismissProgress();
+        }
     }
 }

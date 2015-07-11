@@ -1,37 +1,41 @@
 package cat.xojan.fittracker.daggermodules;
 
+import android.app.Activity;
+import android.content.Context;
+
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.data.GoogleFitSessionStorage;
-import cat.xojan.fittracker.domain.SessionDataInteractor;
-import cat.xojan.fittracker.domain.SessionRepository;
-import cat.xojan.fittracker.ui.presenter.SessionPresenter;
+import cat.xojan.fittracker.ui.activity.SessionActivity;
 import dagger.Module;
 import dagger.Provides;
 
 @Module(
         injects = {
-                SessionRepository.class,
-                SessionDataInteractor.class,
-                SessionPresenter.class
-        }
+                SessionActivity.class
+        },
+        includes = {
+                SessionDataModule.class,
+                UnitDataModule.class
+        },
+        addsTo = AppModule.class,
+        library = true
 )
 public class SessionModule {
+    private final Activity mActivity;
 
-    @Provides
-    @Singleton
-    public SessionRepository provideSessionRepository() {
-        return new GoogleFitSessionStorage();
+    public SessionModule(Activity activity) {
+        mActivity = activity;
     }
 
     @Provides
     @Singleton
-    public SessionDataInteractor provideSessionDataInteractor(SessionRepository sessionRepository) {
-        return new SessionDataInteractor(sessionRepository);
+    public Context provideActivityContext() {
+        return mActivity.getBaseContext();
     }
 
     @Provides
-    public SessionPresenter provideSessionPresenter(SessionDataInteractor sessionDataInteractor) {
-        return new SessionPresenter(sessionDataInteractor);
+    @Singleton
+    public Activity provideActivity() {
+        return mActivity;
     }
 }
