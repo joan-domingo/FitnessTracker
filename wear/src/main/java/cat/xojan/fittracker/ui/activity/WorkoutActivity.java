@@ -25,7 +25,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.modules.WorkoutModule;
-import cat.xojan.fittracker.service.UtilityService;
 import cat.xojan.fittracker.ui.controller.DistanceController;
 import cat.xojan.fittracker.ui.controller.FitnessController;
 import cat.xojan.fittracker.ui.fragment.FragmentStartWorkout;
@@ -86,7 +85,7 @@ public class WorkoutActivity extends BaseActivity implements
         mFitnessController = FitnessController.getInstance();
 
         mFitnessController = FitnessController.getInstance();
-        mFitnessController.init(this);
+        mFitnessController.init();
     }
 
     private boolean hasGps() {
