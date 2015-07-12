@@ -1,7 +1,5 @@
-package cat.xojan.fittracker;
+package cat.xojan.fittracker.ui.activity;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
@@ -13,11 +11,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.main.MainGridPagerAdapter;
 
-public class MainActivity extends WearableActivity {
+public class StartupActivity extends BaseActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "StartupActivity";
 
     private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
@@ -26,7 +25,7 @@ public class MainActivity extends WearableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setAmbientEnabled();
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_startup);
 
         final Resources res = getResources();
 
@@ -54,22 +53,5 @@ public class MainActivity extends WearableActivity {
         pager.setAdapter(new MainGridPagerAdapter(getFragmentManager()));
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityDispatcher();
-    }
-
-    private void ActivityDispatcher() {
-        Class<?> activityClass;
-        SharedPreferences prefs = getSharedPreferences(Constant.SHARED_PREFERENCES, MODE_PRIVATE);
-        try {
-            activityClass = Class.forName(prefs.getString(Constant.LAST_ACTIVITY, ""));
-            if (!activityClass.getName().equals(MainActivity.class.getName())) {
-                startActivity(new Intent(this, activityClass));
-            }
-        } catch (ClassNotFoundException e) {}
     }
 }

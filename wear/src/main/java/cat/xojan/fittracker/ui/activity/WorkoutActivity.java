@@ -1,40 +1,39 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.ui.activity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.MainActivity;
-import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.service.UtilityService;
-import cat.xojan.fittracker.workout.controller.DistanceController;
-import cat.xojan.fittracker.workout.controller.FitnessController;
+import java.util.Collections;
+import java.util.List;
 
-public class WorkoutActivity extends WearableActivity implements
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.modules.WorkoutModule;
+import cat.xojan.fittracker.service.UtilityService;
+import cat.xojan.fittracker.ui.controller.DistanceController;
+import cat.xojan.fittracker.ui.controller.FitnessController;
+import cat.xojan.fittracker.ui.fragment.FragmentStartWorkout;
+import cat.xojan.fittracker.ui.fragment.ResultFragment;
+import cat.xojan.fittracker.ui.fragment.WorkoutFragment;
+import cat.xojan.fittracker.ui.presenter.SessionDataPresenter;
+
+public class WorkoutActivity extends BaseActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
@@ -42,12 +41,16 @@ public class WorkoutActivity extends WearableActivity implements
         FragmentStartWorkout.WorkoutStartListener,
         ResultFragment.SaveButtonListener {
 
-    private static final String TAG = "WorkoutActivity";
+    private static final String TAG = WorkoutActivity.class.getSimpleName();
 
     private static final long UPDATE_INTERVAL_MS = 3 * 1000;
     private static final long FASTEST_INTERVAL_MS = 3 * 1000;
 
-    @InjectView(R.id.text) TextView mTextView;
+    @Inject
+    SessionDataPresenter mSessionDataPresenter;
+
+    @Bind(R.id.text)
+    TextView mTextView;
 
     private GoogleApiClient mGoogleApiClient;
     private boolean isFirstLocation = true;
@@ -61,7 +64,7 @@ public class WorkoutActivity extends WearableActivity implements
         super.onCreate(savedInstanceState);
         setAmbientEnabled();
         setContentView(R.layout.activity_start);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         if (!hasGps()) {
             mTextView.setText(R.string.gps_not_found);
@@ -84,10 +87,6 @@ public class WorkoutActivity extends WearableActivity implements
 
         mFitnessController = FitnessController.getInstance();
         mFitnessController.init(this);
-
-        SharedPreferences prefs = getSharedPreferences(Constant.SHARED_PREFERENCES,
-                Context.MODE_PRIVATE);
-        prefs.edit().putString(Constant.LAST_ACTIVITY, WorkoutActivity.class.getName()).apply();
     }
 
     private boolean hasGps() {
@@ -166,9 +165,6 @@ public class WorkoutActivity extends WearableActivity implements
         }
 
         mOldLocation = location;
-        // Display the latitude and longitude in the UI
-        //mTextView.setText("Latitude:  " + String.valueOf( location.getLatitude()) + "\nLongitude:  " + String.valueOf( location.getLongitude()));
-        //addLocationEntry(location.getLatitude(), location.getLongitude());
     }
 
     public void updateTrack(Location location) {
@@ -206,15 +202,16 @@ public class WorkoutActivity extends WearableActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        SharedPreferences prefs = getSharedPreferences(Constant.SHARED_PREFERENCES,
-                Context.MODE_PRIVATE);
-        prefs.edit().putString(Constant.LAST_ACTIVITY, MainActivity.class.getName()).apply();
-        super.onDestroy();
+    public void saveSessionData() {
+        mSessionDataPresenter.saveSessionData(mGoogleApiClient, getPutDataRequest());
     }
 
     @Override
-    public void saveSessionData() {
-        UtilityService.saveSession(this, UtilityService.SAVE_SESSION);
+    protected List<Object> getModules() {
+        return Collections.singletonList(new WorkoutModule(this));
+    }
+
+    private PutDataRequest getPutDataRequest() {
+        return mFitnessController.getSessionData();
     }
 }

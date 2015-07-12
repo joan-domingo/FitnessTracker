@@ -1,15 +1,18 @@
-package cat.xojan.fittracker.workout.controller;
+package cat.xojan.fittracker.ui.controller;
 
 import android.content.Context;
-import android.location.Location;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
-import cat.xojan.fittracker.Constant;
-
 public class DistanceController {
+
+    public static final String DISTANCE_MEASURE_KM = "Km";
+    public static final String DISTANCE_MEASURE_MILE = "Mi";
+
+    public static final String SHARED_PREFERENCES = "cat.xojan.fittracker_preferences";
+    public static final String PREFERENCE_MEASURE_UNIT = "unit_measure";
 
     private static DistanceController instance;
     private Context mContext;
@@ -47,12 +50,12 @@ public class DistanceController {
     }
 
     private void updateDistanceView() {
-        String measureUnit = mContext.getSharedPreferences(Constant.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getString(Constant.PREFERENCE_MEASURE_UNIT, "");
+        String measureUnit = mContext.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getString(PREFERENCE_MEASURE_UNIT, "");
 
         float distance = mSegmentDistance + mAuxDistance;
 
-        if (measureUnit.equals(Constant.DISTANCE_MEASURE_MILE)) {
+        if (measureUnit.equals(DISTANCE_MEASURE_MILE)) {
             double miles = mSegmentDistance / 1609.344;
             if (miles >= mSegmentUnitCounter) {
                 float mod = (float) ((miles % mSegmentUnitCounter) * 1000);
@@ -62,7 +65,7 @@ public class DistanceController {
                 mSegmentUnitCounter++;
             }
             String milesString = String.format("%.2f", distance /  1609.344);
-            mDistanceView.setText(milesString + " " + Constant.DISTANCE_MEASURE_MILE);
+            mDistanceView.setText(milesString + " " + DISTANCE_MEASURE_MILE);
         } else {
             float segmentKm = mSegmentDistance / 1000;
             if (segmentKm >= mSegmentUnitCounter) {
@@ -73,7 +76,7 @@ public class DistanceController {
                 mSegmentUnitCounter++;
             }
             String kmString = String.format("%.2f", distance / 1000);
-            mDistanceView.setText(kmString + " " + Constant.DISTANCE_MEASURE_KM);
+            mDistanceView.setText(kmString + " " + DISTANCE_MEASURE_KM);
         }
     }
 
@@ -83,8 +86,10 @@ public class DistanceController {
 
     public void updateDistance(LatLng mOldPosition, LatLng currentPosition) {
         //update distance
-        mSessionDistance = mSessionDistance + (float) SphericalUtil.computeDistanceBetween(mOldPosition, currentPosition); //return meters
-        mSegmentDistance = mSegmentDistance + (float) SphericalUtil.computeDistanceBetween(mOldPosition, currentPosition); //return meters
+        mSessionDistance = mSessionDistance + (float) SphericalUtil
+                .computeDistanceBetween(mOldPosition, currentPosition); //return meters
+        mSegmentDistance = mSegmentDistance + (float) SphericalUtil
+                .computeDistanceBetween(mOldPosition, currentPosition); //return meters
 
         //update view
         updateDistanceView();

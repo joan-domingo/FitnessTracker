@@ -16,7 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.workout.WorkoutActivity;
+import cat.xojan.fittracker.ui.activity.WorkoutActivity;
 
 public class TriangleScreen extends View {
 

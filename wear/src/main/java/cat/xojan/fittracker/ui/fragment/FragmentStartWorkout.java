@@ -1,9 +1,7 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,10 +10,8 @@ import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.workout.controller.TimeController;
+import cat.xojan.fittracker.ui.controller.TimeController;
 
 public class FragmentStartWorkout extends Fragment {
 
@@ -49,7 +45,7 @@ public class FragmentStartWorkout extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_start, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         return view;
     }
 }

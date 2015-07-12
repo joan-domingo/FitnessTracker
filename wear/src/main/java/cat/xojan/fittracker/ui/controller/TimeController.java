@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout.controller;
+package cat.xojan.fittracker.ui.controller;
 
 import android.os.SystemClock;
 import android.widget.Chronometer;

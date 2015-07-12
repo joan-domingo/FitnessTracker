@@ -1,10 +1,7 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,19 +12,13 @@ import android.widget.Chronometer;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
-import cat.xojan.fittracker.Constant;
-import cat.xojan.fittracker.MainActivity;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.workout.controller.DistanceController;
-import cat.xojan.fittracker.workout.controller.FitnessController;
-import cat.xojan.fittracker.workout.controller.TimeController;
+import cat.xojan.fittracker.ui.controller.DistanceController;
+import cat.xojan.fittracker.ui.controller.FitnessController;
+import cat.xojan.fittracker.ui.controller.TimeController;
 
 public class WorkoutFragment extends Fragment {
 
@@ -38,23 +29,23 @@ public class WorkoutFragment extends Fragment {
         void removeLocationUpdates();
     }
 
-    @InjectView(R.id.chrono)
+    @Bind(R.id.chrono)
     Chronometer mChronometerView;
 
-    @InjectView(R.id.distance)
+    @Bind(R.id.distance)
     TextView mDistanceView;
 
-    @InjectView(R.id.bar_lap_pause)
+    @Bind(R.id.bar_lap_pause)
     LinearLayout mLapPauseView;
 
-    @InjectView(R.id.bar_resume_finish)
+    @Bind(R.id.bar_resume_finish)
     LinearLayout mResumeFinishView;
 
     private TimeController mTimeController;
     private FitnessController mFitnessController;
     private DistanceController mDistanceController;
 
-    private static final String TAG = "WorkoutFragment";
+    private static final String TAG = WorkoutFragment.class.getSimpleName();
 
     @OnClick(R.id.button_lap)
     public void onLapButtonClicked(Button lapButton){
@@ -107,7 +98,7 @@ public class WorkoutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_workout, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
 
         mTimeController = TimeController.getInstance();
         mTimeController.initChronometer(mChronometerView);

@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout.controller;
+package cat.xojan.fittracker.ui.controller;
 
 import android.content.Context;
 import android.location.Location;
@@ -10,13 +10,17 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import cat.xojan.fittracker.Constant;
+import cat.xojan.fittracker.BuildConfig;
 
 public class FitnessController {
+
+    private static final String PATH = BuildConfig.APPLICATION_ID;
 
     private static FitnessController instance;
     private final TimeController mTimeController;
@@ -120,7 +124,7 @@ public class FitnessController {
         Session session = new Session.Builder()
                 .setName("name")
                 .setDescription("description")
-                .setIdentifier(Constant.PACKAGE_SPECIFIC_PART + ":" + mTimeController.getSessionStartTime())
+                .setIdentifier(BuildConfig.APPLICATION_ID + ":" + mTimeController.getSessionStartTime())
                 .setActivity(mFitnessActivity)
                 .setStartTime(mTimeController.getSessionStartTime(), TimeUnit.MILLISECONDS)
                 .setEndTime(mTimeController.getSessionEndTime(), TimeUnit.MILLISECONDS)
@@ -133,6 +137,12 @@ public class FitnessController {
                 .addDataSet(mDistanceDataSet)
                 .addDataSet(mLocationDataSet)
                 .addDataSet(mSegmentDataSet);
+
+        // Set the path of the data map
+        String path = PATH + "/" + Calendar.getInstance().getTimeInMillis();
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
+
+        putDataMapRequest.getDataMap().put
 
         return insertRequestBuilder.build();
     }

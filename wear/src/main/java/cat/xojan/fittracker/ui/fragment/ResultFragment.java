@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.workout;
+package cat.xojan.fittracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -14,7 +14,7 @@ import cat.xojan.fittracker.R;
 
 public class ResultFragment extends Fragment {
 
-    private SaveButtonListener mCallback;
+    private SaveButtonListener mSaveButtonListener;
 
     public interface SaveButtonListener {
         void saveSessionData();
@@ -22,22 +22,20 @@ public class ResultFragment extends Fragment {
 
     @OnClick(R.id.save_button)
     public void onSaveButtonClicked() {
-        //SessionInsertRequest insertRequest = FitnessController.getInstance().saveSession();
-        //UtilityService.saveSession(getActivity(), UtilityService.SAVE_SESSION);
-        mCallback.saveSessionData();
+        mSaveButtonListener.saveSessionData();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mCallback = (SaveButtonListener) activity;
+        mSaveButtonListener = (SaveButtonListener) activity;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_result, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         return view;
     }
 }
