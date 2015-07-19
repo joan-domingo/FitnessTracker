@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main.fragment;
+package cat.xojan.fittracker.ui.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;

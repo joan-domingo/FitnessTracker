@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.main.customview;
+package cat.xojan.fittracker.ui.customview;
 
 import android.content.Context;
 import android.content.Intent;

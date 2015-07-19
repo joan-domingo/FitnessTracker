@@ -2,28 +2,19 @@ package cat.xojan.fittracker.ui.activity;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.view.View;
 import android.view.WindowInsets;
-import android.widget.TextView;
-
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.Collections;
 import java.util.List;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.main.MainGridPagerAdapter;
+import cat.xojan.fittracker.ui.adapter.MainGridPagerAdapter;
 import cat.xojan.fittracker.modules.StartupModule;
 
 public class StartupActivity extends BaseActivity {
-
-    private static final String TAG = "StartupActivity";
-
-    private TextView mTextView;
-    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

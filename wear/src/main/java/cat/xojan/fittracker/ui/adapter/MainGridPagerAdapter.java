@@ -1,17 +1,15 @@
-package cat.xojan.fittracker.main;
+package cat.xojan.fittracker.ui.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 
-import cat.xojan.fittracker.main.fragment.HistoryFragment;
-import cat.xojan.fittracker.main.fragment.OpenAppFragment;
-import cat.xojan.fittracker.main.fragment.StartFragment;
+import cat.xojan.fittracker.ui.fragment.StartFragment;
+import cat.xojan.fittracker.ui.fragment.OpenAppFragment;
 
 public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
 
     private StartFragment mStartFragment;
-    private HistoryFragment mHistoryFragment;
     private OpenAppFragment mOpenAppFragment;
 
     public MainGridPagerAdapter(FragmentManager fm) {
@@ -21,7 +19,6 @@ public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
 
     private void initFragments() {
         mStartFragment = mStartFragment == null ? new StartFragment() : mStartFragment;
-        mHistoryFragment = mHistoryFragment == null ? new HistoryFragment() : mHistoryFragment;
         mOpenAppFragment = mOpenAppFragment == null ? new OpenAppFragment() : mOpenAppFragment;
     }
 
@@ -29,8 +26,6 @@ public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
     public Fragment getFragment(int row, int col) {
         if (col == 0) {
             return mStartFragment;
-        } else if (col == 1) {
-            return mHistoryFragment;
         } else {
             return mOpenAppFragment;
         }
@@ -43,6 +38,6 @@ public class MainGridPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int i) {
-        return 3;
+        return 2;
     }
 }
