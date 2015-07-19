@@ -15,6 +15,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.android.gms.fitness.FitnessActivities;
+
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.ui.activity.WorkoutActivity;
 
@@ -130,11 +132,11 @@ public class TriangleScreen extends View {
             case MotionEvent.ACTION_UP:
                 if (x1 == event.getX() && y1 == event.getY()) {
                     if (mRegionRunning.contains(Math.round(event.getX()), Math.round(event.getY()))) {
-                        startActivity("Running");
+                        startActivity(FitnessActivities.RUNNING);
                     } else if (mRegionWalking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
-                        startActivity("Walking");
+                        startActivity(FitnessActivities.WALKING);
                     } else if (mRegionBiking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
-                        startActivity("Biking");
+                        startActivity(FitnessActivities.BIKING);
                     }
                 }
                 break;

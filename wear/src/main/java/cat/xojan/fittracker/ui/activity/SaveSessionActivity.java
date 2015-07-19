@@ -1,7 +1,6 @@
 package cat.xojan.fittracker.ui.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -50,7 +49,6 @@ public class SaveSessionActivity extends BaseActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i("joan", "connected");
         mSessionDataPresenter.saveSessionData(mGoogleApiClient, getPutDataRequest());
     }
 

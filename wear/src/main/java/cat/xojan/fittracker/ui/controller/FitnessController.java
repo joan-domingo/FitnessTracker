@@ -119,10 +119,14 @@ public class FitnessController {
         DataMap singleLocationDataMap = new DataMap();
         singleLocationDataMap.putLong(START_TIME, time);
         singleLocationDataMap.putLong(END_TIME, time);
-        singleLocationDataMap.putFloat(Field.FIELD_LATITUDE.toString(), (float) location.getLatitude());
-        singleLocationDataMap.putFloat(Field.FIELD_LONGITUDE.toString(), (float) location.getLongitude());
-        singleLocationDataMap.putFloat(Field.FIELD_ACCURACY.toString(), location.getAccuracy());
-        singleLocationDataMap.putFloat(Field.FIELD_ALTITUDE.toString(), (float) location.getAltitude());
+        singleLocationDataMap.putFloat(Field.FIELD_LATITUDE.toString(),
+                (float) location.getLatitude());
+        singleLocationDataMap.putFloat(Field.FIELD_LONGITUDE.toString(),
+                (float) location.getLongitude());
+        singleLocationDataMap.putFloat(Field.FIELD_ACCURACY.toString(),
+                location.getAccuracy());
+        singleLocationDataMap.putFloat(Field.FIELD_ALTITUDE.toString(),
+                (float) location.getAltitude());
         mLocationDataMapList.add(singleLocationDataMap);
     }
 }
