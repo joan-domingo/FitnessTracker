@@ -74,7 +74,7 @@ public class TriangleScreen extends View {
                 .getColor(R.color.garnet_icon)));
 
         x = (getWidth() / 2) - mRunningBitmap.getWidth()/2;
-        y = 3 * (getHeight() /4) - mRunningBitmap.getHeight()/2;
+        y = 3 * (getHeight() /4) - mRunningBitmap.getHeight()/3;
         canvas.drawBitmap(mRunningBitmap, x, y, null);
 
         //triangle right
@@ -86,7 +86,7 @@ public class TriangleScreen extends View {
         canvas.drawPath(getTrianglePath(mP1, mP2, mP3), getPaintShape(getResources()
                 .getColor(R.color.orange_icon)));
 
-        x = (getWidth() / 4) - mWalkingBitmap.getWidth()/2;
+        x = (float) ((getWidth() / 4) - mWalkingBitmap.getWidth()/1.5);
         y = (getHeight()/2) - mWalkingBitmap.getHeight()/2;
         canvas.drawBitmap(mWalkingBitmap, x, y, null);
 
@@ -99,7 +99,7 @@ public class TriangleScreen extends View {
         canvas.drawPath(getTrianglePath(mP1, mP2, mP3), getPaintShape(getResources()
                 .getColor(R.color.green_icon)));
 
-        x = 3 * (getWidth() / 4) - mCyclingBitmap.getWidth()/2;
+        x = 3 * (getWidth() / 4) - mCyclingBitmap.getWidth()/3;
         y = (getHeight()/2) - mCyclingBitmap.getHeight()/2;
         canvas.drawBitmap(mCyclingBitmap, x, y, null);
     }
