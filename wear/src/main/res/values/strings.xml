@@ -18,6 +18,9 @@
     <string name="gps_not_found">This device doesn\'t have GPS</string>
     <string name="waiting_gps">Waiting for GPS...</string>
     <string name="choose_activity">Choose\nActivity</string>
-
-
+    <string name="workout">Workout</string>
+    <string name="save">Save</string>
+    <string name="mi" translatable="false">mi</string>
+    <string name="km" translatable="false">km</string>
+    <string name="session_saved">Session saved</string>
 </resources>

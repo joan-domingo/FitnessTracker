@@ -179,19 +179,26 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
         }
         float speed = (float) (totalDistance / (timeController.getSessionWorkoutTime() / 1000));
 
-        ((TextView) view.findViewById(R.id.fragment_result_total_time)).setText(Utils.getTimeDifference(timeController.getSessionWorkoutTime(), 0));
-        ((TextView) view.findViewById(R.id.fragment_result_start)).setText(Utils.millisToTime(timeController.getSessionStartTime()));
-        ((TextView) view.findViewById(R.id.fragment_result_end)).setText(Utils.millisToTime(timeController.getSessionEndTime()));
-        ((TextView) view.findViewById(R.id.fragment_result_total_distance)).setText(Utils.getRightDistance((float) totalDistance, getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_time))
+                .setText(Utils.getTimeDifference(timeController.getSessionWorkoutTime(), 0));
+        ((TextView) view.findViewById(R.id.fragment_result_start))
+                .setText(Utils.millisToTime(timeController.getSessionStartTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_end))
+                .setText(Utils.millisToTime(timeController.getSessionEndTime()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_distance))
+                .setText(Utils.getRightDistance((float) totalDistance, getActivity()));
 
-        ((TextView) view.findViewById(R.id.fragment_result_total_pace)).setText(Utils.getRightPace(speed, getActivity()));
-        ((TextView) view.findViewById(R.id.fragment_result_total_speed)).setText(Utils.getRightSpeed(speed, getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_pace))
+                .setText(Utils.getRightPace(speed, getActivity()));
+        ((TextView) view.findViewById(R.id.fragment_result_total_speed))
+                .setText(Utils.getRightSpeed(speed, getActivity()));
 
         Observable.just(mapController.getLastPosition())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(pos -> {
                             String cityName = null;
-                            Geocoder gcd = new Geocoder(getActivity().getBaseContext(), Locale.ENGLISH);
+                            Geocoder gcd = new Geocoder(getActivity().getBaseContext(),
+                                    Locale.ENGLISH);
                             List<Address> addresses;
                             try {
                                 addresses = gcd.getFromLocation(pos.latitude, pos.longitude, 1);

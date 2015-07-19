@@ -71,7 +71,7 @@ public class FitnessController {
         mLocationDataMapList = new ArrayList<>();
     }
 
-    public PutDataRequest getSessionData() {
+    public PutDataRequest getSessionData(String name, String description) {
         //summary activity (aggregate)
         DataMap summaryDataMap = new DataMap();
         summaryDataMap.putLong(SESSION_START_TIME, mTimeController.getSessionStartTime());
@@ -90,8 +90,8 @@ public class FitnessController {
 
         // Create a session with metadata about the activity.
         DataMap sessionDataMap = new DataMap();
-        sessionDataMap.putString("name", "name");
-        sessionDataMap.putString("description", "description");
+        sessionDataMap.putString("name", name);
+        sessionDataMap.putString("description", description);
         sessionDataMap.putString("identifier",
                 BuildConfig.APPLICATION_ID + ":" + mTimeController.getSessionStartTime());
         sessionDataMap.putString("activity", mFitnessActivity);
@@ -128,5 +128,9 @@ public class FitnessController {
         singleLocationDataMap.putFloat(Field.FIELD_ALTITUDE.toString(),
                 (float) location.getAltitude());
         mLocationDataMapList.add(singleLocationDataMap);
+    }
+
+    public String getFitnessActivity() {
+        return mFitnessActivity;
     }
 }
