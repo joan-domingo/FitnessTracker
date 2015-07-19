@@ -11,8 +11,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.Collections;
+import java.util.List;
+
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.main.MainGridPagerAdapter;
+import cat.xojan.fittracker.modules.StartupModule;
 
 public class StartupActivity extends BaseActivity {
 
@@ -53,5 +57,10 @@ public class StartupActivity extends BaseActivity {
         pager.setAdapter(new MainGridPagerAdapter(getFragmentManager()));
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
+    }
+
+    @Override
+    protected List<Object> getModules() {
+        return Collections.singletonList(new StartupModule(this));
     }
 }

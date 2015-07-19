@@ -2,8 +2,10 @@ package cat.xojan.fittracker.ui.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,24 +13,14 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.ui.activity.SaveSessionActivity;
 
 public class ResultFragment extends Fragment {
 
-    private SaveButtonListener mSaveButtonListener;
-
-    public interface SaveButtonListener {
-        void saveSessionData();
-    }
-
     @OnClick(R.id.save_button)
     public void onSaveButtonClicked() {
-        mSaveButtonListener.saveSessionData();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mSaveButtonListener = (SaveButtonListener) activity;
+        Intent intent = new Intent(getActivity(), SaveSessionActivity.class);
+        getActivity().startActivity(intent);
     }
 
     @Nullable

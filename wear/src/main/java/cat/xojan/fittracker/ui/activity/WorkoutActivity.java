@@ -14,7 +14,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.wearable.PutDataRequest;
-import com.google.android.gms.wearable.Wearable;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +27,6 @@ import cat.xojan.fittracker.modules.WorkoutModule;
 import cat.xojan.fittracker.ui.controller.DistanceController;
 import cat.xojan.fittracker.ui.controller.FitnessController;
 import cat.xojan.fittracker.ui.fragment.FragmentStartWorkout;
-import cat.xojan.fittracker.ui.fragment.ResultFragment;
 import cat.xojan.fittracker.ui.fragment.WorkoutFragment;
 import cat.xojan.fittracker.ui.presenter.SessionDataPresenter;
 
@@ -37,16 +35,12 @@ public class WorkoutActivity extends BaseActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         WorkoutFragment.TrackingStateListener,
-        FragmentStartWorkout.WorkoutStartListener,
-        ResultFragment.SaveButtonListener {
+        FragmentStartWorkout.WorkoutStartListener {
 
     private static final String TAG = WorkoutActivity.class.getSimpleName();
 
     private static final long UPDATE_INTERVAL_MS = 3 * 1000;
     private static final long FASTEST_INTERVAL_MS = 3 * 1000;
-
-    @Inject
-    SessionDataPresenter mSessionDataPresenter;
 
     @Bind(R.id.text)
     TextView mTextView;
@@ -76,7 +70,6 @@ public class WorkoutActivity extends BaseActivity implements
         // Build a new GoogleApiClient
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
-                .addApi(Wearable.API)  // used for data layer API
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
@@ -98,7 +91,7 @@ public class WorkoutActivity extends BaseActivity implements
         mGoogleApiClient.connect();
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
         if (mGoogleApiClient.isConnected()) {
@@ -106,10 +99,11 @@ public class WorkoutActivity extends BaseActivity implements
                     .removeLocationUpdates(mGoogleApiClient, this);
         }
         mGoogleApiClient.disconnect();
-    }
+    }*/
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.i(TAG, "Google client connected");
         LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL_MS)
@@ -134,7 +128,7 @@ public class WorkoutActivity extends BaseActivity implements
     // Disconnect from Google Play Services when the Activity stops
     @Override
     protected void onStop() {
-
+        Log.i(TAG, "onStop");
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
@@ -149,6 +143,7 @@ public class WorkoutActivity extends BaseActivity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
+        Log.d(TAG, "connection to location client failed");
     }
 
     @Override
@@ -201,16 +196,7 @@ public class WorkoutActivity extends BaseActivity implements
     }
 
     @Override
-    public void saveSessionData() {
-        mSessionDataPresenter.saveSessionData(mGoogleApiClient, getPutDataRequest());
-    }
-
-    @Override
     protected List<Object> getModules() {
         return Collections.singletonList(new WorkoutModule(this));
-    }
-
-    private PutDataRequest getPutDataRequest() {
-        return mFitnessController.getSessionData();
     }
 }

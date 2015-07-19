@@ -8,24 +8,24 @@ import javax.inject.Singleton;
 import cat.xojan.fittracker.data.WearableDataApiRequester;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
 import cat.xojan.fittracker.domain.SessionDataRepository;
+import cat.xojan.fittracker.ui.activity.StartupActivity;
 import cat.xojan.fittracker.ui.activity.WorkoutActivity;
-import cat.xojan.fittracker.ui.fragment.ResultFragment;
 import cat.xojan.fittracker.ui.presenter.SessionDataPresenter;
 import dagger.Module;
 import dagger.Provides;
 
 @Module(
         injects = {
-                WorkoutActivity.class
+                StartupActivity.class
         },
         addsTo = AppModule.class,
         library = true
 )
-public class WorkoutModule {
+public class StartupModule {
 
     private Activity mActivity;
 
-    public WorkoutModule(Activity activity) {
+    public StartupModule(Activity activity) {
         mActivity = activity;
     }
 

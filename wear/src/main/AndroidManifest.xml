@@ -10,7 +10,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_wear_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.DeviceDefault" >
+        android:theme="@android:style/Theme.DeviceDefault"
+        android:name=".WearFitTrackerApp">
         <activity
             android:name=".ui.activity.StartupActivity"
             android:label="@string/app_name"
@@ -26,8 +27,8 @@
         <activity
             android:name=".ui.activity.WorkoutActivity"
             android:launchMode="singleInstance" />
-
-        <activity android:name=".SaveSessionActivity"
+        <activity
+            android:name=".ui.activity.SaveSessionActivity"
             android:launchMode="singleInstance" />
 
         <service android:name=".service.UtilityService"/>

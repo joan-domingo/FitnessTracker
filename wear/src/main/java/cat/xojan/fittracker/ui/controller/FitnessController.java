@@ -15,7 +15,6 @@ import cat.xojan.fittracker.BuildConfig;
 
 public class FitnessController {
 
-    private static final String PATH = BuildConfig.APPLICATION_ID;
     private static final String SESSION_START_TIME = "sessionStartTime";
     private static final String SESSION_END_TIME = "sessionEndTime";
     private static final String START_TIME = "startTime";
@@ -100,13 +99,14 @@ public class FitnessController {
         sessionDataMap.putLong(SESSION_END_TIME, mTimeController.getSessionEndTime());
 
         // Set the path of the data map
-        String path = PATH + "/" + Calendar.getInstance().getTimeInMillis();
+        String path = "/session";
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
 
         putDataMapRequest.getDataMap().putDataMap("summary", summaryDataMap);
         putDataMapRequest.getDataMap().putDataMap("distance", distanceDataMap);
         putDataMapRequest.getDataMap().putDataMap("session", sessionDataMap);
-        putDataMapRequest.getDataMap().putDataMap("locations", (DataMap) mLocationDataMapList);
+        putDataMapRequest.getDataMap().putDataMapArrayList("locations",
+                (ArrayList<DataMap>) mLocationDataMapList);
         putDataMapRequest.getDataMap().putDataMapArrayList("segments",
                 (ArrayList<DataMap>) mSegmentDataMapList);
 
