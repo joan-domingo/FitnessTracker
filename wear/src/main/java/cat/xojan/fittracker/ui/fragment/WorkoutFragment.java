@@ -67,7 +67,7 @@ public class WorkoutFragment extends Fragment {
     @OnClick(R.id.button_resume)
     public void onResumeClicked(Button resumeButton) {
         showLapPause(true);
-        mCallback.isTracking(false);
+        mCallback.isTracking(true);
 
         mTimeController.resume();
         mFitnessController.saveSegment(true);

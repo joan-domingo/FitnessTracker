@@ -86,22 +86,6 @@ public class WorkoutActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mGoogleApiClient.connect();
-    }
-
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi
-                    .removeLocationUpdates(mGoogleApiClient, this);
-        }
-        mGoogleApiClient.disconnect();
-    }*/
-
-    @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Google client connected");
         LocationRequest locationRequest = LocationRequest.create()
@@ -198,5 +182,11 @@ public class WorkoutActivity extends BaseActivity implements
     @Override
     protected List<Object> getModules() {
         return Collections.singletonList(new WorkoutModule(this));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.disconnect();
     }
 }
