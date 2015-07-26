@@ -34,7 +34,6 @@ public class WearableListener extends WearableListenerService {
 
     private static final String TAG = WearableListener.class.getSimpleName();
     private static final String LAUNCH_HANDHELD_APP = "/launch_handheld_app";
-    private static final String SAVE_SESSION = "/save_session";
 
     private static final String SESSION_START_TIME = "sessionStartTime";
     private static final String SESSION_END_TIME = "sessionEndTime";
@@ -46,11 +45,6 @@ public class WearableListener extends WearableListenerService {
         Log.v(TAG, "onMessageReceived: " + messageEvent);
 
         if (LAUNCH_HANDHELD_APP.equals(messageEvent.getPath())) {
-            Intent i = new Intent();
-            i.setClass(this, StartUpActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-        } else if (SAVE_SESSION.equals(messageEvent.getPath())) {
             Intent i = new Intent();
             i.setClass(this, StartUpActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -84,6 +78,14 @@ public class WearableListener extends WearableListenerService {
 
         //extract data
         DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+
+        for (int i = 0; i < dataMap.size(); i++) {
+            saveNewWorkout(dataMap.get(String.valueOf(i)), connectionResult, fitnessClient);
+        }
+    }
+
+    private void saveNewWorkout(DataMap dataMap, ConnectionResult connectionResult,
+                                GoogleApiClient fitnessClient) {
 
         DataMap summary = dataMap.getDataMap("summary");
         DataMap distance = dataMap.getDataMap("distance");

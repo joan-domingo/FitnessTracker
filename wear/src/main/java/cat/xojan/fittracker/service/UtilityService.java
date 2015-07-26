@@ -21,7 +21,6 @@ public class UtilityService extends IntentService {
     private static final String TAG = "UtilityService";
 
     public static final String LAUNCH_HANDHELD_APP = "/launch_handheld_app";
-    public static final String SAVE_SESSION = "/save_session";
 
     private static final String ACTION_START_DEVICE_ACTIVITY = "start_device_activity";
 
@@ -92,18 +91,5 @@ public class UtilityService extends IntentService {
 
             googleApiClient.disconnect();
         }
-    }
-
-    /**
-     * Trigger a message that asks the master device to save a session
-     *
-     * @param context the context
-     * @param path the path that will be sent via the wearable message API
-     */
-    public static void saveSession(Context context, String path) {
-        Intent intent = new Intent(context, UtilityService.class);
-        intent.setAction(UtilityService.ACTION_START_DEVICE_ACTIVITY);
-        intent.putExtra(EXTRA_START_PATH, path);
-        context.startService(intent);
     }
 }

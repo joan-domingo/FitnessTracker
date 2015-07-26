@@ -19,9 +19,11 @@ public class FitnessController {
     private static final String SESSION_END_TIME = "sessionEndTime";
     private static final String START_TIME = "startTime";
     private static final String END_TIME = "endTime";
+    private static final String PATH = "/session";
 
     private static FitnessController instance;
     private final TimeController mTimeController;
+    private final PutDataMapRequest mPutDataMapRequest;
     private String mFitnessActivity;
     private int mNumSegments;
 
@@ -37,6 +39,7 @@ public class FitnessController {
 
     public FitnessController() {
         mTimeController = TimeController.getInstance();
+        mPutDataMapRequest = PutDataMapRequest.create(PATH);
     }
 
     public void saveSegment(boolean isPauseSegment) {
@@ -98,19 +101,22 @@ public class FitnessController {
         sessionDataMap.putLong(SESSION_START_TIME, mTimeController.getSessionStartTime());
         sessionDataMap.putLong(SESSION_END_TIME, mTimeController.getSessionEndTime());
 
-        // Set the path of the data map
-        String path = "/session";
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(path);
-
-        putDataMapRequest.getDataMap().putDataMap("summary", summaryDataMap);
-        putDataMapRequest.getDataMap().putDataMap("distance", distanceDataMap);
-        putDataMapRequest.getDataMap().putDataMap("session", sessionDataMap);
-        putDataMapRequest.getDataMap().putDataMapArrayList("locations",
+        DataMap newWorkoutDataMap = new DataMap();
+        newWorkoutDataMap.putDataMap("summary", summaryDataMap);
+        newWorkoutDataMap.putDataMap("distance", distanceDataMap);
+        newWorkoutDataMap.putDataMap("session", sessionDataMap);
+        newWorkoutDataMap.putDataMapArrayList("locations",
                 (ArrayList<DataMap>) mLocationDataMapList);
-        putDataMapRequest.getDataMap().putDataMapArrayList("segments",
+        newWorkoutDataMap.putDataMapArrayList("segments",
                 (ArrayList<DataMap>) mSegmentDataMapList);
 
-        return putDataMapRequest.asPutDataRequest();
+        addNewSessionToMapRequest(mPutDataMapRequest.getDataMap().size(), newWorkoutDataMap);
+
+        return mPutDataMapRequest.asPutDataRequest();
+    }
+
+    private void addNewSessionToMapRequest(int size, DataMap newWorkoutDataMap) {
+        mPutDataMapRequest.getDataMap().putDataMap(String.valueOf(size), newWorkoutDataMap);
     }
 
     public void storeLocation(Location location) {

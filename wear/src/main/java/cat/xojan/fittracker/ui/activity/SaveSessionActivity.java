@@ -56,13 +56,7 @@ public class SaveSessionActivity extends BaseActivity
 
                 finish();
             }
-        }, 5000);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mGoogleApiClient.connect();
+        }, 3000);
     }
 
     @Override
@@ -102,5 +96,11 @@ public class SaveSessionActivity extends BaseActivity
     private static String millisToDay(long timeInMillis) {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.getDefault());
         return sdf.format(timeInMillis);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.disconnect();
     }
 }
