@@ -109,6 +109,12 @@ public class WorkoutActivity extends BaseActivity implements
                 });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
     // Disconnect from Google Play Services when the Activity stops
     @Override
     protected void onStop() {
@@ -182,11 +188,5 @@ public class WorkoutActivity extends BaseActivity implements
     @Override
     protected List<Object> getModules() {
         return Collections.singletonList(new WorkoutModule(this));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mGoogleApiClient.disconnect();
     }
 }
