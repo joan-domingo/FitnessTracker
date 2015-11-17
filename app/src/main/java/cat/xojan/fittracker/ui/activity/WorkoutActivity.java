@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.daggermodules.WorkoutModule;
+import cat.xojan.fittracker.ui.controller.FitnessController;
 import cat.xojan.fittracker.ui.fragment.WorkoutMapFragment;
 import cat.xojan.fittracker.ui.listener.LocationUpdateListener;
 import cat.xojan.fittracker.ui.listener.RemoveLocationUpdateListener;
@@ -37,6 +38,8 @@ public class WorkoutActivity extends BaseActivity
 
     @Inject
     LocationManager mLocationManager;
+    @Inject
+    FitnessController mFitnessController;
 
     private LocationUpdateListener mLocationUpdateListener;
     private boolean mIsFirstLocation;
@@ -49,6 +52,9 @@ public class WorkoutActivity extends BaseActivity
         mIsFirstLocation = true;
         setUpLocationListener();
         setUpView();
+
+        mFitnessController.setFitnessActivity((String) getIntent().getExtras()
+                .get(WorkoutActivity.FITNESS_ACTIVITY));
     }
 
     @Override
@@ -76,17 +82,6 @@ public class WorkoutActivity extends BaseActivity
     public void onLocationChanged(Location location) {
         if (mIsFirstLocation) {
             Log.i(TAG, "Got First Location");
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for Activity#requestPermissions for more details.
-                return;
-            }
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
             mIsFirstLocation = false;

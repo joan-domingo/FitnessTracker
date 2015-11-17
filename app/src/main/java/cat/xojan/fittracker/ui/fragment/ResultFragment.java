@@ -83,8 +83,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
     @OnClick(R.id.result_button_save)
     public void onClickSave(Button save) {
         SessionInsertRequest sessionInsertRequest = fitController.saveSession(mName.getText()
-                        .toString(), mDescription.getText().toString(), totalDistance,
-                mFitnessActivity);
+                        .toString(), mDescription.getText().toString(), totalDistance);
         mSessionPresenter.insertSession(sessionInsertRequest, mFitnessClient, this);
         showProgressDialog(true);
     }
