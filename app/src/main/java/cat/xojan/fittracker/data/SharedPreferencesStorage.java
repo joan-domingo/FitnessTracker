@@ -2,14 +2,23 @@ package cat.xojan.fittracker.data;
 
 import android.content.Context;
 
-import cat.xojan.fittracker.domain.UnitDataRepository;
+import java.util.Calendar;
+import java.util.Date;
 
-public class SharedPreferencesStorage implements UnitDataRepository {
+import cat.xojan.fittracker.domain.PreferencesRepository;
+
+public class SharedPreferencesStorage implements PreferencesRepository {
 
     public static final String SHARED_PREFERENCES = "cat.xojan.fittracker_preferences";
     private static final String PREFERENCE_FIRST_RUN = "first_run";
     public static final String PREFERENCE_MEASURE_UNIT = "unit_measure";
     public static final String PREFERENCE_DATE_FORMAT = "date_format";
+    private static final String PREFERENCE_LAST_UPDATE = "last_update";
+    private final Context mContext;
+
+    public SharedPreferencesStorage(Context context) {
+        mContext = context;
+    }
 
     @Override
     public boolean getIsFirstRun(Context context) {
@@ -45,5 +54,14 @@ public class SharedPreferencesStorage implements UnitDataRepository {
     public void setDateFormat(String dateFormat, Context context) {
         context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE).edit()
                 .putString(PREFERENCE_DATE_FORMAT, dateFormat).commit();
+    }
+
+    @Override
+    public Date getLastFitnessDataUpdate() {
+        long date = mContext.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getLong(PREFERENCE_LAST_UPDATE, 1);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(date);
+        return cal.getTime();
     }
 }

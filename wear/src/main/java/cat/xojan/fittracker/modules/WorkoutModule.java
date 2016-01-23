@@ -5,12 +5,7 @@ import android.content.Context;
 
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.data.WearableDataApiRequester;
-import cat.xojan.fittracker.domain.SessionDataInteractor;
-import cat.xojan.fittracker.domain.SessionDataRepository;
-import cat.xojan.fittracker.ui.activity.WorkoutActivity;
-import cat.xojan.fittracker.ui.fragment.ResultFragment;
-import cat.xojan.fittracker.ui.presenter.SessionDataPresenter;
+import cat.xojan.fittracker.presentation.activity.WorkoutActivity;
 import dagger.Module;
 import dagger.Provides;
 

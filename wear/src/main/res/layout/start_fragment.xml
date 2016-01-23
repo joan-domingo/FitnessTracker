@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <cat.xojan.fittracker.ui.customview.TriangleScreen
+    <cat.xojan.fittracker.presentation.customview.TriangleScreen
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

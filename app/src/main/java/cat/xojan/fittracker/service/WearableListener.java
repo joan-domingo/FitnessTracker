@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.BuildConfig;
-import cat.xojan.fittracker.ui.activity.StartUpActivity;
+import cat.xojan.fittracker.presentation.home.HomeActivity;
 
 public class WearableListener extends WearableListenerService {
 
@@ -46,7 +46,7 @@ public class WearableListener extends WearableListenerService {
 
         if (LAUNCH_HANDHELD_APP.equals(messageEvent.getPath())) {
             Intent i = new Intent();
-            i.setClass(this, StartUpActivity.class);
+            i.setClass(this, HomeActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         }

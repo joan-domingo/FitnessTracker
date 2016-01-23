@@ -2,11 +2,10 @@ package cat.xojan.fittracker;
 
 import android.app.Application;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import cat.xojan.fittracker.daggermodules.AppModule;
+import cat.xojan.fittracker.injection.AppModule;
 import dagger.ObjectGraph;
 
 public class FitTrackerApp extends Application {

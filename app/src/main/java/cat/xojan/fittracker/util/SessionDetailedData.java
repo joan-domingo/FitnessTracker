@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.ui.controller.DistanceController;
-import cat.xojan.fittracker.ui.presenter.UnitDataPresenter;
+import cat.xojan.fittracker.presentation.controller.DistanceController;
+import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
 
 public class SessionDetailedData {
 

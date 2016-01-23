@@ -4,9 +4,9 @@ import android.content.Context;
 
 public class UnitDataInteractor {
 
-    private UnitDataRepository mUnitDataRepository;
+    private PreferencesRepository mUnitDataRepository;
 
-    public UnitDataInteractor(UnitDataRepository firstRunRepository) {
+    public UnitDataInteractor(PreferencesRepository firstRunRepository) {
         mUnitDataRepository = firstRunRepository;
     }
 

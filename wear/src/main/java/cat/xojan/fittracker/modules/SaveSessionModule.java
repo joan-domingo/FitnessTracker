@@ -8,8 +8,8 @@ import javax.inject.Singleton;
 import cat.xojan.fittracker.data.WearableDataApiRequester;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
 import cat.xojan.fittracker.domain.SessionDataRepository;
-import cat.xojan.fittracker.ui.activity.SaveSessionActivity;
-import cat.xojan.fittracker.ui.presenter.SessionDataPresenter;
+import cat.xojan.fittracker.presentation.activity.SaveSessionActivity;
+import cat.xojan.fittracker.presentation.presenter.SessionDataPresenter;
 import dagger.Module;
 import dagger.Provides;
 
