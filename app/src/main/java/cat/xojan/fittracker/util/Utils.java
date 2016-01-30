@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.data.SharedPreferencesStorage;
+import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
 import cat.xojan.fittracker.presentation.controller.DistanceController;
 
 public class Utils {

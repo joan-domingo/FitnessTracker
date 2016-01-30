@@ -5,25 +5,19 @@ import android.content.Context;
 
 import javax.inject.Singleton;
 
+import cat.xojan.fittracker.data.repository.GoogleFitStorage;
+import cat.xojan.fittracker.domain.FitnessDataInteractor;
+import cat.xojan.fittracker.injection.module.AppModule;
 import cat.xojan.fittracker.presentation.home.HomeActivity;
+import cat.xojan.fittracker.presentation.home.HomePresenter;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(
-        injects = {
-                HomeActivity.class
-        },
-        includes = {
-                SessionDataModule.class,
-                UnitDataModule.class
-        },
-        addsTo = AppModule.class,
-        library = true
-)
+@Module
 public class HomeModule {
-    private final Activity mActivity;
+    private final HomeActivity mActivity;
 
-    public HomeModule(Activity activity) {
+    public HomeModule(HomeActivity activity) {
         mActivity = activity;
     }
 
@@ -37,5 +31,17 @@ public class HomeModule {
     @Singleton
     public Activity provideActivity() {
         return mActivity;
+    }
+
+    @Provides
+    @Singleton
+    public HomePresenter provideHomePresenter(FitnessDataInteractor fitnessDataInteractor) {
+        return new HomePresenter(fitnessDataInteractor, mActivity);
+    }
+
+    @Provides
+    @Singleton
+    public FitnessDataInteractor provideFitnessDataInteractor() {
+        return new FitnessDataInteractor(new GoogleFitStorage());
     }
 }

@@ -32,6 +32,9 @@ import butterknife.ButterKnife;
 import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.injection.SessionModule;
+import cat.xojan.fittracker.injection.component.AppComponent;
+import cat.xojan.fittracker.injection.component.BaseActivityComponent;
+import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.listener.UiContentUpdater;
 import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
@@ -81,14 +84,10 @@ public class SessionActivity extends BaseActivity
     }
 
     @Override
-    protected List<Object> getModules() {
-        return Collections.singletonList(new SessionModule(this));
+    protected void injectComponent(AppComponent appComponent, BaseActivityModule baseActivityModule) {
+
     }
 
-    @Override
-    protected void onGoogleApiClientConnected(GoogleApiClient mFitnessClient) {
-        mSessionPresenter.getSessionExtendedData(mSession, mFitnessClient, this);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,7 +116,7 @@ public class SessionActivity extends BaseActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.delete_session)
                         .setPositiveButton(R.string.delete, (dialog, id1) -> {
-                            mSessionPresenter.deleteSession(mSession, getGoogleApiClient(), this);
+                            mSessionPresenter.deleteSession(mSession, null /*getGoogleApiClient()*/, this);
                         })
                         .setNegativeButton(R.string.cancel, (dialog, id1) -> {
                             // User cancelled the dialog

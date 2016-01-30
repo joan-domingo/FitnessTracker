@@ -5,21 +5,12 @@ import android.content.Context;
 
 import javax.inject.Singleton;
 
+import cat.xojan.fittracker.injection.module.AppModule;
 import cat.xojan.fittracker.presentation.activity.SessionActivity;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(
-        injects = {
-                SessionActivity.class
-        },
-        includes = {
-                SessionDataModule.class,
-                UnitDataModule.class
-        },
-        addsTo = AppModule.class,
-        library = true
-)
+@Module
 public class SessionModule {
     private final Activity mActivity;
 

@@ -5,22 +5,17 @@ import android.content.Context;
 
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.data.GoogleFitStorage;
-import cat.xojan.fittracker.data.SharedPreferencesStorage;
+import cat.xojan.fittracker.data.repository.GoogleFitStorage;
+import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
 import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.domain.PreferencesInteractor;
+import cat.xojan.fittracker.injection.module.AppModule;
 import cat.xojan.fittracker.presentation.startup.StartupActivity;
 import cat.xojan.fittracker.presentation.startup.StartupPresenter;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(
-        injects = {
-                StartupActivity.class
-        },
-        addsTo = AppModule.class,
-        library = true
-)
+@Module
 public class StartupModule {
     private final Activity mActivity;
 

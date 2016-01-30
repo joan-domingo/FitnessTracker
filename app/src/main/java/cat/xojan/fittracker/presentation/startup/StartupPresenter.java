@@ -66,7 +66,7 @@ public class StartupPresenter implements BasePresenter {
     public class UpdateFitnessDataObserver implements Observer<List<Session>> {
         @Override
         public void onCompleted() {
-            //startHomeActivity();
+            startHomeActivity();
         }
 
         @Override

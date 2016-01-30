@@ -16,6 +16,9 @@ import javax.inject.Inject;
 
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.injection.WorkoutModule;
+import cat.xojan.fittracker.injection.component.AppComponent;
+import cat.xojan.fittracker.injection.component.BaseActivityComponent;
+import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.controller.FitnessController;
 import cat.xojan.fittracker.presentation.fragment.WorkoutMapFragment;
@@ -57,6 +60,11 @@ public class WorkoutActivity extends BaseActivity
     }
 
     @Override
+    protected void injectComponent(AppComponent appComponent, BaseActivityModule baseActivityModule) {
+
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -66,11 +74,6 @@ public class WorkoutActivity extends BaseActivity
             builder.setMessage(R.string.enable_gps_desc);
             builder.create().show();
         }
-    }
-
-    @Override
-    protected List<Object> getModules() {
-        return Collections.singletonList(new WorkoutModule(this));
     }
 
     @Override
@@ -106,10 +109,10 @@ public class WorkoutActivity extends BaseActivity
     }
 
     private void setUpView() {
-        getSupportFragmentManager().beginTransaction()
+        /*getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, new WorkoutMapFragment(),
                         WorkoutMapFragment.WORKOUT_FRAGMENT_TAG)
-                .commit();
+                .commit();*/
     }
 
     private void setUpLocationListener() {
@@ -133,6 +136,6 @@ public class WorkoutActivity extends BaseActivity
     }
 
     public GoogleApiClient getFitnessClient() {
-        return getGoogleApiClient();
+        return null /*getGoogleApiClient()*/;
     }
 }

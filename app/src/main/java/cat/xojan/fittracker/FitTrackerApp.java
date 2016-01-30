@@ -2,28 +2,22 @@ package cat.xojan.fittracker;
 
 import android.app.Application;
 
-import java.util.Collections;
-import java.util.List;
-
-import cat.xojan.fittracker.injection.AppModule;
-import dagger.ObjectGraph;
+import cat.xojan.fittracker.injection.component.AppComponent;
+import cat.xojan.fittracker.injection.component.DaggerAppComponent;
+import cat.xojan.fittracker.injection.module.AppModule;
 
 public class FitTrackerApp extends Application {
-    private ObjectGraph applicationGraph;
+    private AppComponent mComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        applicationGraph = ObjectGraph.create(getModules().toArray());
+        mComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .build();
     }
 
-    protected List<Object> getModules() {
-        return Collections.singletonList(new AppModule(this));
+    public AppComponent getAppComponent() {
+        return mComponent;
     }
-
-    public ObjectGraph getApplicationGraph() {
-        return applicationGraph;
-    }
-
-
 }

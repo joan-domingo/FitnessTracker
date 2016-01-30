@@ -11,6 +11,7 @@ import com.google.android.gms.maps.MapFragment;
 import javax.inject.Singleton;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.injection.module.AppModule;
 import cat.xojan.fittracker.presentation.activity.WorkoutActivity;
 import cat.xojan.fittracker.presentation.controller.DistanceController;
 import cat.xojan.fittracker.presentation.controller.FitnessController;
@@ -25,26 +26,7 @@ import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(
-        injects = {
-                WorkoutActivity.class,
-                WorkoutMapFragment.class,
-                ResultFragment.class,
-                NotificationController.class,
-                TimeController.class,
-                SpeedController.class,
-                MapController.class,
-                DistanceController.class,
-                FitnessController.class,
-                SessionPresenter.class
-        },
-        includes = {
-                SessionDataModule.class,
-                UnitDataModule.class,
-        },
-        addsTo = AppModule.class,
-        library = true
-)
+@Module
 public class WorkoutModule {
     private final Activity mActivity;
 

@@ -36,7 +36,7 @@
             android:value="AIzaSyBWSi7b9pptamEWucwpPp8YGQhqj9H_V5Y" />
 
         <activity
-            android:name=".presentation.startup.StartupActivity"
+            android:name=".presentation.splash.SplashActivity"
             android:launchMode="singleInstance"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -45,8 +45,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
+            android:name=".presentation.startup.StartupActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <!--activity
             android:name=".presentation.home.HomeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
@@ -91,7 +95,7 @@
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
-        <service android:name=".service.UtilityService" />
+        <service android:name=".service.UtilityService" /-->
     </application>
 
 </manifest>

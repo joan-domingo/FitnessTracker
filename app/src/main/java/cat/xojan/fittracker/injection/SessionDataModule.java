@@ -2,20 +2,14 @@ package cat.xojan.fittracker.injection;
 
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.data.GoogleFitSessionStorage;
+import cat.xojan.fittracker.data.repository.GoogleFitSessionStorage;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
 import cat.xojan.fittracker.domain.SessionRepository;
 import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(
-        injects = {
-                SessionRepository.class,
-                SessionDataInteractor.class,
-                SessionPresenter.class
-        }
-)
+@Module
 public class SessionDataModule {
 
     @Provides

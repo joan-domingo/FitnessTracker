@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFF</color>
-    <color name="my_darker_color">#0D47A1</color>
-    <color name="my_color">#2196F3</color>
-    <color name="accent">#F44336</color>
+    <color name="primary_dark">#aaaaaa</color>
+    <color name="primary">#ffffff</color>
+    <color name="accent">#6A287E</color>
     <color name="toolbar_text_color">#ffffff</color>
     <color name="light_grey">#F8F8F8</color>
     <color name="grey">#E8E8E8</color>

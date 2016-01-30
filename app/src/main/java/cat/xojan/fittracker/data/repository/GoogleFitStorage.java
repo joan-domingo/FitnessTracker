@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.data;
+package cat.xojan.fittracker.data.repository;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
