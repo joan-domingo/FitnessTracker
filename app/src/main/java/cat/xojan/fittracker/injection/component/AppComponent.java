@@ -1,11 +1,8 @@
 package cat.xojan.fittracker.injection.component;
 
-import android.app.Application;
-import android.content.Context;
-
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.FitTrackerApp;
+import cat.xojan.fittracker.data.UserData;
 import cat.xojan.fittracker.injection.module.AppModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import dagger.Component;
@@ -16,6 +13,8 @@ import dagger.Component;
 @Singleton
 @Component(modules = AppModule.class)
 public interface AppComponent {
-    // Field injections of any dependencies of the DemoApplication
     void inject(BaseActivity baseActivity);
+
+    //Exposed to sub-graphs.
+    UserData userData();
 }

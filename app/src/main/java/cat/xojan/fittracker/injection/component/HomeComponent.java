@@ -1,8 +1,9 @@
 package cat.xojan.fittracker.injection.component;
 
-import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
+import cat.xojan.fittracker.injection.module.HomeModule;
 import cat.xojan.fittracker.injection.module.StartupModule;
+import cat.xojan.fittracker.presentation.home.HomeActivity;
 import cat.xojan.fittracker.presentation.startup.StartupActivity;
 import dagger.Component;
 
@@ -11,9 +12,9 @@ import dagger.Component;
         dependencies = AppComponent.class,
         modules = {
                 BaseActivityModule.class,
-                StartupModule.class
+                HomeModule.class
         }
 )
-public interface StartupComponent extends BaseActivityComponent {
-    void inject(StartupActivity startupActivity);
+public interface HomeComponent extends BaseActivityComponent {
+    void inject(HomeActivity homeActivity);
 }

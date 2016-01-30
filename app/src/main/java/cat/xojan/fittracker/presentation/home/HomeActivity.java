@@ -17,11 +17,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.injection.component.AppComponent;
-import cat.xojan.fittracker.injection.component.BaseActivityComponent;
+import cat.xojan.fittracker.injection.component.DaggerHomeComponent;
+import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
+import cat.xojan.fittracker.injection.module.HomeModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 
-public class HomeActivity extends BaseActivity implements MenuAdapter.MenuClickListener {
+public class HomeActivity extends BaseActivity implements
+        MenuAdapter.MenuClickListener {
 
     @Inject
     HomePresenter mPresenter;
@@ -35,6 +38,11 @@ public class HomeActivity extends BaseActivity implements MenuAdapter.MenuClickL
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mPlanetTitles;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +68,15 @@ public class HomeActivity extends BaseActivity implements MenuAdapter.MenuClickL
     }
 
     @Override
-    protected void injectComponent(AppComponent appComponent, BaseActivityModule baseActivityModule) {
+    protected void injectComponent(AppComponent appComponent,
+                                   BaseActivityModule baseActivityModule) {
+        HomeComponent component = DaggerHomeComponent.builder()
+                .appComponent(appComponent)
+                .baseActivityModule(baseActivityModule)
+                .homeModule(new HomeModule())
+                .build();
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        component.inject(this);
     }
 
     @Override

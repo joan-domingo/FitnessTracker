@@ -14,6 +14,8 @@ import com.google.android.gms.fitness.Fitness;
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.UserData;
+import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.injection.component.AppComponent;
 import cat.xojan.fittracker.injection.component.DaggerStartupComponent;
 import cat.xojan.fittracker.injection.component.StartupComponent;
@@ -30,8 +32,8 @@ public class StartupActivity extends BaseActivity implements
 
     private static final String TAG = BaseActivity.class.getSimpleName();
 
-    //@Inject
-    //AppSessionData mAppSessionData;
+    @Inject
+    UserData mUserData;
     @Inject
     StartupPresenter mPresenter;
 
@@ -112,7 +114,7 @@ public class StartupActivity extends BaseActivity implements
     }
 
     private void onGoogleApiClientConnected(GoogleApiClient googleApiClient) {
-        //mAppSessionData.setGoogleApiClient(googleApiClient);
-        mPresenter.updateUserFitnessData(googleApiClient);
+        mUserData.setGoogleApiClient(googleApiClient);
+        mPresenter.updateUserFitnessData();
     }
 }

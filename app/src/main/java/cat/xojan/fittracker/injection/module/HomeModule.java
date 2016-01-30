@@ -9,14 +9,15 @@ import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
 import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.domain.PreferencesInteractor;
 import cat.xojan.fittracker.injection.component.PerActivity;
+import cat.xojan.fittracker.presentation.home.HomePresenter;
 import cat.xojan.fittracker.presentation.startup.StartupPresenter;
 import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class StartupModule {
+public class HomeModule {
 
-    public StartupModule() {
+    public HomeModule() {
 
     }
 
@@ -28,15 +29,8 @@ public class StartupModule {
 
     @Provides
     @PerActivity
-    PreferencesInteractor providePreferencesInteractor(Context context) {
-        return new PreferencesInteractor(new SharedPreferencesStorage(context));
-    }
-
-    @Provides
-    @PerActivity
-    StartupPresenter provideStartUpPresenter(FitnessDataInteractor fitnessDataInteractor,
-                                             PreferencesInteractor preferencesInteractor,
-                                             Activity activity) {
-        return new StartupPresenter(fitnessDataInteractor, preferencesInteractor, activity);
+    HomePresenter provideStartUpPresenter(FitnessDataInteractor fitnessDataInteractor,
+                                          Activity activity) {
+        return new HomePresenter(fitnessDataInteractor, activity);
     }
 }

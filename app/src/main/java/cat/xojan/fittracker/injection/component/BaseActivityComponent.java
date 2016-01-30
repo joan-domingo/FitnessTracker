@@ -3,7 +3,9 @@ package cat.xojan.fittracker.injection.component;
 import android.app.Activity;
 import android.content.Context;
 
+import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
+import cat.xojan.fittracker.presentation.BaseActivity;
 import dagger.Component;
 
 /**
@@ -16,6 +18,7 @@ import dagger.Component;
         modules = BaseActivityModule.class
 )
 public interface BaseActivityComponent {
+    void inject(BaseActivity baseActivity);
     Activity activity(); // Expose the activity to sub-graphs
     Context context();
 }

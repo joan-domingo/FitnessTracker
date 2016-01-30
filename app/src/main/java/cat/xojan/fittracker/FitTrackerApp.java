@@ -7,6 +7,7 @@ import cat.xojan.fittracker.injection.component.DaggerAppComponent;
 import cat.xojan.fittracker.injection.module.AppModule;
 
 public class FitTrackerApp extends Application {
+
     private AppComponent mComponent;
 
     @Override

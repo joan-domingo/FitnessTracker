@@ -1,5 +1,7 @@
 package cat.xojan.fittracker.presentation.home;
 
+import android.app.Activity;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.data.Session;
 
@@ -18,10 +20,10 @@ import rx.schedulers.Schedulers;
  */
 public class HomePresenter implements BasePresenter {
     private final FitnessDataInteractor mFitnessDataInteractor;
-    private final HomeActivity mActivity;
+    private final Activity mActivity;
     private Subscription mSubscription;
 
-    public HomePresenter(FitnessDataInteractor fitnessDataInteractor, HomeActivity activity) {
+    public HomePresenter(FitnessDataInteractor fitnessDataInteractor, Activity activity) {
         mFitnessDataInteractor = fitnessDataInteractor;
         mActivity = activity;
     }
@@ -43,11 +45,11 @@ public class HomePresenter implements BasePresenter {
 
     }
 
-    public void showData(GoogleApiClient googleApiClient) {
+    public void showData() {
         // mActivity.showProgress();
         Calendar calendar = Calendar.getInstance();
         calendar.set(2015, 12, 12);
-        mSubscription = mFitnessDataInteractor.updateData(calendar.getTime(), googleApiClient)
+        mSubscription = mFitnessDataInteractor.updateData(calendar.getTime())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FitnessDataSubscriber());

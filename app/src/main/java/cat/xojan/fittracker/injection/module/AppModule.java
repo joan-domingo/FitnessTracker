@@ -1,11 +1,13 @@
 package cat.xojan.fittracker.injection.module;
 
-import android.app.Application;
 import android.content.Context;
 
 import javax.inject.Singleton;
 
 import cat.xojan.fittracker.FitTrackerApp;
+import cat.xojan.fittracker.data.UserData;
+import cat.xojan.fittracker.data.repository.GoogleFitStorage;
+import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import dagger.Module;
 import dagger.Provides;
 
@@ -20,5 +22,11 @@ public class AppModule {
 
     public AppModule(FitTrackerApp application) {
         mApplication = application;
+    }
+
+    @Provides
+    @Singleton
+    UserData provideUserData() {
+        return new UserData(mApplication);
     }
 }
