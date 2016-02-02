@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.injection.component;
 
+import cat.xojan.fittracker.injection.PerActivity;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.injection.module.SplashModule;
 import cat.xojan.fittracker.presentation.splash.SplashActivity;

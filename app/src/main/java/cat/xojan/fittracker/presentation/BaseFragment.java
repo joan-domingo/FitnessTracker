@@ -1,14 +1,26 @@
 package cat.xojan.fittracker.presentation;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 
-public class BaseFragment extends Fragment {
+import com.squareup.leakcanary.RefWatcher;
+
+import cat.xojan.fittracker.FitTrackerApp;
+import cat.xojan.fittracker.injection.HasComponent;
+
+public abstract class BaseFragment extends Fragment {
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //((BaseActivity) getActivity()).inject(this);
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = FitTrackerApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
+
+    /**
+     * Gets a component for dependency injection by its type.
+     */
+    @SuppressWarnings("unchecked")
+    protected <C> C getComponent(Class<C> componentType) {
+        return componentType.cast(((HasComponent<C>) getActivity()).getComponent());
     }
 }

@@ -9,26 +9,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import javax.inject.Inject;
+
 import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.injection.component.AppComponent;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
+import cat.xojan.fittracker.navigation.Navigator;
 import cat.xojan.fittracker.presentation.menu.AttributionActivity;
 import cat.xojan.fittracker.presentation.menu.PreferenceActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
+
+    @Inject
+    public Navigator navigator;
 
     private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        injectComponent(((FitTrackerApp) getApplication()).getAppComponent(),
-                new BaseActivityModule(this));
+        this.getApplicationComponent().inject(this);
     }
-
-    protected abstract void injectComponent(AppComponent appComponent,
-                                            BaseActivityModule baseActivityModule);
 
     public void showProgress() {
         mProgressDialog = ProgressDialog.show(this, null, getString(R.string.wait));
@@ -68,5 +70,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Get the Main Application component for dependency injection.
+     *
+     * @return {@link AppComponent}
+     */
+    protected AppComponent getApplicationComponent() {
+        return ((FitTrackerApp)getApplication()).getAppComponent();
+    }
+
+    /**
+     * Get an Activity module for dependency injection.
+     *
+     * @return {@link cat.xojan.fittracker.injection.component.BaseActivityComponent}
+     */
+    protected BaseActivityModule getActivityModule() {
+        return new BaseActivityModule(this);
     }
 }

@@ -9,11 +9,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.data.UserData;
-import cat.xojan.fittracker.injection.component.AppComponent;
 import cat.xojan.fittracker.injection.component.DaggerSplashComponent;
 import cat.xojan.fittracker.injection.component.SplashComponent;
-import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.injection.module.SplashModule;
+import cat.xojan.fittracker.navigation.Navigator;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.home.HomeActivity;
 import cat.xojan.fittracker.presentation.startup.StartupActivity;
@@ -25,30 +24,22 @@ import cat.xojan.fittracker.presentation.startup.StartupActivity;
 public class SplashActivity extends BaseActivity {
 
     @Inject
-    UserData mUserData;
+    Navigator mNavigator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        GoogleApiClient googleClient = mUserData.getGoogleApiClient();
-        Intent intent;
+        initializeInjector();
 
-        if (googleClient == null) {
-            intent = new Intent(this, StartupActivity.class);
-        } else {
-            intent = new Intent(this, HomeActivity.class);
-        }
-        startActivity(intent);
+        mNavigator.navigateToStartupActivity(this);
         finish();
     }
 
-    @Override
-    protected void injectComponent(AppComponent appComponent,
-                                   BaseActivityModule baseActivityModule) {
+    private void initializeInjector() {
         SplashComponent component = DaggerSplashComponent.builder()
-                .appComponent(appComponent)
-                .baseActivityModule(baseActivityModule)
+                .appComponent(getApplicationComponent())
+                .baseActivityModule(getActivityModule())
                 .splashModule(new SplashModule())
                 .build();
 

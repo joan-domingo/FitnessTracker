@@ -8,6 +8,7 @@ import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.data.UserData;
 import cat.xojan.fittracker.data.repository.GoogleFitStorage;
 import cat.xojan.fittracker.domain.FitnessDataInteractor;
+import cat.xojan.fittracker.navigation.Navigator;
 import dagger.Module;
 import dagger.Provides;
 
@@ -28,5 +29,10 @@ public class AppModule {
     @Singleton
     UserData provideUserData() {
         return new UserData(mApplication);
+    }
+
+    @Provides
+    Navigator navigator() {
+        return new Navigator();
     }
 }

@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import cat.xojan.fittracker.data.UserData;
 import cat.xojan.fittracker.injection.module.AppModule;
+import cat.xojan.fittracker.navigation.Navigator;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import dagger.Component;
 
@@ -17,4 +18,5 @@ public interface AppComponent {
 
     //Exposed to sub-graphs.
     UserData userData();
+    Navigator navigator();
 }

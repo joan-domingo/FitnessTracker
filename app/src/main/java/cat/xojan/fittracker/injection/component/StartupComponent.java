@@ -1,6 +1,6 @@
 package cat.xojan.fittracker.injection.component;
 
-import cat.xojan.fittracker.domain.FitnessDataInteractor;
+import cat.xojan.fittracker.injection.PerActivity;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.injection.module.StartupModule;
 import cat.xojan.fittracker.presentation.startup.StartupActivity;

@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.presentation.home;
 
 import android.app.Activity;
+import android.view.View;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.data.Session;
@@ -22,6 +23,7 @@ public class HomePresenter implements BasePresenter {
     private final FitnessDataInteractor mFitnessDataInteractor;
     private final Activity mActivity;
     private Subscription mSubscription;
+    private int mView;
 
     public HomePresenter(FitnessDataInteractor fitnessDataInteractor, Activity activity) {
         mFitnessDataInteractor = fitnessDataInteractor;
@@ -30,9 +32,6 @@ public class HomePresenter implements BasePresenter {
 
     @Override
     public void resume() {
-        /*if (mSessionList = null) {
-            fetchSessionData();
-        }*/
     }
 
     @Override
@@ -53,6 +52,16 @@ public class HomePresenter implements BasePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FitnessDataSubscriber());
+    }
+
+    public void showHomeFragment() {
+        mActivity.getFragmentManager().beginTransaction()
+                .replace(mView, new HomeFragment())
+                .commit();
+    }
+
+    public void setUpView(int view) {
+        mView = view;
     }
 
     private class FitnessDataSubscriber implements Observer<List<Session>>{

@@ -8,7 +8,7 @@ import cat.xojan.fittracker.data.repository.GoogleFitStorage;
 import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
 import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.domain.PreferencesInteractor;
-import cat.xojan.fittracker.injection.component.PerActivity;
+import cat.xojan.fittracker.injection.PerActivity;
 import cat.xojan.fittracker.presentation.startup.StartupPresenter;
 import dagger.Module;
 import dagger.Provides;
@@ -35,8 +35,7 @@ public class StartupModule {
     @Provides
     @PerActivity
     StartupPresenter provideStartUpPresenter(FitnessDataInteractor fitnessDataInteractor,
-                                             PreferencesInteractor preferencesInteractor,
-                                             Activity activity) {
-        return new StartupPresenter(fitnessDataInteractor, preferencesInteractor, activity);
+                                             PreferencesInteractor preferencesInteractor) {
+        return new StartupPresenter(fitnessDataInteractor, preferencesInteractor);
     }
 }

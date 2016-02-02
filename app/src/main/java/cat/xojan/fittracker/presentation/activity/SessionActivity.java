@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
@@ -21,7 +20,6 @@ import com.google.android.gms.fitness.result.SessionReadResult;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -31,10 +29,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.injection.SessionModule;
-import cat.xojan.fittracker.injection.component.AppComponent;
-import cat.xojan.fittracker.injection.component.BaseActivityComponent;
-import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.listener.UiContentUpdater;
 import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
@@ -82,12 +76,6 @@ public class SessionActivity extends BaseActivity
         mSession = Session.extract(intent);
         showProgress();
     }
-
-    @Override
-    protected void injectComponent(AppComponent appComponent, BaseActivityModule baseActivityModule) {
-
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

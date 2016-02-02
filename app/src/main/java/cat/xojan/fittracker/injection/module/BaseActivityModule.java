@@ -3,7 +3,7 @@ package cat.xojan.fittracker.injection.module;
 import android.app.Activity;
 import android.content.Context;
 
-import cat.xojan.fittracker.injection.component.PerActivity;
+import cat.xojan.fittracker.injection.PerActivity;
 import dagger.Module;
 import dagger.Provides;
 

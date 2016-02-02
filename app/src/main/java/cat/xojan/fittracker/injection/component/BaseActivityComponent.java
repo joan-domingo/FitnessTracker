@@ -3,7 +3,7 @@ package cat.xojan.fittracker.injection.component;
 import android.app.Activity;
 import android.content.Context;
 
-import cat.xojan.fittracker.domain.FitnessDataInteractor;
+import cat.xojan.fittracker.injection.PerActivity;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import dagger.Component;

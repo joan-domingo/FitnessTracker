@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.injection.component;
+package cat.xojan.fittracker.injection;
 
 import java.lang.annotation.Retention;
 

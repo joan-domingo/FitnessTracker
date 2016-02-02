@@ -9,22 +9,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.injection.component.AppComponent;
+import cat.xojan.fittracker.injection.HasComponent;
 import cat.xojan.fittracker.injection.component.DaggerHomeComponent;
 import cat.xojan.fittracker.injection.component.HomeComponent;
-import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.injection.module.HomeModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 
 public class HomeActivity extends BaseActivity implements
-        MenuAdapter.MenuClickListener {
+        MenuAdapter.MenuClickListener,
+        HasComponent {
 
     @Inject
     HomePresenter mPresenter;
@@ -38,6 +37,7 @@ public class HomeActivity extends BaseActivity implements
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mPlanetTitles;
+    private HomeComponent mComponent;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -48,10 +48,12 @@ public class HomeActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        initializeInjector();
         ButterKnife.bind(this);
 
         mTitle = mDrawerTitle = getTitle();
-        mPlanetTitles = new String[]{"test1", "test2"};
+        mPlanetTitles = new String[]{"Activity", "History"};
 
         // set up the drawer's list view with items and click listener
         mDrawerList.setAdapter(new MenuAdapter(mPlanetTitles, this));
@@ -65,24 +67,18 @@ public class HomeActivity extends BaseActivity implements
                         R.string.drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+
+        mPresenter.setUpView(R.id.content_frame);
+        mPresenter.showHomeFragment();
     }
 
-    @Override
-    protected void injectComponent(AppComponent appComponent,
-                                   BaseActivityModule baseActivityModule) {
-        HomeComponent component = DaggerHomeComponent.builder()
-                .appComponent(appComponent)
-                .baseActivityModule(baseActivityModule)
+    private void initializeInjector() {
+        mComponent = DaggerHomeComponent.builder()
+                .appComponent(getApplicationComponent())
+                .baseActivityModule(getActivityModule())
                 .homeModule(new HomeModule())
                 .build();
-
-        component.inject(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mPresenter.resume();
+        mComponent.inject(this);
     }
 
     private void selectItem(int position) {
@@ -101,13 +97,16 @@ public class HomeActivity extends BaseActivity implements
 
     @Override
     public void onClick(View view, int position) {
-
+        selectItem(position);
     }
 
-    private class DrawerItemClickListener implements AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    @Override
+    public HomeComponent getComponent() {
+        return mComponent;
+    }
 
-        }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

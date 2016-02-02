@@ -10,16 +10,16 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.Session;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.data.UserData;
-import cat.xojan.fittracker.domain.FitnessDataInteractor;
-import cat.xojan.fittracker.injection.component.AppComponent;
 import cat.xojan.fittracker.injection.component.DaggerStartupComponent;
 import cat.xojan.fittracker.injection.component.StartupComponent;
-import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.injection.module.StartupModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 
@@ -28,7 +28,8 @@ import cat.xojan.fittracker.presentation.BaseActivity;
  */
 public class StartupActivity extends BaseActivity implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        FitnessDataListener {
 
     private static final String TAG = BaseActivity.class.getSimpleName();
 
@@ -66,21 +67,25 @@ public class StartupActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_startup);
+    public void onSuccessfullyUpdated(List<Session> sessions) {
+        mUserData.setFitnessSessions(sessions);
+        navigator.navigateToHomeActivity(this);
+        finish();
     }
 
     @Override
-    protected void injectComponent(AppComponent appComponent,
-                                   BaseActivityModule baseActivityModule) {
-        StartupComponent component = DaggerStartupComponent.builder()
-                .appComponent(appComponent)
-                .baseActivityModule(baseActivityModule)
-                .startupModule(new StartupModule())
-                .build();
+    public void onError(Throwable e) {
 
-        component.inject(this);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_startup);
+
+        initInjector();
+        initPresenter();
+
     }
 
     @Override
@@ -90,6 +95,25 @@ public class StartupActivity extends BaseActivity implements
         // This ensures that if the user denies the permissions then uses Settings to re-enable
         // them, the app will start working.
         buildFitnessClient();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.destroy();
+        super.onDestroy();
+    }
+
+    private void initInjector() {
+        StartupComponent component = DaggerStartupComponent.builder()
+                .appComponent(getApplicationComponent())
+                .baseActivityModule(getActivityModule())
+                .startupModule(new StartupModule())
+                .build();
+        component.inject(this);
+    }
+
+    private void initPresenter() {
+        mPresenter.setListener(this);
     }
 
     /**

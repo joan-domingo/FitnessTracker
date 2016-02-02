@@ -60,11 +60,6 @@ public class WorkoutActivity extends BaseActivity
     }
 
     @Override
-    protected void injectComponent(AppComponent appComponent, BaseActivityModule baseActivityModule) {
-
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 

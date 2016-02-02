@@ -3,6 +3,9 @@ package cat.xojan.fittracker.data;
 import android.content.Context;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.data.Session;
+
+import java.util.List;
 
 import cat.xojan.fittracker.FitTrackerApp;
 
@@ -12,7 +15,8 @@ import cat.xojan.fittracker.FitTrackerApp;
 public class UserData {
 
     private final Context mContext;
-    GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
+    private List<Session> mFitnessSessions;
 
     public UserData(Context context) {
         mContext = context;
@@ -24,5 +28,9 @@ public class UserData {
 
     public GoogleApiClient getGoogleApiClient() {
         return mGoogleApiClient;
+    }
+
+    public void setFitnessSessions(List<Session> sessions) {
+        mFitnessSessions = sessions;
     }
 }
