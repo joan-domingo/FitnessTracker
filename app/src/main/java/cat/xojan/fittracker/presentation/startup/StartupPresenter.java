@@ -1,5 +1,7 @@
 package cat.xojan.fittracker.presentation.startup;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -46,9 +48,9 @@ public class StartupPresenter implements BasePresenter {
         mListener = null;
     }
 
-    public void updateUserFitnessData() {
+    public void updateUserFitnessData(GoogleApiClient googleApiClient) {
         Date lastUpdate = mPreferencesInteractor.getLastUpdate();
-        mSubscription = mFitnessDataInteractor.updateData(lastUpdate)
+        mSubscription = mFitnessDataInteractor.updateData(lastUpdate, googleApiClient)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(new FitnessDataSubscriber(mListener));

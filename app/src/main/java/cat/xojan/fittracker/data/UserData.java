@@ -15,19 +15,10 @@ import cat.xojan.fittracker.FitTrackerApp;
 public class UserData {
 
     private final Context mContext;
-    private GoogleApiClient mGoogleApiClient;
     private List<Session> mFitnessSessions;
 
     public UserData(Context context) {
         mContext = context;
-    }
-
-    public void setGoogleApiClient(GoogleApiClient googleApiClient) {
-        mGoogleApiClient = googleApiClient;
-    }
-
-    public GoogleApiClient getGoogleApiClient() {
-        return mGoogleApiClient;
     }
 
     public void setFitnessSessions(List<Session> sessions) {

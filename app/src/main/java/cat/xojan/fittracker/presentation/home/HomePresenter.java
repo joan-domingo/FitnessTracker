@@ -1,9 +1,7 @@
 package cat.xojan.fittracker.presentation.home;
 
 import android.app.Activity;
-import android.view.View;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.data.Session;
 
 import java.util.Calendar;
@@ -48,7 +46,7 @@ public class HomePresenter implements BasePresenter {
         // mActivity.showProgress();
         Calendar calendar = Calendar.getInstance();
         calendar.set(2015, 12, 12);
-        mSubscription = mFitnessDataInteractor.updateData(calendar.getTime())
+        mSubscription = mFitnessDataInteractor.updateData(calendar.getTime(), null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FitnessDataSubscriber());

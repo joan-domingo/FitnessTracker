@@ -22,8 +22,8 @@ public class StartupModule {
 
     @Provides
     @PerActivity
-    FitnessDataInteractor provideFitnessDataInteractor(UserData userData) {
-        return new FitnessDataInteractor(new GoogleFitStorage(), userData);
+    FitnessDataInteractor provideFitnessDataInteractor() {
+        return new FitnessDataInteractor(new GoogleFitStorage());
     }
 
     @Provides

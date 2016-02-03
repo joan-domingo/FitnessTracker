@@ -32,7 +32,7 @@ public class AppModule {
     }
 
     @Provides
-    Navigator navigator() {
+    Navigator provideNavigator() {
         return new Navigator();
     }
 }

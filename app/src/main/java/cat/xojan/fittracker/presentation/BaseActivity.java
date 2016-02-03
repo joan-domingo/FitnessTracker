@@ -22,7 +22,7 @@ import cat.xojan.fittracker.presentation.menu.PreferenceActivity;
 public abstract class BaseActivity extends AppCompatActivity {
 
     @Inject
-    public Navigator navigator;
+    public Navigator mNavigator;
 
     private ProgressDialog mProgressDialog;
 

@@ -69,7 +69,7 @@ public class HomeActivity extends BaseActivity implements
         mDrawerToggle.syncState();
 
         mPresenter.setUpView(R.id.content_frame);
-        mPresenter.showHomeFragment();
+        selectItem(0);
     }
 
     private void initializeInjector() {
@@ -82,12 +82,23 @@ public class HomeActivity extends BaseActivity implements
     }
 
     private void selectItem(int position) {
-        // update the main content by replacing fragments
-        Fragment fragment = new MainFragment();
+        Fragment fragment = null;
+        switch (position) {
+            case 0:
+                fragment = new HomeFragment();
+                break;
+            case 1:
+                fragment = new HistoryFragment();
+                break;
+            default:
+
+                break;
+        }
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.content_frame, fragment);
+        ft.addToBackStack(null);
         ft.commit();
 
         // update selected item title, then close the drawer

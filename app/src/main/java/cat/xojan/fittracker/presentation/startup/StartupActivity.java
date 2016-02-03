@@ -69,13 +69,12 @@ public class StartupActivity extends BaseActivity implements
     @Override
     public void onSuccessfullyUpdated(List<Session> sessions) {
         mUserData.setFitnessSessions(sessions);
-        navigator.navigateToHomeActivity(this);
+        mNavigator.navigateToHomeActivity(this);
         finish();
     }
 
     @Override
     public void onError(Throwable e) {
-
     }
 
     @Override
@@ -85,7 +84,6 @@ public class StartupActivity extends BaseActivity implements
 
         initInjector();
         initPresenter();
-
     }
 
     @Override
@@ -138,7 +136,6 @@ public class StartupActivity extends BaseActivity implements
     }
 
     private void onGoogleApiClientConnected(GoogleApiClient googleApiClient) {
-        mUserData.setGoogleApiClient(googleApiClient);
-        mPresenter.updateUserFitnessData();
+        mPresenter.updateUserFitnessData(googleApiClient);
     }
 }
