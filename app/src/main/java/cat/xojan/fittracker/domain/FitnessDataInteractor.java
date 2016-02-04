@@ -7,7 +7,6 @@ import com.google.android.gms.fitness.result.SessionReadResult;
 import java.util.Date;
 import java.util.List;
 
-import cat.xojan.fittracker.data.UserData;
 import rx.Observable;
 import rx.Subscriber;
 

@@ -24,4 +24,8 @@ public class UserData {
     public void setFitnessSessions(List<Session> sessions) {
         mFitnessSessions = sessions;
     }
+
+    public List<Session> getFitnessSessions() {
+        return mFitnessSessions;
+    }
 }

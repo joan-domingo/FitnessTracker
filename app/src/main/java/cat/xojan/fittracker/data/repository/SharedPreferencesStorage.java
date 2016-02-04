@@ -58,8 +58,8 @@ public class SharedPreferencesStorage implements PreferencesRepository {
 
     @Override
     public Date getLastFitnessDataUpdate() {
-        long date = mContext.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
-                .getLong(PREFERENCE_LAST_UPDATE, 1);
+        long date = 1;/* mContext.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+                .getLong(PREFERENCE_LAST_UPDATE, 1);*/
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(date);
         return cal.getTime();

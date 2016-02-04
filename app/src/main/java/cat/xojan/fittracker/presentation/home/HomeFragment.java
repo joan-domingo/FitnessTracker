@@ -5,7 +5,9 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
@@ -16,6 +18,9 @@ import cat.xojan.fittracker.presentation.BaseFragment;
  * Created by Joan on 31/01/2016.
  */
 public class HomeFragment extends BaseFragment {
+
+    @Inject
+    HomePresenter mPresenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,7 +34,13 @@ public class HomeFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
 
-        TextView totalKm = (TextView) view.findViewById(R.id.total_kilometres);
+        Button button = (Button) view.findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.insert();
+            }
+        });
 
         return view;
     }

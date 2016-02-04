@@ -62,6 +62,14 @@ public class HomePresenter implements BasePresenter {
         mView = view;
     }
 
+    public void insert() {
+        Calendar calendar = Calendar.getInstance();
+        mSubscription = mFitnessDataInteractor.updateData(calendar.getTime(), null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FitnessDataSubscriber());
+    }
+
     private class FitnessDataSubscriber implements Observer<List<Session>>{
         @Override
         public void onCompleted() {

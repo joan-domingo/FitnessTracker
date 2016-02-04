@@ -10,8 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 
-import javax.inject.Inject;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
@@ -20,13 +18,11 @@ import cat.xojan.fittracker.injection.component.DaggerHomeComponent;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.injection.module.HomeModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
+import cat.xojan.fittracker.presentation.history.HistoryFragment;
 
 public class HomeActivity extends BaseActivity implements
         MenuAdapter.MenuClickListener,
         HasComponent {
-
-    @Inject
-    HomePresenter mPresenter;
 
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -67,8 +63,6 @@ public class HomeActivity extends BaseActivity implements
                         R.string.drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
-
-        mPresenter.setUpView(R.id.content_frame);
         selectItem(0);
     }
 

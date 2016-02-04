@@ -46,7 +46,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.startup.StartupActivity">
+            android:name=".presentation.startup.StartupActivity"
+            android:theme="@style/NoActionBarAppTheme">
         </activity>
         <activity
             android:name=".presentation.home.HomeActivity">
