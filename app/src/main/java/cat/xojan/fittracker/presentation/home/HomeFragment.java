@@ -6,21 +6,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.android.gms.fitness.FitnessActivities;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.UserData;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
+import cat.xojan.fittracker.presentation.view.TriangleScreen;
 
 /**
  * Created by Joan on 31/01/2016.
  */
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements
+        TriangleScreen.FitnessActivityClickListener {
 
     @Inject
     HomePresenter mPresenter;
+
+    @Bind(R.id.triangle_view)
+    TriangleScreen mTriangleView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,26 +44,28 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
-
-        Button button = (Button) view.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.insert();
-            }
-        });
-
         return view;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //mHomeFragmentPresenter.setView(this);
+        mTriangleView.setFitnessActivityClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.resume();
     }
 
     @Override public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onClick(String running) {
+
     }
 }

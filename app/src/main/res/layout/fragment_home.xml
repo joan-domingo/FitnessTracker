@@ -3,31 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <cat.xojan.fittracker.presentation.view.TriangleScreen
+        android:id="@+id/triangle_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Kilometres"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/total_kilometres"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="00,00"/>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Activity"
-        android:layout_alignParentBottom="true"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

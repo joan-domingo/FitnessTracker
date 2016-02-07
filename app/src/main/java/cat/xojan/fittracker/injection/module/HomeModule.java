@@ -25,8 +25,7 @@ public class HomeModule {
 
     @Provides
     @PerActivity
-    HomePresenter provideStartUpPresenter(FitnessDataInteractor fitnessDataInteractor,
-                                          Activity activity) {
-        return new HomePresenter(fitnessDataInteractor, activity);
+    HomePresenter provideStartUpPresenter(UserData userData) {
+        return new HomePresenter(userData);
     }
 }

@@ -38,7 +38,8 @@
 
         <activity
             android:name=".presentation.splash.SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,10 +48,12 @@
         </activity>
         <activity
             android:name=".presentation.startup.StartupActivity"
-            android:theme="@style/NoActionBarAppTheme">
+            android:theme="@style/NoActionBarAppTheme"
+            android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presentation.home.HomeActivity">
+            android:name=".presentation.home.HomeActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presentation.activity.WorkoutActivity"
@@ -86,6 +89,7 @@
             android:name=".presentation.menu.AttributionActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
+        <activity android:name=".presentation.sessiondetails.SessionDetailsActivity"/>
 
         <service android:name=".service.WearableListener" >
             <intent-filter>

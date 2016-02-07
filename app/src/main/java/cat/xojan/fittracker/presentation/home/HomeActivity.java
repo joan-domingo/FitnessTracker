@@ -32,7 +32,7 @@ public class HomeActivity extends BaseActivity implements
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mPlanetTitles;
+    private String[] mMenuTitles;
     private HomeComponent mComponent;
 
     @Override
@@ -49,10 +49,10 @@ public class HomeActivity extends BaseActivity implements
         ButterKnife.bind(this);
 
         mTitle = mDrawerTitle = getTitle();
-        mPlanetTitles = new String[]{"Activity", "History"};
+        mMenuTitles = new String[]{"Activity", "History"};
 
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new MenuAdapter(mPlanetTitles, this));
+        mDrawerList.setAdapter(new MenuAdapter(mMenuTitles, this));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -96,7 +96,7 @@ public class HomeActivity extends BaseActivity implements
         ft.commit();
 
         // update selected item title, then close the drawer
-        setTitle(mPlanetTitles[position]);
+        setTitle(mMenuTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#FFFFFF</color>
     <color name="primary_dark">#aaaaaa</color>
     <color name="primary">#ffffff</color>
     <color name="accent">#6A287E</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="red">#FF1744</color>
+    <color name="turquoise">#26C6DA</color>
+    <color name="brown">#795548</color>
+    <color name="lime">#B2FF59</color>
+
     <color name="toolbar_text_color">#ffffff</color>
     <color name="light_grey">#F8F8F8</color>
     <color name="grey">#E8E8E8</color>

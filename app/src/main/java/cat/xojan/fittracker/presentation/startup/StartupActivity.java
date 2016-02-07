@@ -3,6 +3,9 @@ package cat.xojan.fittracker.presentation.startup;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -12,10 +15,14 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Session;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.data.UserData;
 import cat.xojan.fittracker.injection.component.DaggerStartupComponent;
@@ -37,6 +44,11 @@ public class StartupActivity extends BaseActivity implements
     UserData mUserData;
     @Inject
     StartupPresenter mPresenter;
+
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
+    @Bind(R.id.error_message)
+    TextView mErrorView;
 
     private GoogleApiClient mClient;
 
@@ -75,12 +87,16 @@ public class StartupActivity extends BaseActivity implements
 
     @Override
     public void onError(Throwable e) {
+        mProgressBar.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.VISIBLE);
+        mErrorView.setText(e.getMessage());
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startup);
+        ButterKnife.bind(this);
 
         initInjector();
         initPresenter();
@@ -90,6 +106,8 @@ public class StartupActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
 
+        mErrorView.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
         // This ensures that if the user denies the permissions then uses Settings to re-enable
         // them, the app will start working.
         buildFitnessClient();
@@ -99,6 +117,7 @@ public class StartupActivity extends BaseActivity implements
     protected void onDestroy() {
         mPresenter.destroy();
         super.onDestroy();
+        ButterKnife.unbind(this);
     }
 
     private void initInjector() {

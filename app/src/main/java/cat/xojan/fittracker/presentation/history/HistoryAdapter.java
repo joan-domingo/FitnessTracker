@@ -17,12 +17,13 @@ import cat.xojan.fittracker.R;
  */
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
+    private static RecyclerViewClickListener mClickListener;
     private final List<Session> mSessions;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         public TextView mTitle;
         public TextView mActivity;
@@ -30,12 +31,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             super(v);
             mTitle = (TextView) v.findViewById(R.id.text);
             mActivity = (TextView) v.findViewById(R.id.activity);
+            v.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View v) {
+            mClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 
-    public HistoryAdapter(List<Session> sessions) {
+    public HistoryAdapter(List<Session> sessions, RecyclerViewClickListener clickListener) {
         mSessions = sessions;
+        mClickListener = clickListener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -67,5 +74,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mSessions.size();
+    }
+
+    /*package*/ interface RecyclerViewClickListener {
+        void onItemClick(int position, View v);
     }
 }
