@@ -15,8 +15,6 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Session;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 import javax.inject.Inject;

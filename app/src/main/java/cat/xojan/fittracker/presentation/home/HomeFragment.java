@@ -5,25 +5,16 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.google.android.gms.fitness.FitnessActivities;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.data.UserData;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
 import cat.xojan.fittracker.presentation.view.TriangleScreen;
 
-/**
- * Created by Joan on 31/01/2016.
- */
 public class HomeFragment extends BaseFragment implements
         TriangleScreen.FitnessActivityClickListener {
 
