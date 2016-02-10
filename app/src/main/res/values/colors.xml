@@ -6,9 +6,13 @@
 
     <color name="white">#FFFFFF</color>
     <color name="red">#FF1744</color>
+    <color name="red_dark">#b30024</color>
     <color name="turquoise">#26C6DA</color>
+    <color name="turquoise_dark">#1e9eae</color>
     <color name="brown">#795548</color>
+    <color name="brown_dark">#5F4840</color>
     <color name="lime">#B2FF59</color>
+    <color name="lime_dark">#6dcc00</color>
 
     <color name="toolbar_text_color">#ffffff</color>
     <color name="light_grey">#F8F8F8</color>

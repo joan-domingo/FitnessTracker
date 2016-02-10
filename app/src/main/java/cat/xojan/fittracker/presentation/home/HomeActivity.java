@@ -109,9 +109,4 @@ public class HomeActivity extends BaseActivity implements
     public HomeComponent getComponent() {
         return mComponent;
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 }

@@ -55,9 +55,9 @@
             android:name=".presentation.home.HomeActivity"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".presentation.workout.WorkoutActivity"/>
         <activity
             android:name=".presentation.activity.WorkoutActivity"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.activity.SessionActivity"

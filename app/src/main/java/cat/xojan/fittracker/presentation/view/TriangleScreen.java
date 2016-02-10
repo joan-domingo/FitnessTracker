@@ -1,7 +1,6 @@
 package cat.xojan.fittracker.presentation.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,8 +18,6 @@ import com.fernandocejas.frodo.core.checks.Preconditions;
 import com.google.android.gms.fitness.FitnessActivities;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.presentation.activity.WorkoutActivity;
-import cat.xojan.fittracker.presentation.home.HomeFragment;
 
 public class TriangleScreen extends View {
 
@@ -38,12 +35,14 @@ public class TriangleScreen extends View {
     private Point mP2;
     private Point mP3;
 
-    private float x1;
-    private float y1;
-
     private Bitmap mRunningBitmap;
     private Bitmap mCyclingBitmap;
     private Bitmap mWalkingBitmap;
+
+    private boolean isRunningPressed;
+    private boolean isOtherPressed;
+    private boolean isWalkingPressed;
+    private boolean isBikingPressed;
 
     FitnessActivityClickListener mListener;
 
@@ -77,6 +76,7 @@ public class TriangleScreen extends View {
         mClip.set(0, 0, getWidth(), getHeight());
         Path path;
         float x, y;
+        int color;
 
         //triangle up
         mP1.set(0, getHeight());
@@ -84,8 +84,9 @@ public class TriangleScreen extends View {
         mP3.set(mP1.x + (getWidth() / 2), mP1.y - getHeight() / 2);
         path = getTrianglePath(mP1, mP2, mP3);
         mRegionOther.setPath(path, mClip);
+        color = isOtherPressed ? R.color.red_dark : R.color.red;
         canvas.drawPath(path, getPaintShape(getResources()
-                .getColor(R.color.red)));
+                .getColor(color)));
 
         x = (getWidth() / 2) - mRunningBitmap.getWidth()/2;
         y = 3 * (getHeight() /4) - mRunningBitmap.getHeight()/3;
@@ -97,8 +98,9 @@ public class TriangleScreen extends View {
         mP3.set(mP1.x + getWidth() / 2, mP1.y + getHeight() / 2);
         path = getTrianglePath(mP1, mP2, mP3);
         mRegionWalking.setPath(path, mClip);
+        color = isWalkingPressed ? R.color.turquoise_dark : R.color.turquoise;
         canvas.drawPath(getTrianglePath(mP1, mP2, mP3), getPaintShape(getResources()
-                .getColor(R.color.turquoise)));
+                .getColor(color)));
 
         x = (float) ((getWidth() / 4) - mWalkingBitmap.getWidth()/1.5);
         y = (getHeight()/2) - mWalkingBitmap.getHeight()/2;
@@ -110,8 +112,9 @@ public class TriangleScreen extends View {
         mP3.set(mP1.x - getWidth() / 2, mP1.y + getHeight() / 2);
         path = getTrianglePath(mP1, mP2, mP3);
         mRegionBiking.setPath(path, mClip);
+        color = isBikingPressed ? R.color.brown_dark : R.color.brown;
         canvas.drawPath(getTrianglePath(mP1, mP2, mP3), getPaintShape(getResources()
-                .getColor(R.color.brown)));
+                .getColor(color)));
 
         x = 3 * (getWidth() / 4) - mCyclingBitmap.getWidth()/3;
         y = (getHeight()/2) - mCyclingBitmap.getHeight()/2;
@@ -123,8 +126,9 @@ public class TriangleScreen extends View {
         mP3.set(mP1.x + (getWidth() / 2), mP1.y + getHeight() / 2);
         path = getTrianglePath(mP1, mP2, mP3);
         mRegionRunning.setPath(path, mClip);
+        color = isRunningPressed ? R.color.lime_dark : R.color.lime;
         canvas.drawPath(path, getPaintShape(getResources()
-                .getColor(R.color.lime)));
+                .getColor(color)));
 
         x = (getWidth() / 2) - mRunningBitmap.getWidth()/2;
         y = (getHeight() /4) - mRunningBitmap.getHeight()/3;
@@ -150,27 +154,36 @@ public class TriangleScreen extends View {
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         int action = event.getAction();
-
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
-                y1 = event.getY();
+                if (mRegionRunning.contains(Math.round(event.getX()), Math.round(event.getY()))) {
+                    isRunningPressed = true;
+                } else if (mRegionWalking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
+                    isWalkingPressed = true;
+                } else if (mRegionBiking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
+                    isBikingPressed = true;
+                } else {
+                    isOtherPressed = true;
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 Preconditions.checkNotNull(mListener);
-                if (x1 == event.getX() && y1 == event.getY()) {
-                    if (mRegionRunning.contains(Math.round(event.getX()), Math.round(event.getY()))) {
-                        mListener.onClick(FitnessActivities.RUNNING);
-                    } else if (mRegionWalking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
-                        mListener.onClick(FitnessActivities.WALKING);
-                    } else if (mRegionBiking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
-                        mListener.onClick(FitnessActivities.BIKING);
-                    } else {
-                        mListener.onClick(FitnessActivities.OTHER);
-                    }
+                if (mRegionRunning.contains(Math.round(event.getX()), Math.round(event.getY()))) {
+                    isRunningPressed = false;
+                    mListener.onClick(FitnessActivities.RUNNING);
+                } else if (mRegionWalking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
+                    isWalkingPressed = false;
+                    mListener.onClick(FitnessActivities.WALKING);
+                } else if (mRegionBiking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
+                    isBikingPressed = false;
+                    mListener.onClick(FitnessActivities.BIKING);
+                } else {
+                    isOtherPressed = false;
+                    mListener.onClick(FitnessActivities.OTHER);
                 }
                 break;
         }
+        this.invalidate();
         return true;
     }
 }
