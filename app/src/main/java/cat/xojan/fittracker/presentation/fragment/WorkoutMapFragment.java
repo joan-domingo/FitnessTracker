@@ -203,8 +203,8 @@ public class WorkoutMapFragment extends BaseFragment implements LocationUpdateLi
     }
 
     private void showResult() {
-        getActivity().getFragmentManager().beginTransaction()
+        /*getActivity().getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new ResultFragment(), ResultFragment.TAG)
-                .commit();
+                .commit();*/
     }
 }

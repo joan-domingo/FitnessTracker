@@ -2,6 +2,8 @@ package cat.xojan.fittracker.presentation.workout;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.widget.Toolbar;
 
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
@@ -28,6 +30,14 @@ public class WorkoutActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setTitle(getIntent().getExtras().getString(FITNESS_ACTIVITY));
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("My Toolbar Tittle");
     }
 
     @Override

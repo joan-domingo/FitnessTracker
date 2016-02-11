@@ -55,7 +55,8 @@
             android:name=".presentation.home.HomeActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".presentation.workout.WorkoutActivity"/>
+        <activity android:name=".presentation.workout.WorkoutActivity"
+            android:theme="@style/NoActionBarAppTheme"/>
         <activity
             android:name=".presentation.activity.WorkoutActivity"
             android:screenOrientation="portrait" />
