@@ -2,8 +2,13 @@ package cat.xojan.fittracker.presentation.workout;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.widget.Toolbar;
+import android.support.design.widget.AppBarLayout;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
@@ -15,11 +20,12 @@ import cat.xojan.fittracker.presentation.BaseActivity;
 /**
  * Created by Joan on 10/02/2016.
  */
-public class WorkoutActivity extends BaseActivity {
+public class WorkoutActivity extends BaseActivity implements OnMapReadyCallback {
 
     public static final String FITNESS_ACTIVITY = "fitness_activity";
 
     private WorkoutComponent mComponent;
+    private GoogleMap mGoogleMap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,13 +37,26 @@ public class WorkoutActivity extends BaseActivity {
 
         setTitle(getIntent().getExtras().getString(FITNESS_ACTIVITY));
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        appBarLayout.setExpanded(false);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (verticalOffset == 0) {
+                    //expanded
+                    LatLng sydney = new LatLng(-33.867, 151.206);
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
 
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle("My Toolbar Tittle");
+                } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
+                    //collapsed
+                    LatLng sydney = new LatLng(-33.867, 151.206);
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
+                }
+            }
+        });
+
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -53,5 +72,13 @@ public class WorkoutActivity extends BaseActivity {
                 .workoutModule(new WorkoutModule())
                 .build();
         mComponent.inject(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        mGoogleMap = map;
+        LatLng sydney = new LatLng(-33.867, 151.206);
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+
     }
 }
