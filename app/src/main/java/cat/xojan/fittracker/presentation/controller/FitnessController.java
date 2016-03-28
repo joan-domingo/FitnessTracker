@@ -2,20 +2,17 @@ package cat.xojan.fittracker.presentation.controller;
 
 import android.content.Context;
 import android.location.Location;
-
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.request.SessionInsertRequest;
+import android.renderscript.Element;
 
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.sql.DataSource;
+
 import cat.xojan.fittracker.BuildConfig;
+import cat.xojan.fittracker.domain.Session;
+import cat.xojan.fittracker.domain.SessionInsertRequest;
 
 public class FitnessController {
 
@@ -45,20 +42,20 @@ public class FitnessController {
         DataPoint summaryDataPoint = DataPoint.create(mSummaryDataSource);
         summaryDataPoint.setTimeInterval(timeController.getSessionStartTime(),
                 timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
-        summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
-        summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) timeController
-                .getSessionWorkoutTime());
-        summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
+        //summaryDataPoint.getValue(Field.FIELD_NUM_SEGMENTS).setInt(mNumSegments);
+        //summaryDataPoint.getValue(Field.FIELD_DURATION).setInt((int) timeController
+        //        .getSessionWorkoutTime());
+        //summaryDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
 
         //distance
         DataPoint distanceDataPoint = DataPoint.create(mDistanceDataSource);
         distanceDataPoint.setTimeInterval(timeController.getSessionStartTime(),
                 timeController.getSessionEndTime(), TimeUnit.MILLISECONDS);
-        distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat((float) totalDistance);
-        mDistanceDataSet.add(distanceDataPoint);
+        //distanceDataPoint.getValue(Field.FIELD_DISTANCE).setFloat((float) totalDistance);
+        //mDistanceDataSet.add(distanceDataPoint);
 
         // Create a session with metadata about the activity.
-        Session session = new Session.Builder()
+        /*Session session = new Session.Builder()
                 .setName(name)
                 .setDescription(description)
                 .setIdentifier(PACKAGE_SPECIFIC_PART + ":"
@@ -66,10 +63,10 @@ public class FitnessController {
                 .setActivity(mFitnessActivity)
                 .setStartTime(timeController.getSessionStartTime(), TimeUnit.MILLISECONDS)
                 .setEndTime(timeController.getSessionEndTime(), TimeUnit.MILLISECONDS)
-                .build();
+                .build();*/
 
         // Build a session insert request
-        SessionInsertRequest.Builder insertRequestBuilder = new SessionInsertRequest.Builder();
+        /*SessionInsertRequest.Builder insertRequestBuilder = new SessionInsertRequest.Builder();
         insertRequestBuilder.setSession(session)
                 .addAggregateDataPoint(summaryDataPoint)
                 .addDataSet(mDistanceDataSet)
@@ -81,7 +78,8 @@ public class FitnessController {
                     .addDataSet(mSpeedDataSet);
         }
 
-        return insertRequestBuilder.build();
+        return insertRequestBuilder.build();*/
+        return null;
     }
 
     public void saveSegment(boolean isPauseSegment) {
@@ -100,7 +98,7 @@ public class FitnessController {
         mNumSegments++;
         DataPoint segmentDataPoint = DataPoint.create(mSegmentDataSource);
         segmentDataPoint.setTimeInterval(startTimeSegment, endTimeSegment, TimeUnit.MILLISECONDS);
-        segmentDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
+        //segmentDataPoint.getValue(Field.FIELD_ACTIVITY).setActivity(mFitnessActivity);
         mSegmentDataSet.add(segmentDataPoint);
     }
 
@@ -109,9 +107,9 @@ public class FitnessController {
         mNumSegments = 0;
 
         //speed
-        mSpeedDataSource = new DataSource.Builder()
+        /*mSpeedDataSource = new DataSource.Builder()
                 .setAppPackageName(mContext)
-                .setDataType(DataType.TYPE_SPEED)
+                .setDataType(Element.DataType.TYPE_SPEED)
                 .setType(DataSource.TYPE_RAW)
                 .build();
         mSpeedDataSet = DataSet.create(mSpeedDataSource);
@@ -145,19 +143,19 @@ public class FitnessController {
                 .setDataType(DataType.TYPE_ACTIVITY_SEGMENT)
                 .setType(DataSource.TYPE_RAW)
                 .build();
-        mSegmentDataSet = DataSet.create(mSegmentDataSource);
+        mSegmentDataSet = DataSet.create(mSegmentDataSource);*/
     }
 
     public void storeLocation(Location location) {
         long time = Calendar.getInstance().getTimeInMillis();
         //distance
         DataPoint locationDataPoint = DataPoint.create(mLocationDataSource);
-        locationDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
+        /*locationDataPoint.setTimeInterval(time, time, TimeUnit.MILLISECONDS);
         locationDataPoint.getValue(Field.FIELD_LATITUDE).setFloat((float) location.getLatitude());
         locationDataPoint.getValue(Field.FIELD_LONGITUDE).setFloat((float) location.getLongitude());
         locationDataPoint.getValue(Field.FIELD_ACCURACY).setFloat(location.getAccuracy());
         locationDataPoint.getValue(Field.FIELD_ALTITUDE).setFloat((float) location.getAltitude());
-        mLocationDataSet.add(locationDataPoint);
+        mLocationDataSet.add(locationDataPoint);*/
     }
 
     public List<DataPoint> getSegmentDataPoints() {
@@ -172,7 +170,7 @@ public class FitnessController {
         //speed
         DataPoint speedDataPoint = DataPoint.create(mSpeedDataSource);
         speedDataPoint.setTimeInterval(start, end, TimeUnit.MILLISECONDS);
-        speedDataPoint.getValue(Field.FIELD_SPEED).setFloat((float) speed);
+        //speedDataPoint.getValue(Field.FIELD_SPEED).setFloat((float) speed);
         mSpeedDataSet.add(speedDataPoint);
     }
 

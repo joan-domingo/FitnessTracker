@@ -1,6 +1,6 @@
 package cat.xojan.fittracker.presentation.listener;
 
-import com.google.android.gms.fitness.result.SessionReadResult;
+import cat.xojan.fittracker.domain.SessionReadResult;
 
 public interface UiContentUpdater {
     public void setSessionData(SessionReadResult sessionReadResult);

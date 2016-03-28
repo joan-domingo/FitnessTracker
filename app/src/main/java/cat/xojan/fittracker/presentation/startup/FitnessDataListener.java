@@ -1,8 +1,8 @@
 package cat.xojan.fittracker.presentation.startup;
 
-import com.google.android.gms.fitness.data.Session;
-
 import java.util.List;
+
+import cat.xojan.fittracker.domain.Session;
 
 /**
  * Created by Joan on 02/02/2016.

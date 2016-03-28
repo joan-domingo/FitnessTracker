@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -19,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.presentation.controller.DataPoint;
 
 public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
     private final Context mContext;
@@ -52,7 +51,7 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
         float maxSpeed = 0;
         polyList = new ArrayList<>();
 
-        for (DataPoint dp : mSpeedDataPoints) {
+        /*for (DataPoint dp : mSpeedDataPoints) {
             speed = speed + dp.getValue(Field.FIELD_SPEED).asFloat();
             if (dp.getValue(Field.FIELD_SPEED).asFloat() > maxSpeed) {
                 maxSpeed = dp.getValue(Field.FIELD_SPEED).asFloat();
@@ -60,7 +59,7 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
             if (dp.getValue(Field.FIELD_SPEED).asFloat() < minSpeed) {
                 minSpeed = dp.getValue(Field.FIELD_SPEED).asFloat();
             }
-        }
+        }*/
 
         //average speed
         float avgSpeed = speed / mSpeedDataPoints.size();
@@ -68,7 +67,7 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
             return false;
         }
 
-        for (DataPoint segment : mSegmentDataPoints) {
+        /*for (DataPoint segment : mSegmentDataPoints) {
             LatLng oldPosition = null;
             for (DataPoint dp : mLocationDataPoints) {
                 if (dp.getStartTime(TimeUnit.MILLISECONDS) >= segment.getStartTime(TimeUnit.MILLISECONDS) &&
@@ -92,20 +91,20 @@ public class SpeedMapLoader extends AsyncTask<List<DataPoint>, Void, Boolean> {
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                         .position(new LatLng(oldPosition.latitude, oldPosition.longitude)));
             }
-        }
+        }*/
 
         return true;
     }
 
     private float getCurrentSpeed(long startTime) {
         float speed = 0;
-        for (int i = mSpeedIndex; i < mSpeedDataPoints.size(); i++) {
+        /*for (int i = mSpeedIndex; i < mSpeedDataPoints.size(); i++) {
             if (mSpeedDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) >= startTime) {
                 speed = mSpeedDataPoints.get(i).getValue(Field.FIELD_SPEED).asFloat();
                 mSpeedIndex = i;
                 break;
             }
-        }
+        }*/
         return speed;
     }
 

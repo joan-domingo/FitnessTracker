@@ -2,7 +2,6 @@ package cat.xojan.fittracker.injection;
 
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.data.repository.GoogleFitSessionStorage;
 import cat.xojan.fittracker.domain.SessionDataInteractor;
 import cat.xojan.fittracker.domain.SessionRepository;
 import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
@@ -15,7 +14,7 @@ public class SessionDataModule {
     @Provides
     @Singleton
     public SessionRepository provideSessionRepository() {
-        return new GoogleFitSessionStorage();
+        return null;
     }
 
     @Provides

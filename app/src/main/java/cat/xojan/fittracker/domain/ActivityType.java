@@ -2,20 +2,16 @@ package cat.xojan.fittracker.domain;
 
 import android.content.Context;
 
-import com.google.android.gms.fitness.FitnessActivities;
-
 import cat.xojan.fittracker.R;
 
 public enum ActivityType {
-    running(FitnessActivities.RUNNING, R.string.running),
-    walking(FitnessActivities.WALKING, R.string.walking),
-    biking(FitnessActivities.BIKING, R.string.biking);
+    running(R.string.running),
+    walking(R.string.walking),
+    biking(R.string.biking);
 
-    String fitnessActivity;
     int activityString;
 
-    ActivityType(String fitnessActivity, int activityString) {
-        this.fitnessActivity = fitnessActivity;
+    ActivityType(int activityString) {
         this.activityString = activityString;
     }
 
@@ -28,31 +24,27 @@ public enum ActivityType {
         return result;
     }
 
-    public String getActivity() {
-        return fitnessActivity;
-    }
-
     public static int getDrawable(String activity) {
-        if (activity.equals(running.fitnessActivity)) {
+        /*if (activity.equals(running.fitnessActivity)) {
             return R.drawable.ic_running30;
         } else if (activity.equals(walking.fitnessActivity)) {
             return R.drawable.ic_walking3;
         } else if (activity.equals(biking.fitnessActivity)) {
             return R.drawable.ic_biking2;
-        }
+        }*/
 
         return R.drawable.ic_walking3;
     }
 
 
     public static int getRightLanguageString(String activity) {
-        if (activity.equals(running.fitnessActivity)) {
+        /*if (activity.equals(running.fitnessActivity)) {
             return running.activityString;
         } else if (activity.equals(walking.fitnessActivity)) {
             return walking.activityString;
         } else if (activity.equals(biking.fitnessActivity)) {
             return biking.activityString;
-        }
+        }*/
 
         return R.string.workout;
     }

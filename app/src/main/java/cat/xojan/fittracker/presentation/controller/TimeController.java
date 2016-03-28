@@ -21,7 +21,7 @@ public class TimeController {
 
     public void init(Chronometer chronometer) {
         mChronometer = chronometer;
-        mChronometer.setOnChronometerTickListener(cArg -> {
+        /*mChronometer.setOnChronometerTickListener(cArg -> {
             long t = SystemClock.elapsedRealtime() - cArg.getBase();
             int h = (int) (t / 3600000);
             int m = (int) (t - h * 3600000) / 60000;
@@ -30,7 +30,7 @@ public class TimeController {
             String mm = m < 10 ? "0" + m : m + "";
             String ss = s < 10 ? "0" + s : s + "";
             cArg.setText(hh + ":" + mm + ":" + ss);
-        });
+        });*/
         mChronometer.setText("00:00");
     }
 

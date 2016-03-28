@@ -2,8 +2,6 @@ package cat.xojan.fittracker.util;
 
 import android.graphics.Color;
 
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -40,7 +38,7 @@ public class SessionMapData {
         return mMarkerList;
     }
 
-    public void readMapData(List<DataPoint> mSegmentDataPoints, List<DataPoint> mLocationDataPoints) {
+    /*public void readMapData(List<DataPoint> mSegmentDataPoints, List<DataPoint> mLocationDataPoints) {
         mBoundsBuilder = new LatLngBounds.Builder();
         mPolyList = new ArrayList<>();
         mMarkerList = new ArrayList<>();
@@ -73,7 +71,7 @@ public class SessionMapData {
             }
             mPolyList.add(trackOptions);
         }
-    }
+    }*/
 
     public void setDataIntoMap(GoogleMap map, SessionMapData mapData) {
 

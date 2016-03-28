@@ -16,7 +16,7 @@ public class AttributionActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_attribution);
         Toolbar toolbar = (Toolbar) findViewById(R.id.fragment_attribution_toolbar);
         toolbar.setTitle(R.string.attributions);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        //toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
 
 

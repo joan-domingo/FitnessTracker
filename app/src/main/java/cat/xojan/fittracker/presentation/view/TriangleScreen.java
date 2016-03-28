@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.fernandocejas.frodo.core.checks.Preconditions;
-import com.google.android.gms.fitness.FitnessActivities;
 
 import cat.xojan.fittracker.R;
 
@@ -170,16 +169,16 @@ public class TriangleScreen extends View {
                 Preconditions.checkNotNull(mListener);
                 if (mRegionRunning.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isRunningPressed = false;
-                    mListener.onClick(FitnessActivities.RUNNING);
+                    //mListener.onClick(FitnessActivities.RUNNING);
                 } else if (mRegionWalking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isWalkingPressed = false;
-                    mListener.onClick(FitnessActivities.WALKING);
+                    //mListener.onClick(FitnessActivities.WALKING);
                 } else if (mRegionBiking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isBikingPressed = false;
-                    mListener.onClick(FitnessActivities.BIKING);
+                    //mListener.onClick(FitnessActivities.BIKING);
                 } else {
                     isOtherPressed = false;
-                    mListener.onClick(FitnessActivities.OTHER);
+                    //mListener.onClick(FitnessActivities.OTHER);
                 }
                 break;
         }

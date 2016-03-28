@@ -15,7 +15,7 @@ public class PreferenceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_preferences);
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_preferences_toolbar);
         toolbar.setTitle(R.string.settings);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        //toolbar.setNavigationOnClickListener(v -> finish());
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, new UserSettingFragment())

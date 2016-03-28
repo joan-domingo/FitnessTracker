@@ -9,8 +9,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
@@ -18,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.presentation.controller.DataPoint;
 import cat.xojan.fittracker.presentation.controller.DistanceController;
 import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
 
@@ -79,7 +78,7 @@ public class SessionDetailedData {
             long startTime = 0;
             String measureUnit = mUnitDataPresenter.getMeasureUnit(mContext);
 
-            for (DataPoint dp : mLocationDataPoints) {
+            /*for (DataPoint dp : mLocationDataPoints) {
                 if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
                         dp.getStartTime(TimeUnit.MILLISECONDS) <= mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS)) {
 
@@ -113,8 +112,8 @@ public class SessionDetailedData {
                     }
                     oldPosition = currentPosition;
                 }
-            }
-            //last value
+            }*/
+            /*//last value
             if (unitCounter > 1)
                 addLastDetailedRow(intervalTable, lastDistance, startTime, mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS), mContext);
 
@@ -137,7 +136,7 @@ public class SessionDetailedData {
             intervalTable.addView(valuesRow);
 
             //5 add table to view
-            intervalView.addView(intervalTable);
+            intervalView.addView(intervalTable);*/
         }
     }
 

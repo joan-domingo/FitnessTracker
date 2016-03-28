@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
@@ -83,9 +82,9 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
 
     @OnClick(R.id.result_button_save)
     public void onClickSave(Button save) {
-        SessionInsertRequest sessionInsertRequest = fitController.saveSession(mName.getText()
+        /*SessionInsertRequest sessionInsertRequest = fitController.saveSession(mName.getText()
                         .toString(), mDescription.getText().toString(), totalDistance);
-        mSessionPresenter.insertSession(sessionInsertRequest, mFitnessClient, this);
+        mSessionPresenter.insertSession(sessionInsertRequest, mFitnessClient, this);*/
         showProgressDialog(true);
     }
 
@@ -93,10 +92,10 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
     public void onClickExit(Button exit) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.save_activity)
-                .setPositiveButton(R.string.exit, (dialog, id) -> getActivity().finish())
+                /*.setPositiveButton(R.string.exit, (dialog, id) -> getActivity().finish())
                 .setNegativeButton(R.string.cancel, (dialog, id) -> {
                     // User cancelled the dialog
-                });
+                })*/;
         // Create the AlertDialog object and return it
         builder.create().show();
     }
@@ -143,12 +142,12 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
 
                     @Override
                     public void onCompleted() {
-                        Observable.just("")
+                        /*Observable.just("")
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(result -> {
                                     showDetailedData(intervalView, totalDistance);
-                                });
+                                });*/
                     }
 
                     @Override
@@ -160,8 +159,8 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
                     public void onNext(Context context) {
                         SessionDetailedData detailedData = new SessionDetailedData(context,
                                 mUnitDataPresenter);
-                        detailedData.readDetailedData(fitController.getLocationDataPoints(),
-                                fitController.getSegmentDataPoints());
+                        /*detailedData.readDetailedData(fitController.getLocationDataPoints(),
+                                fitController.getSegmentDataPoints());*/
                         intervalView = detailedData.getIntervalView();
                         totalDistance = detailedData.getTotalDistance();
                     }
@@ -193,7 +192,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
         ((TextView) view.findViewById(R.id.fragment_result_total_speed))
                 .setText(Utils.getRightSpeed(speed, getActivity()));
 
-        Observable.just(mapController.getLastPosition())
+        /*Observable.just(mapController.getLastPosition())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(pos -> {
                             String cityName = null;
@@ -207,7 +206,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            Observable.just(cityName)
+                            /*Observable.just(cityName)
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(cn -> {
                                         mName.setText(getText(R.string.workout) + " " +
@@ -223,7 +222,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
                                         setMap();
                                     });
                         }
-                );
+                );*/
     }
 
     private void showProgressDialog(boolean b) {
@@ -238,7 +237,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
         //init google map
         MapFragment mapFragment = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.result_map));
 
-        mapFragment.getMapAsync(googleMap -> {
+        /*mapFragment.getMapAsync(googleMap -> {
             map = googleMap;
             map.clear();
             map.setPadding(40, 80, 40, 0);
@@ -273,7 +272,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
                             mapData.readMapData(fitController.getSegmentDataPoints(), fitController.getLocationDataPoints());
                         }
                     });
-        });
+        });*/
     }
 
     @Override

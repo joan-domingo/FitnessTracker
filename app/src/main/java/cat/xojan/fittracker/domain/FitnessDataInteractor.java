@@ -1,8 +1,6 @@
 package cat.xojan.fittracker.domain;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.result.SessionReadResult;
 
 import java.util.Date;
 import java.util.List;
@@ -25,7 +23,8 @@ public class FitnessDataInteractor {
     /**
      * Read user's fitness data.
      */
-    public Observable<List<Session>> updateData(Date lastUpdate, GoogleApiClient googleApiClient) {
+    public Observable<List<Session>> updateData(final Date lastUpdate,
+                                                final GoogleApiClient googleApiClient) {
         return Observable.create(new Observable.OnSubscribe<List<Session>>() {
             @Override
             public void call(Subscriber<? super List<Session>> subscriber) {

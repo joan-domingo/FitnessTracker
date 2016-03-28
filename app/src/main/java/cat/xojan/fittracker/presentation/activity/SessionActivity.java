@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.presentation.activity;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,12 +12,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.result.SessionReadResult;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
@@ -29,7 +24,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.domain.Session;
+import cat.xojan.fittracker.domain.SessionReadResult;
 import cat.xojan.fittracker.presentation.BaseActivity;
+import cat.xojan.fittracker.presentation.controller.DataPoint;
+import cat.xojan.fittracker.presentation.controller.DataSet;
 import cat.xojan.fittracker.presentation.listener.UiContentUpdater;
 import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
 import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
@@ -73,7 +72,7 @@ public class SessionActivity extends BaseActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        mSession = Session.extract(intent);
+        //mSession = Session.extract(intent);
         showProgress();
     }
 
@@ -103,11 +102,17 @@ public class SessionActivity extends BaseActivity
             case R.id.action_delete:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.delete_session)
-                        .setPositiveButton(R.string.delete, (dialog, id1) -> {
-                            mSessionPresenter.deleteSession(mSession, null /*getGoogleApiClient()*/, this);
+                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //mSessionPresenter.deleteSession(mSession, null /*getGoogleApiClient()*/, this);
+                            }
                         })
-                        .setNegativeButton(R.string.cancel, (dialog, id1) -> {
-                            // User cancelled the dialog
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // User cancelled the dialog
+                            }
                         });
                 // Create the AlertDialog object and return it
                 builder.create().show();
@@ -160,7 +165,7 @@ public class SessionActivity extends BaseActivity
                     public void onNext(SessionActivity sessionActivity) {
                         SessionDetailedData detailedData = new SessionDetailedData(sessionActivity,
                                 mUnitDataPresenter);
-                        detailedData.readDetailedData(mLocationDataPoints, mSegmentDataPoints);
+                        //detailedData.readDetailedData(mLocationDataPoints, mSegmentDataPoints);
                         intervalView = detailedData.getIntervalView();
                         totalDistance = detailedData.getTotalDistance();
                     }
@@ -175,7 +180,7 @@ public class SessionActivity extends BaseActivity
         } else {
             totalDistance = 0;
             for (DataPoint dp : mDistanceDataPoints) {
-                totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
+                //totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
             }
         }
         //distance
@@ -230,7 +235,7 @@ public class SessionActivity extends BaseActivity
         mLocationDataPoints = null;
         mSegmentDataPoints = null;
 
-        for (DataSet ds : mDataSets) {
+        /*for (DataSet ds : mDataSets) {
             if (ds.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
                 mDistanceDataPoints = ds.getDataPoints();
             } else if (ds.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
@@ -242,7 +247,7 @@ public class SessionActivity extends BaseActivity
                     mActiveTime = ds.getDataPoints().get(0).getValue(Field.FIELD_DURATION).asInt();
                 }
             }
-        }
+        }*/
     }
 
     private void fillMap(boolean fillMap) {
@@ -252,7 +257,7 @@ public class SessionActivity extends BaseActivity
             if (mapFragment.getView() != null)
                 mapFragment.getView().setVisibility(View.VISIBLE);
 
-            mapFragment.getMapAsync(googleMap -> {
+            /*mapFragment.getMapAsync(googleMap -> {
                 map = googleMap;
                 map.clear();
                 map.setPadding(40, 80, 40, 0);
@@ -287,7 +292,7 @@ public class SessionActivity extends BaseActivity
                                 mapData.readMapData(mSegmentDataPoints, mLocationDataPoints);
                             }
                         });
-            });
+            });*/
         } else {
             if (mapFragment != null && mapFragment.getView() != null)
                 mapFragment.getView().setVisibility(View.GONE);

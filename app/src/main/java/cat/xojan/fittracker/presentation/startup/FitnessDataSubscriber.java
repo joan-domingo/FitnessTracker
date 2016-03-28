@@ -1,10 +1,10 @@
 package cat.xojan.fittracker.presentation.startup;
 
 import com.fernandocejas.frodo.annotation.RxLogSubscriber;
-import com.google.android.gms.fitness.data.Session;
 
 import java.util.List;
 
+import cat.xojan.fittracker.domain.Session;
 import rx.Subscriber;
 
 @RxLogSubscriber

@@ -1,10 +1,7 @@
 package cat.xojan.fittracker.injection.module;
 
-import android.app.Activity;
 import android.content.Context;
 
-import cat.xojan.fittracker.data.UserData;
-import cat.xojan.fittracker.data.repository.GoogleFitStorage;
 import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
 import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.domain.PreferencesInteractor;
@@ -23,7 +20,7 @@ public class StartupModule {
     @Provides
     @PerActivity
     FitnessDataInteractor provideFitnessDataInteractor() {
-        return new FitnessDataInteractor(new GoogleFitStorage());
+        return new FitnessDataInteractor(null/*new GoogleFitStorage()*/);
     }
 
     @Provides

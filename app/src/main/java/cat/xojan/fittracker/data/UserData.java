@@ -2,30 +2,23 @@ package cat.xojan.fittracker.data;
 
 import android.content.Context;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.fitness.data.Session;
-
 import java.util.List;
 
-import cat.xojan.fittracker.FitTrackerApp;
+import cat.xojan.fittracker.domain.Session;
 
 /**
- * Contains user's app session data. eg: google api client.
+ * Contains user's app session data.
  */
 public class UserData {
 
     private final Context mContext;
-    private List<Session> mFitnessSessions;
+    private List<Session> fitnessSessions;
 
     public UserData(Context context) {
         mContext = context;
     }
 
-    public void setFitnessSessions(List<Session> sessions) {
-        mFitnessSessions = sessions;
-    }
-
-    public List<Session> getFitnessSessions() {
-        return mFitnessSessions;
+    public void setFitnessSessions(List<Session> fitnessSessions) {
+        this.fitnessSessions = fitnessSessions;
     }
 }

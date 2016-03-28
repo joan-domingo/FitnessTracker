@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.renderscript.Element;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,14 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.fitness.SessionsApi;
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.result.SessionReadResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +23,10 @@ import butterknife.ButterKnife;
 import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.domain.ActivityType;
+import cat.xojan.fittracker.domain.Session;
+import cat.xojan.fittracker.domain.SessionReadResult;
+import cat.xojan.fittracker.presentation.controller.DataPoint;
+import cat.xojan.fittracker.presentation.controller.DataSet;
 import cat.xojan.fittracker.util.Utils;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
@@ -52,7 +49,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(v -> {
+            /*itemView.setOnClickListener(v -> {
                 Session session = mSession.get(getPosition());
 
                 // Pass your activity object to the constructor
@@ -65,7 +62,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
                 // Fire the intent
                 mContext.startActivity(intent);
-            });
+            });*/
         }
     }
     // Provide a suitable constructor (depends on the kind of dataset)
@@ -82,11 +79,11 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
 
         for (Session s : sessionReadResult.getSessions()) {
             float distance = 0;
-            for (DataSet ds : sessionReadResult.getDataSet(s, DataType.TYPE_DISTANCE_DELTA)) {
+            /*for (DataSet ds : sessionReadResult.getDataSet(s, Element.DataType.TYPE_DISTANCE_DELTA)) {
                 for (DataPoint dp : ds.getDataPoints()) {
                     distance = distance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
                 }
-            }
+            }*/
             sessionDistance.add(distance);
         }
         return sessionDistance;
@@ -118,13 +115,13 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         if (mSession.get(position).getAppPackageName().equals(BuildConfig.APPLICATION_ID)) {
             holder.mIcon.setImageResource(R.drawable.ic_launcher);
         } else {
-            try {
+            /*try {
                 PackageManager pkgManager = mContext.getPackageManager();
                 Drawable appIcon = pkgManager.getApplicationIcon(mSession.get(position).getAppPackageName());
                 holder.mIcon.setImageDrawable(appIcon);
             } catch (PackageManager.NameNotFoundException e) {
                 Log.i(TAG, "Package name not found");
-            }
+            }*/
         }
     }
 

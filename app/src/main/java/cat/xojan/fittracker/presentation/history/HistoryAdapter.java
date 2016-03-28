@@ -6,11 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.fitness.data.Session;
-
 import java.util.List;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.domain.Session;
 
 /**
  * Created by Joan on 04/02/2016.

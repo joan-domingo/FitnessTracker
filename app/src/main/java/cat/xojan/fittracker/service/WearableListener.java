@@ -8,14 +8,6 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.Session;
-import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
@@ -27,7 +19,10 @@ import com.google.android.gms.wearable.WearableListenerService;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import javax.sql.DataSource;
+
 import cat.xojan.fittracker.BuildConfig;
+import cat.xojan.fittracker.presentation.controller.DataSet;
 import cat.xojan.fittracker.presentation.home.HomeActivity;
 
 public class WearableListener extends WearableListenerService {
@@ -61,12 +56,12 @@ public class WearableListener extends WearableListenerService {
             if (event.getType() == DataEvent.TYPE_CHANGED
                     && event.getDataItem().getUri().getPath().equals("/session")) {
                 Log.d(TAG, "DataItem changed: " + event.getDataItem().getUri());
-                extractAndSaveDataItem(event.getDataItem());
+                //extractAndSaveDataItem(event.getDataItem());
             }
         }
     }
 
-    private void extractAndSaveDataItem(DataItem dataItem) {
+    /*private void extractAndSaveDataItem(DataItem dataItem) {
         GoogleApiClient fitnessClient = new GoogleApiClient.Builder(this)
                 .addApi(Fitness.SESSIONS_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
@@ -80,7 +75,8 @@ public class WearableListener extends WearableListenerService {
         DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
 
         for (int i = 0; i < dataMap.size(); i++) {
-            saveNewWorkout(dataMap.get(String.valueOf(i)), connectionResult, fitnessClient);
+            saveNewWorkout(dataMap.<DataMap>get(String.valueOf(i)),
+                    connectionResult, fitnessClient);
         }
     }
 
@@ -227,5 +223,5 @@ public class WearableListener extends WearableListenerService {
                 .setStartTime(sessionDataMap.getLong(SESSION_START_TIME), TimeUnit.MILLISECONDS)
                 .setEndTime(sessionDataMap.getLong(SESSION_END_TIME), TimeUnit.MILLISECONDS)
                 .build();
-    }
+    }*/
 }

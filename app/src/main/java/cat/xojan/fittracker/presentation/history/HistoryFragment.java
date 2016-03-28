@@ -59,7 +59,7 @@ public class HistoryFragment extends BaseFragment implements
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new HistoryAdapter(mUserData.getFitnessSessions(), this);
+        mAdapter = new HistoryAdapter(null/*mUserData.getFitnessSessions()*/, this);
         mRecyclerView.setAdapter(mAdapter);
 
         return view;
