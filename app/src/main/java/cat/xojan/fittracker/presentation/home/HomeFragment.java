@@ -11,19 +11,21 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.navigation.Navigator;
 import cat.xojan.fittracker.presentation.BaseFragment;
 import cat.xojan.fittracker.presentation.view.TriangleScreen;
 
+import static cat.xojan.fittracker.presentation.view.TriangleScreen.*;
+
 public class HomeFragment extends BaseFragment implements
-        TriangleScreen.FitnessActivityClickListener {
+        FitnessActivityClickListener {
 
     @Inject
     Navigator mNavigator;
     @Inject
     HomePresenter mPresenter;
-
     @Bind(R.id.triangle_view)
     TriangleScreen mTriangleView;
 
@@ -59,7 +61,7 @@ public class HomeFragment extends BaseFragment implements
     }
 
     @Override
-    public void onClick(String fitnessActivity) {
-        mNavigator.navigateToWorkoutActivity(getActivity(), fitnessActivity);
+    public void onClick(ActivityType activityType) {
+        mNavigator.navigateToWorkoutActivity(getActivity(), activityType);
     }
 }

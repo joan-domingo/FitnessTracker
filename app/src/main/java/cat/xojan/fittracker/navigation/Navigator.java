@@ -6,9 +6,11 @@ import android.content.Intent;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.presentation.home.HomeActivity;
 import cat.xojan.fittracker.presentation.startup.StartupActivity;
 import cat.xojan.fittracker.presentation.workout.WorkoutActivity;
+import cat.xojan.fittracker.presentation.workout.WorkoutActivityTest;
 
 /**
  * Class used to navigate through the application.
@@ -46,10 +48,10 @@ public class Navigator {
     /**
      * Goes to Workout activity.
      */
-    public void navigateToWorkoutActivity(Context context, String fitnessActivity) {
+    public void navigateToWorkoutActivity(Context context, ActivityType activityType) {
         if (context != null) {
             Intent intentToLaunch = new Intent(context, WorkoutActivity.class);
-            intentToLaunch.putExtra(WorkoutActivity.FITNESS_ACTIVITY, fitnessActivity);
+            intentToLaunch.putExtra(WorkoutActivity.FITNESS_ACTIVITY, activityType);
             context.startActivity(intentToLaunch);
         }
     }

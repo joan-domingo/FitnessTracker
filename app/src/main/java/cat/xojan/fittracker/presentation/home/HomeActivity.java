@@ -1,14 +1,8 @@
 package cat.xojan.fittracker.presentation.home;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
-import android.view.View;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,25 +14,14 @@ import cat.xojan.fittracker.injection.module.HomeModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.history.HistoryFragment;
 
-public class HomeActivity extends BaseActivity implements
-        MenuAdapter.MenuClickListener,
-        HasComponent {
+public class HomeActivity extends BaseActivity implements HasComponent {
 
-    @Bind(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-    @Bind(R.id.left_drawer)
-    RecyclerView mDrawerList;
+    @Bind(R.id.tabs)
+    TabLayout mTabLayout;
+    @Bind(R.id.viewpager)
+    ViewPager mViewPager;
 
-    private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    private String[] mMenuTitles;
     private HomeComponent mComponent;
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +31,8 @@ public class HomeActivity extends BaseActivity implements
         initializeInjector();
         ButterKnife.bind(this);
 
-        mTitle = mDrawerTitle = getTitle();
-        mMenuTitles = new String[]{"Activity", "History"};
-
-        // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new MenuAdapter(mMenuTitles, this));
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                        this,
-                        mDrawerLayout,
-                        R.string.drawer_open,
-                        R.string.drawer_close);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
-        selectItem(0);
+        setupViewPager(mViewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 
     private void initializeInjector() {
@@ -75,38 +44,16 @@ public class HomeActivity extends BaseActivity implements
         mComponent.inject(this);
     }
 
-    private void selectItem(int position) {
-        Fragment fragment = null;
-        switch (position) {
-            case 0:
-                fragment = new HomeFragment();
-                break;
-            case 1:
-                fragment = new HistoryFragment();
-                break;
-            default:
-
-                break;
-        }
-
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.content_frame, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
-
-        // update selected item title, then close the drawer
-        setTitle(mMenuTitles[position]);
-        mDrawerLayout.closeDrawer(mDrawerList);
-    }
-
-    @Override
-    public void onClick(View view, int position) {
-        selectItem(position);
-    }
-
     @Override
     public HomeComponent getComponent() {
         return mComponent;
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new HomeFragment(), "WORKOUT");
+        adapter.addFragment(new HistoryFragment(), "HISTORY");
+        adapter.addFragment(new HomeFragment(), "SETTINGS");
+        viewPager.setAdapter(adapter);
     }
 }

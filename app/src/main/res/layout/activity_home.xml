@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
+<RelativeLayout
     android:layout_height="match_parent"
-    tools:openDrawer="start" >
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
-        android:id="@+id/content_frame"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/left_drawer"
-        android:scrollbars="vertical"
-        android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@null"
-        app:layoutManager="LinearLayoutManager"
-        android:background="@color/accent"/>
-</android.support.v4.widget.DrawerLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_above="@+id/tabs"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabMode="fixed"
+        app:tabGravity="fill"
+        android:layout_alignParentBottom="true"
+        android:background="@color/common_action_bar_splitter"/>
+
+</RelativeLayout>

@@ -5,9 +5,10 @@ import android.content.Context;
 import cat.xojan.fittracker.R;
 
 public enum ActivityType {
-    running(R.string.running),
-    walking(R.string.walking),
-    biking(R.string.biking);
+    RUNNING(R.string.running),
+    WALKING(R.string.walking),
+    BIKING(R.string.biking),
+    OTHER(R.string.other_activity);
 
     int activityString;
 
@@ -25,11 +26,11 @@ public enum ActivityType {
     }
 
     public static int getDrawable(String activity) {
-        /*if (activity.equals(running.fitnessActivity)) {
+        /*if (activity.equals(RUNNING.fitnessActivity)) {
             return R.drawable.ic_running30;
-        } else if (activity.equals(walking.fitnessActivity)) {
+        } else if (activity.equals(WALKING.fitnessActivity)) {
             return R.drawable.ic_walking3;
-        } else if (activity.equals(biking.fitnessActivity)) {
+        } else if (activity.equals(BIKING.fitnessActivity)) {
             return R.drawable.ic_biking2;
         }*/
 
@@ -38,12 +39,12 @@ public enum ActivityType {
 
 
     public static int getRightLanguageString(String activity) {
-        /*if (activity.equals(running.fitnessActivity)) {
-            return running.activityString;
-        } else if (activity.equals(walking.fitnessActivity)) {
-            return walking.activityString;
-        } else if (activity.equals(biking.fitnessActivity)) {
-            return biking.activityString;
+        /*if (activity.equals(RUNNING.fitnessActivity)) {
+            return RUNNING.activityString;
+        } else if (activity.equals(WALKING.fitnessActivity)) {
+            return WALKING.activityString;
+        } else if (activity.equals(BIKING.fitnessActivity)) {
+            return BIKING.activityString;
         }*/
 
         return R.string.workout;

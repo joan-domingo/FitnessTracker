@@ -72,7 +72,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mSessions.size();
+        //return mSessions.size();
+        return 0;
     }
 
     /*package*/ interface RecyclerViewClickListener {

@@ -9,16 +9,9 @@ import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.injection.WorkoutModule;
-import cat.xojan.fittracker.injection.component.AppComponent;
-import cat.xojan.fittracker.injection.component.BaseActivityComponent;
-import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.controller.FitnessController;
 import cat.xojan.fittracker.presentation.fragment.WorkoutMapFragment;
@@ -49,7 +42,7 @@ public class WorkoutActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout);
+        setContentView(R.layout.activity_workout_test);
 
         mIsFirstLocation = true;
         setUpLocationListener();

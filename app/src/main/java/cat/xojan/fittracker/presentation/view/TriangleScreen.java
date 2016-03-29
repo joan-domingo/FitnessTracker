@@ -17,11 +17,12 @@ import android.view.View;
 import com.fernandocejas.frodo.core.checks.Preconditions;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.domain.ActivityType;
 
 public class TriangleScreen extends View {
 
     public interface FitnessActivityClickListener {
-        void onClick(String running);
+        void onClick(ActivityType activityType);
     }
 
     private Region mRegionWalking;
@@ -169,16 +170,16 @@ public class TriangleScreen extends View {
                 Preconditions.checkNotNull(mListener);
                 if (mRegionRunning.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isRunningPressed = false;
-                    //mListener.onClick(FitnessActivities.RUNNING);
+                    mListener.onClick(ActivityType.RUNNING);
                 } else if (mRegionWalking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isWalkingPressed = false;
-                    //mListener.onClick(FitnessActivities.WALKING);
+                    mListener.onClick(ActivityType.WALKING);
                 } else if (mRegionBiking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isBikingPressed = false;
-                    //mListener.onClick(FitnessActivities.BIKING);
+                    mListener.onClick(ActivityType.BIKING);
                 } else {
                     isOtherPressed = false;
-                    //mListener.onClick(FitnessActivities.OTHER);
+                    mListener.onClick(ActivityType.OTHER);
                 }
                 break;
         }

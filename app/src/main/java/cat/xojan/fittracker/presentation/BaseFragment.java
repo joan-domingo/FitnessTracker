@@ -1,6 +1,6 @@
 package cat.xojan.fittracker.presentation;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 import com.squareup.leakcanary.RefWatcher;
 
