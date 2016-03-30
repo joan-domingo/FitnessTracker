@@ -89,7 +89,7 @@ public class WorkoutActivity extends BaseActivity implements
                 .setInterval(UPDATE_INTERVAL_MS)
                 .setFastestInterval(FASTEST_INTERVAL_MS);
 
-        LocationServices.FusedLocationApi
+        /*LocationServices.FusedLocationApi
                 .requestLocationUpdates(mGoogleApiClient, locationRequest, this)
                 .setResultCallback(status -> {
                     if (status.getStatus().isSuccess()) {
@@ -102,7 +102,7 @@ public class WorkoutActivity extends BaseActivity implements
                                         + ", message: "
                                         + status.getStatusMessage());
                     }
-                });
+                });*/
     }
 
     @Override
@@ -183,6 +183,6 @@ public class WorkoutActivity extends BaseActivity implements
 
     @Override
     protected List<Object> getModules() {
-        return Collections.singletonList(new WorkoutModule(this));
+        return null; //Collections.singletonList(new WorkoutModule(this));
     }
 }

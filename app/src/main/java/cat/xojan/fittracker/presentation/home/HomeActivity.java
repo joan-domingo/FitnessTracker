@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
@@ -13,6 +15,7 @@ import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.injection.module.HomeModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.history.HistoryFragment;
+import cat.xojan.fittracker.util.LocationFetcher;
 
 public class HomeActivity extends BaseActivity implements HasComponent {
 
@@ -20,6 +23,9 @@ public class HomeActivity extends BaseActivity implements HasComponent {
     TabLayout mTabLayout;
     @Bind(R.id.viewpager)
     ViewPager mViewPager;
+
+    @Inject
+    LocationFetcher mLocationFetcher;
 
     private HomeComponent mComponent;
 
@@ -55,5 +61,17 @@ public class HomeActivity extends BaseActivity implements HasComponent {
         adapter.addFragment(new HistoryFragment(), "HISTORY");
         adapter.addFragment(new HomeFragment(), "SETTINGS");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLocationFetcher.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mLocationFetcher.stop();
     }
 }
