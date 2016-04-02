@@ -40,6 +40,7 @@ public class LocationFetcher {
         } else {
             mLocationManager.removeUpdates(mLocationListener);
         }
+        mListener = null;
     }
 
     public void setLocationListener(LocationChangedListener listener) {

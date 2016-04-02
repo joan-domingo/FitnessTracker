@@ -5,6 +5,7 @@ import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.injection.module.WorkoutModule;
 import cat.xojan.fittracker.presentation.workout.WorkoutActivity;
 import cat.xojan.fittracker.presentation.workout.WorkoutActivityTest;
+import cat.xojan.fittracker.presentation.workout.WorkoutFragment;
 import dagger.Component;
 
 @PerActivity
@@ -17,5 +18,5 @@ import dagger.Component;
 )
 public interface WorkoutComponent extends BaseActivityComponent {
     void inject(WorkoutActivity workoutActivity);
-    //void inject(HomeFragment homeFragment);
+    void inject(WorkoutFragment workoutFragment);
 }

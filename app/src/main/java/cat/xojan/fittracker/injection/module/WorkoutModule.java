@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.injection.module;
 
 import cat.xojan.fittracker.injection.PerActivity;
+import cat.xojan.fittracker.presentation.workout.MapPresenter;
 import cat.xojan.fittracker.presentation.workout.WorkoutPresenter;
 import dagger.Module;
 import dagger.Provides;
@@ -16,5 +17,11 @@ public class WorkoutModule {
     @PerActivity
     WorkoutPresenter provideStartUpPresenter() {
         return new WorkoutPresenter();
+    }
+
+    @Provides
+    @PerActivity
+    MapPresenter provideMapPresenter() {
+        return new MapPresenter();
     }
 }

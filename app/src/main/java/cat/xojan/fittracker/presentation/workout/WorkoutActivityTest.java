@@ -17,19 +17,15 @@ import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.injection.module.WorkoutModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 
-public class WorkoutActivityTest extends BaseActivity implements OnMapReadyCallback {
+public class WorkoutActivityTest extends BaseActivity {
 
     public static final String FITNESS_ACTIVITY = "fitness_activity";
-
-    private WorkoutComponent mComponent;
-    private GoogleMap mGoogleMap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_test);
 
-        initializeInjector();
         ButterKnife.bind(this);
 
         setTitle(getIntent().getExtras().getString(FITNESS_ACTIVITY));
@@ -42,40 +38,14 @@ public class WorkoutActivityTest extends BaseActivity implements OnMapReadyCallb
                 if (verticalOffset == 0) {
                     //expanded
                     LatLng sydney = new LatLng(-33.867, 151.206);
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
+                    //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
 
                 } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
                     //collapsed
                     LatLng sydney = new LatLng(-33.867, 151.206);
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
+                    //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
                 }
             }
         });
-
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
-    }
-
-    private void initializeInjector() {
-        mComponent = DaggerWorkoutComponent.builder()
-                .appComponent(getApplicationComponent())
-                .baseActivityModule(getActivityModule())
-                .workoutModule(new WorkoutModule())
-                .build();
-        mComponent.inject(this);
-    }
-
-    @Override
-    public void onMapReady(GoogleMap map) {
-        mGoogleMap = map;
-        LatLng sydney = new LatLng(-33.867, 151.206);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
     }
 }

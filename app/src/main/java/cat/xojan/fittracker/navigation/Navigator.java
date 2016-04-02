@@ -10,7 +10,6 @@ import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.presentation.home.HomeActivity;
 import cat.xojan.fittracker.presentation.startup.StartupActivity;
 import cat.xojan.fittracker.presentation.workout.WorkoutActivity;
-import cat.xojan.fittracker.presentation.workout.WorkoutActivityTest;
 
 /**
  * Class used to navigate through the application.
