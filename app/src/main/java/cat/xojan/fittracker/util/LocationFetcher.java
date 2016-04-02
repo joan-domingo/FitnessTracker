@@ -5,15 +5,18 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-/**
- * Created by Joan on 30/03/2016.
- */
+
 public class LocationFetcher {
+
+    public interface LocationChangedListener {
+        void onLocationChanged(Location location);
+    }
 
     private final LocationManager mLocationManager;
     private LocationListener mLocationListener;
     private Location mLocation;
     private FirstLocationListener mFirstLocationListener;
+    private LocationChangedListener mListener;
 
     public LocationFetcher(LocationManager locationManager) {
         mLocationManager = locationManager;
@@ -39,6 +42,10 @@ public class LocationFetcher {
         }
     }
 
+    public void setLocationListener(LocationChangedListener listener) {
+        mListener = listener;
+    }
+
     @Nullable
     public Location getLocation() {
         return mLocation;
@@ -51,7 +58,7 @@ public class LocationFetcher {
 
         @Override
         public void onLocationChanged(Location location) {
-            mLocation = location;
+            locationChanged(location);
             listenToLocationUpdates();
         }
 
@@ -88,7 +95,7 @@ public class LocationFetcher {
 
         @Override
         public void onLocationChanged(Location location) {
-            mLocation = location;
+            locationChanged(location);
         }
 
         @Override
@@ -104,6 +111,13 @@ public class LocationFetcher {
         @Override
         public void onProviderDisabled(String provider) {
 
+        }
+    }
+
+    private void locationChanged(Location location) {
+        mLocation = location;
+        if (mListener != null) {
+            mListener.onLocationChanged(location);
         }
     }
 }

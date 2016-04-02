@@ -3,12 +3,14 @@ package cat.xojan.fittracker;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 import cat.xojan.fittracker.injection.component.AppComponent;
 import cat.xojan.fittracker.injection.component.DaggerAppComponent;
 import cat.xojan.fittracker.injection.module.AppModule;
+import io.fabric.sdk.android.Fabric;
 
 public class FitTrackerApp extends Application {
 
@@ -18,6 +20,7 @@ public class FitTrackerApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         initInjector();
         initLeakDetection();
     }

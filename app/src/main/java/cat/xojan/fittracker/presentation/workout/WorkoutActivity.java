@@ -9,7 +9,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
 
@@ -21,13 +20,20 @@ import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.injection.module.WorkoutModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.util.LocationFetcher;
+import cat.xojan.fittracker.util.LocationUtils;
 
 
-public class WorkoutActivity extends BaseActivity implements OnMapReadyCallback {
+public class WorkoutActivity extends BaseActivity implements
+        OnMapReadyCallback,
+        LocationFetcher.LocationChangedListener {
 
     public static final String FITNESS_ACTIVITY = "fitness_activity";
 
+    @Inject
+    LocationFetcher mLocationFetcher;
+
     private WorkoutComponent mComponent;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,11 +44,13 @@ public class WorkoutActivity extends BaseActivity implements OnMapReadyCallback 
         ButterKnife.bind(this);
 
         ActivityType activityType = (ActivityType) getIntent().getExtras().get(FITNESS_ACTIVITY);
-        setTitle(activityType.name().toString());
+        setTitle(activityType.name());
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mLocationFetcher.setLocationListener(this);
     }
 
     @Override
@@ -62,14 +70,23 @@ public class WorkoutActivity extends BaseActivity implements OnMapReadyCallback 
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(-33.867, 151.206);
+        mMap = map;
+        Location location = mLocationFetcher.getLocation();
+        if (location != null) {
+            goToLocation(location);
+        } else {
+            mLocationFetcher.start();
+        }
+    }
 
-        map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+    private void goToLocation(Location location) {
+        LatLng latLng = LocationUtils.locationToLatLng(location);
+        mMap.setMyLocationEnabled(true);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+    }
 
-        map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
-                .position(sydney));
+    @Override
+    public void onLocationChanged(Location location) {
+        goToLocation(location);
     }
 }
