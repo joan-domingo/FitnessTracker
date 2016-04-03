@@ -3,17 +3,46 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="250dp">
+    android:layout_height="match_parent">
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start"/>
+        android:orientation="horizontal">
 
-    <Button
+        <Chronometer
+            android:id="@+id/workout_chronometer"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="36sp"
+            android:fontFamily="sans-serif"/>
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="36sp"
+            android:text="@string/distance"
+            android:fontFamily="sans-serif"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/button_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="STOP"/>
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/main_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/play_button_background" />
+
+    </RelativeLayout>
 
 </LinearLayout>

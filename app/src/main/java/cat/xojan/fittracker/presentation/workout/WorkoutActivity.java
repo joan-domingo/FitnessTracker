@@ -51,6 +51,7 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         ActivityType activityType = (ActivityType) getIntent().getExtras().get(FITNESS_ACTIVITY);
         setTitle(activityType.name().toLowerCase());
 
+        addFragment(R.id.fragment_container, new WorkoutFragment());
         ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
         mLocationFetcher.setLocationListener(this);
 
@@ -100,7 +101,6 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     }
 
     private void startWorkout() {
-        //addFragment(R.id.fragment_container, new WorkoutFragment());
         mAppBarLayout.setExpanded(false, true);
     }
 }

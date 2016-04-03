@@ -1,55 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/coordinator_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/coordinator_layout"/>
-
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/collapsing_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    app:layout_collapseMode="pin"/>
-
-                <fragment
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/map"
-                    tools:context=".presentation.workout.WorkoutActivity"
-                    android:name="com.google.android.gms.maps.MapFragment"
-                    app:layout_collapseMode="parallax"/>
-
-            </android.support.design.widget.CollapsingToolbarLayout>
-
-        </android.support.design.widget.AppBarLayout>
-
-    </android.support.design.widget.CoordinatorLayout>
-
-</RelativeLayout-->
-
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -59,7 +8,8 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="120dp">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -89,22 +39,11 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Start"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="stop"/>
-
-        </LinearLayout>
+            android:layout_below="@+id/coordinator_layout"/>
 
     </android.support.v4.widget.NestedScrollView>
 
