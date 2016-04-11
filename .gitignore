@@ -71,3 +71,4 @@ build/intermediates/gradle_project_sync_data.bin
 build/intermediates/model_data.bin
 local.properties
 wear/wear.iml
+.idea/
