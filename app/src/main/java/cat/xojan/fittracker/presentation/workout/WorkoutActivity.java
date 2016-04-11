@@ -101,6 +101,6 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     }
 
     private void startWorkout() {
-        mAppBarLayout.setExpanded(false, true);
+        //mAppBarLayout.setExpanded(false, true);
     }
 }
