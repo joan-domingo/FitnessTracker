@@ -11,6 +11,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.domain.ActivityType;
@@ -33,12 +34,11 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     @Inject
     LocationFetcher mLocationFetcher;
     @Inject
-    WorkoutPresenter mWorkoutPresenter;
-    @Inject
     MapPresenter mMapPresenter;
+    @Bind(R.id.appbar)
+    AppBarLayout mAppBar;
 
     private WorkoutComponent mComponent;
-    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,10 +52,11 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         setTitle(activityType.name().toLowerCase());
 
         addFragment(R.id.fragment_container, new WorkoutFragment());
-        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+        MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map));
+        mapFragment.getMapAsync(this);
         mLocationFetcher.setLocationListener(this);
 
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        mAppBar.setExpanded(true);
     }
 
     @Override
@@ -101,6 +102,6 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     }
 
     private void startWorkout() {
-        //mAppBarLayout.setExpanded(false, true);
+        mAppBar.setExpanded(false, true);
     }
 }

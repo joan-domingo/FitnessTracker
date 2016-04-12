@@ -15,7 +15,7 @@ public class WorkoutModule {
 
     @Provides
     @PerActivity
-    WorkoutPresenter provideStartUpPresenter() {
+    WorkoutPresenter provideWorkoutPresenter() {
         return new WorkoutPresenter();
     }
 

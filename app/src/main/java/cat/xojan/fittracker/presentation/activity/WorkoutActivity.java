@@ -42,7 +42,7 @@ public class WorkoutActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout_test);
+        //setContentView(R.layout.activity_workout_test);
 
         mIsFirstLocation = true;
         setUpLocationListener();

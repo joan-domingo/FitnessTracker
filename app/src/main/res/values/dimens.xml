@@ -6,5 +6,6 @@
     <dimen name="fab_size">64dp</dimen>
     <dimen name="button_elevation">2dp</dimen>
     <dimen name="button_press_elevation">4dp</dimen>
+    <dimen name="workout_text_size">36sp</dimen>
 
 </resources>

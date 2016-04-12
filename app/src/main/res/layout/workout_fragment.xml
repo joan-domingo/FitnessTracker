@@ -1,48 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="100dp"
+    android:orientation="horizontal">
 
-    <LinearLayout
+    <Chronometer
+        android:id="@+id/chronometer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_toLeftOf="@+id/action_button"
+        android:layout_toStartOf="@+id/action_button"
+        android:gravity="center"
+        android:textSize="@dimen/workout_text_size"
+        android:layout_centerVertical="true"
+        android:fontFamily="sans-serif"/>
 
-        <Chronometer
-            android:id="@+id/workout_chronometer"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="36sp"
-            android:fontFamily="sans-serif"/>
+    <ImageButton
+        android:id="@+id/action_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/play_button_background"
+        android:src="@android:drawable/ic_media_play"/>
 
-        <TextView
-            android:id="@+id/distance"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="36sp"
-            android:text="@string/distance"
-            android:fontFamily="sans-serif"/>
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/button_container"
+    <TextView
+        android:id="@+id/distance"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_toEndOf="@+id/action_button"
+        android:layout_toRightOf="@+id/action_button"
+        android:textSize="@dimen/workout_text_size"
+        android:text="0,00km"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="sans-serif"/>
 
-        <Button
-            android:id="@+id/main_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/play_button_background" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>
