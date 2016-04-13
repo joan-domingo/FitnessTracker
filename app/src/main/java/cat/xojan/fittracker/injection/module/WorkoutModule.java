@@ -3,6 +3,7 @@ package cat.xojan.fittracker.injection.module;
 import cat.xojan.fittracker.injection.PerActivity;
 import cat.xojan.fittracker.presentation.workout.MapPresenter;
 import cat.xojan.fittracker.presentation.workout.WorkoutPresenter;
+import cat.xojan.fittracker.util.LocationFetcher;
 import dagger.Module;
 import dagger.Provides;
 
@@ -21,7 +22,7 @@ public class WorkoutModule {
 
     @Provides
     @PerActivity
-    MapPresenter provideMapPresenter() {
-        return new MapPresenter();
+    MapPresenter provideMapPresenter(LocationFetcher locationFetcher) {
+        return new MapPresenter(locationFetcher);
     }
 }

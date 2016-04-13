@@ -1,41 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:orientation="horizontal">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <Chronometer
-        android:id="@+id/chronometer"
+    <LinearLayout
+        android:id="@+id/workout_main_data"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal">
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="@dimen/workout_text_size"
+            android:fontFamily="sans-serif"/>
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="@dimen/workout_text_size"
+            android:text="0.00km"
+            android:fontFamily="sans-serif"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/searching_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/action_button"
-        android:layout_toStartOf="@+id/action_button"
-        android:gravity="center"
-        android:textSize="@dimen/workout_text_size"
-        android:layout_centerVertical="true"
-        android:fontFamily="sans-serif"/>
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <ImageButton
-        android:id="@+id/action_button"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/play_button_background"
-        android:src="@android:drawable/ic_media_play"/>
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/distance"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_toEndOf="@+id/action_button"
-        android:layout_toRightOf="@+id/action_button"
-        android:textSize="@dimen/workout_text_size"
-        android:text="0,00km"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:fontFamily="sans-serif"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/waiting_gps"/>
 
-</RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
@@ -23,12 +22,12 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     @Inject
     WorkoutPresenter mPresenter;
 
-    @OnClick(R.id.action_button)
-    public void actionButtonClicked() {
-        mPresenter.actionButtonClicked();
-    }
     @Bind(R.id.chronometer)
     Chronometer mChrono;
+    @Bind(R.id.workout_main_data)
+    View mMainDataView;
+    @Bind(R.id.searching_location)
+    View mSearchLocationView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +42,11 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
         View view = inflater.inflate(R.layout.workout_fragment, container, false);
         ButterKnife.bind(this, view);
         mPresenter.setListener(this);
+
         mChrono.setText("00:00:00");
+        mMainDataView.setVisibility(View.INVISIBLE);
+        mSearchLocationView.setVisibility(View.VISIBLE);
+
         return view;
     }
 
@@ -54,14 +57,17 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     }
 
     @Override
-    public void startChrono() {
+    public void startWorkout() {
         mChrono.setOnChronometerTickListener(new ChronometerTickListener());
         mChrono.setBase(SystemClock.elapsedRealtime());
         mChrono.start();
+
+        mMainDataView.setVisibility(View.VISIBLE);
+        mSearchLocationView.setVisibility(View.GONE);
     }
 
     @Override
-    public void stopChrono() {
+    public void stopWorkout() {
         mChrono.stop();
     }
 

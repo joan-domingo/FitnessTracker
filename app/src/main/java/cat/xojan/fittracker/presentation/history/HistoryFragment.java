@@ -68,6 +68,7 @@ public class HistoryFragment extends BaseFragment implements
     @Override public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        mAdapter.destroy();
     }
 
     @Override

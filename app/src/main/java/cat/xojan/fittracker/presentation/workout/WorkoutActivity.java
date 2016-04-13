@@ -1,9 +1,10 @@
 package cat.xojan.fittracker.presentation.workout;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -20,23 +21,20 @@ import cat.xojan.fittracker.injection.component.DaggerWorkoutComponent;
 import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.injection.module.WorkoutModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
-import cat.xojan.fittracker.util.LocationFetcher;
-
-import static cat.xojan.fittracker.util.LocationFetcher.LocationChangedListener;
 
 
 public class WorkoutActivity extends BaseActivity implements HasComponent,
         OnMapReadyCallback,
-        LocationChangedListener {
+        MapPresenter.Listener{
 
     public static final String FITNESS_ACTIVITY = "fitness_activity";
 
     @Inject
-    LocationFetcher mLocationFetcher;
-    @Inject
     MapPresenter mMapPresenter;
     @Bind(R.id.appbar)
     AppBarLayout mAppBar;
+    @Bind(R.id.fab)
+    FloatingActionButton mButton;
 
     private WorkoutComponent mComponent;
 
@@ -54,16 +52,18 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         addFragment(R.id.fragment_container, new WorkoutFragment());
         MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map));
         mapFragment.getMapAsync(this);
-        mLocationFetcher.setLocationListener(this);
 
-        mAppBar.setExpanded(true);
+        mAppBar.setExpanded(false);
+
+        mButton.setVisibility(View.GONE);
+        mButton.setOnClickListener(new StopWorkoutClickListener());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-        mLocationFetcher.stop();
+        mMapPresenter.destroy();
     }
 
     private void initializeInjector() {
@@ -77,18 +77,7 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
 
     @Override
     public void onMapReady(GoogleMap map) {
-        mMapPresenter.setUp(map);
-        Location location = mLocationFetcher.getLocation();
-        if (location != null) {
-            goToLocation(location);
-        } else {
-            mLocationFetcher.start();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        goToLocation(location);
+        mMapPresenter.init(map, this);
     }
 
     @Override
@@ -96,12 +85,18 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         return mComponent;
     }
 
-    private void goToLocation(Location location) {
-        mMapPresenter.goToLocation(location);
-        startWorkout();
+    @Override
+    public void startWorkout() {
+        mAppBar.setExpanded(true);
+        ((WorkoutFragment) getCurrentFragment()).startWorkout();
+        mButton.setVisibility(View.VISIBLE);
     }
 
-    private void startWorkout() {
-        mAppBar.setExpanded(false, true);
+    private class StopWorkoutClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            ((WorkoutFragment) getCurrentFragment()).stopWorkout();
+            mAppBar.setExpanded(false);
+        }
     }
 }

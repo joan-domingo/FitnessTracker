@@ -1,33 +1,64 @@
 package cat.xojan.fittracker.presentation.workout;
 
+import android.graphics.Color;
 import android.location.Location;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import javax.inject.Inject;
+
+import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.presentation.BasePresenter;
+import cat.xojan.fittracker.util.LocationFetcher;
 import cat.xojan.fittracker.util.LocationUtils;
 
 /**
  * Map presenter.
  */
-public class MapPresenter implements BasePresenter {
+public class MapPresenter implements BasePresenter, LocationFetcher.LocationChangedListener {
+
+    private Listener mListener;
+    private LatLngBounds.Builder mBoundsBuilder;
+
+    interface Listener {
+        void startWorkout();
+    }
 
     public static final float MAP_ZOOM = 13;
 
+    private final LocationFetcher mLocationFetcher;
     private GoogleMap mMap;
     private Location mLocation;
 
-    public void setUp(GoogleMap map) {
+    @Inject
+    public MapPresenter(LocationFetcher locationFetcher) {
+        mLocationFetcher = locationFetcher;
+        mLocationFetcher.setLocationListener(this);
+    }
+
+    public void init(GoogleMap map, Listener listener) {
         mMap = map;
+        mListener = listener;
+        mLocationFetcher.start();
+
+        initMap();
     }
 
     public void goToLocation(Location location) {
         mLocation = location;
         LatLng latLng = LocationUtils.locationToLatLng(location);
-        mMap.setMyLocationEnabled(true);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM));
+        mBoundsBuilder.include(latLng);
+        if (mBoundsBuilder != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 0));
+        } else {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM));
+        }
     }
 
     @Override
@@ -42,10 +73,50 @@ public class MapPresenter implements BasePresenter {
 
     @Override
     public void destroy() {
-
+        mLocationFetcher.stop();
+        mLocationFetcher.removeListener();
+        mListener = null;
     }
 
-    public void goToLastLocation() {
-        goToLocation(mLocation);
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng currentPosition = LocationUtils.locationToLatLng(location);
+        if (mLocation == null) {
+            mListener.startWorkout();
+            mBoundsBuilder = new LatLngBounds.Builder();
+            addFirstMarker(currentPosition);
+        } else {
+            LatLng oldPosition = LocationUtils.locationToLatLng(mLocation);
+            //create polyline with last location
+            addMapPolyline(new PolylineOptions()
+                    .geodesic(true)
+                    .add(oldPosition)
+                    .add(currentPosition)
+                    .width(6)
+                    .color(Color.BLACK));
+        }
+        goToLocation(location);
+    }
+
+    private void addFirstMarker(LatLng position) {
+        addMapMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                .position(position));
+    }
+
+    private void addMapMarker(MarkerOptions markerOptions) {
+        mMap.addMarker(markerOptions);
+    }
+
+    private void initMap() {
+        mMap.clear();
+        mMap.setPadding(40, 40, 40, 40);
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+    }
+
+    private void addMapPolyline(PolylineOptions polylineOptions) {
+        mMap.addPolyline(polylineOptions);
     }
 }

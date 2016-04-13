@@ -19,6 +19,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     private static RecyclerViewClickListener mClickListener;
     private final List<Session> mSessions;
 
+    public void destroy() {
+        mClickListener = null;
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder

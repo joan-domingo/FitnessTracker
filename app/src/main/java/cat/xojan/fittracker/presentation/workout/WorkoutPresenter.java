@@ -14,8 +14,8 @@ public class WorkoutPresenter implements BasePresenter {
     private long mEndTime;
 
     interface Listener {
-        void startChrono();
-        void stopChrono();
+        void startWorkout();
+        void stopWorkout();
     }
 
     public void setListener(Listener listener) {
@@ -37,22 +37,14 @@ public class WorkoutPresenter implements BasePresenter {
         mListener = null;
     }
 
-    public void actionButtonClicked() {
-        if (mStartTime == 0) {
-            startWorkout();
-        } else {
-            stopWorkout();
-        }
-    }
-
     private void stopWorkout() {
         mEndTime = getCurrentTime();
-        mListener.stopChrono();
+        mListener.stopWorkout();
     }
 
     private void startWorkout() {
         mStartTime = getCurrentTime();
-        mListener.startChrono();
+        mListener.startWorkout();
     }
 
     private long getCurrentTime() {

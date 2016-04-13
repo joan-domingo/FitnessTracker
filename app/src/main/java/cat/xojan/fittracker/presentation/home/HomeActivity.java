@@ -24,9 +24,6 @@ public class HomeActivity extends BaseActivity implements HasComponent {
     @Bind(R.id.viewpager)
     ViewPager mViewPager;
 
-    @Inject
-    LocationFetcher mLocationFetcher;
-
     private HomeComponent mComponent;
 
     @Override
@@ -66,12 +63,10 @@ public class HomeActivity extends BaseActivity implements HasComponent {
     @Override
     protected void onResume() {
         super.onResume();
-        mLocationFetcher.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mLocationFetcher.stop();
     }
 }
