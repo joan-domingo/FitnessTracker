@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.presentation.workout;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -90,6 +91,11 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         mAppBar.setExpanded(true);
         ((WorkoutFragment) getCurrentFragment()).startWorkout();
         mButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onDistanceChanged(String distance) {
+        ((WorkoutFragment) getCurrentFragment()).updateDistance(distance);
     }
 
     private class StopWorkoutClickListener implements View.OnClickListener {

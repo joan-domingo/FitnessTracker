@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.presentation.workout;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Chronometer;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -24,6 +26,8 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
 
     @Bind(R.id.chronometer)
     Chronometer mChrono;
+    @Bind(R.id.distance)
+    TextView mDistance;
     @Bind(R.id.workout_main_data)
     View mMainDataView;
     @Bind(R.id.searching_location)
@@ -69,6 +73,10 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     @Override
     public void stopWorkout() {
         mChrono.stop();
+    }
+
+    public void updateDistance(String distance) {
+        mDistance.setText(distance);
     }
 
     private class ChronometerTickListener implements Chronometer.OnChronometerTickListener {

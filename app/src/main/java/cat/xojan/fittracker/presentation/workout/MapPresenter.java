@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.SphericalUtil;
 
 import javax.inject.Inject;
 
@@ -25,9 +26,11 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
 
     private Listener mListener;
     private LatLngBounds.Builder mBoundsBuilder;
+    private float mWorkoutDistance;
 
     interface Listener {
         void startWorkout();
+        void onDistanceChanged(String distance);
     }
 
     public static final float MAP_ZOOM = 13;
@@ -94,6 +97,10 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
                     .add(currentPosition)
                     .width(6)
                     .color(Color.BLACK));
+
+            mWorkoutDistance = mWorkoutDistance + (float) SphericalUtil
+                    .computeDistanceBetween(oldPosition, currentPosition); //return meters
+            mListener.onDistanceChanged(String.format("%.2f", mWorkoutDistance / 1000));
         }
         goToLocation(location);
     }
