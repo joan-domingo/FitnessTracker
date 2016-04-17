@@ -29,7 +29,7 @@ public class HistoryPresenter implements BasePresenter {
 
     @Override
     public void resume() {
-
+        loadWorkouts();
     }
 
     @Override
@@ -40,6 +40,9 @@ public class HistoryPresenter implements BasePresenter {
     @Override
     public void destroy() {
         mListener = null;
+        if (mSubscription != null) {
+            mSubscription.unsubscribe();
+        }
     }
 
     public void loadWorkouts() {

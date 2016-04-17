@@ -61,9 +61,13 @@ public class HistoryFragment extends BaseFragment implements
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mPresenter.loadWorkouts();
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.resume();
     }
 
     @Override public void onDestroyView() {

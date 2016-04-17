@@ -59,7 +59,9 @@ public class WorkoutPresenter implements BasePresenter {
     @Override
     public void destroy() {
         mListener = null;
-        mSubscription.unsubscribe();
+        if (mSubscription != null) {
+            mSubscription.unsubscribe();
+        }
     }
 
     public void saveWorkout(Workout workout) {
