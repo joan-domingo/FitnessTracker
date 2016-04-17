@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.data.UserData;
+import cat.xojan.fittracker.data.entity.UserData;
 import cat.xojan.fittracker.injection.component.DaggerStartupComponent;
 import cat.xojan.fittracker.injection.component.StartupComponent;
 import cat.xojan.fittracker.injection.module.StartupModule;

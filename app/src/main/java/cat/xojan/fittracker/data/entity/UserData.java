@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.data;
+package cat.xojan.fittracker.data.entity;
 
 import android.content.Context;
 

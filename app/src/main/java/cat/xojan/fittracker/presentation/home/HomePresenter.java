@@ -1,6 +1,6 @@
 package cat.xojan.fittracker.presentation.home;
 
-import cat.xojan.fittracker.data.UserData;
+import cat.xojan.fittracker.data.entity.UserData;
 import cat.xojan.fittracker.presentation.BasePresenter;
 
 /**
