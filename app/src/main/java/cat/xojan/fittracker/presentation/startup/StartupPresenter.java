@@ -45,6 +45,6 @@ public class StartupPresenter implements BasePresenter {
         mSubscription = mFitnessDataInteractor.updateData(lastUpdate, googleApiClient)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
-            .subscribe(new FitnessDataSubscriber(mListener));
+            .subscribe(new SaveWorkoutSubscriber(mListener));
     }*/
 }

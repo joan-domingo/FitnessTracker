@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.data.entity.UserData;
 import cat.xojan.fittracker.injection.component.DaggerStartupComponent;
 import cat.xojan.fittracker.injection.component.StartupComponent;
 import cat.xojan.fittracker.injection.module.StartupModule;
@@ -24,8 +23,6 @@ public class StartupActivity extends BaseActivity {
 
     private static final String TAG = BaseActivity.class.getSimpleName();
 
-    @Inject
-    UserData mUserData;
     @Inject
     StartupPresenter mPresenter;
     @Inject

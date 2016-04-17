@@ -1,6 +1,5 @@
 package cat.xojan.fittracker.injection.module;
 
-import cat.xojan.fittracker.data.entity.UserData;
 import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.injection.PerActivity;
 import cat.xojan.fittracker.presentation.home.HomePresenter;
@@ -22,7 +21,7 @@ public class HomeModule {
 
     @Provides
     @PerActivity
-    HomePresenter provideStartUpPresenter(UserData userData) {
-        return new HomePresenter(userData);
+    HomePresenter provideStartUpPresenter() {
+        return new HomePresenter();
     }
 }

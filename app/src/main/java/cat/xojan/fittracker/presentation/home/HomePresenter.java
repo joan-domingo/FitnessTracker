@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.presentation.home;
 
-import cat.xojan.fittracker.data.entity.UserData;
+import javax.inject.Inject;
+
 import cat.xojan.fittracker.presentation.BasePresenter;
 
 /**
@@ -8,10 +9,9 @@ import cat.xojan.fittracker.presentation.BasePresenter;
  */
 public class HomePresenter implements BasePresenter {
 
-    private final UserData mUserData;
+    @Inject
+    public HomePresenter() {
 
-    public HomePresenter(UserData userData) {
-        mUserData = userData;
     }
 
     @Override

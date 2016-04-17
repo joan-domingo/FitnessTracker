@@ -6,7 +6,10 @@ import android.location.LocationManager;
 import javax.inject.Singleton;
 
 import cat.xojan.fittracker.FitTrackerApp;
-import cat.xojan.fittracker.data.entity.UserData;
+import cat.xojan.fittracker.data.db.dao.DaoSession;
+import cat.xojan.fittracker.data.repository.DbWorkoutStorage;
+import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
+import cat.xojan.fittracker.domain.repository.WorkoutRepository;
 import cat.xojan.fittracker.navigation.Navigator;
 import cat.xojan.fittracker.util.LocationFetcher;
 import dagger.Module;
@@ -20,15 +23,11 @@ import dagger.Provides;
 public class AppModule {
 
     private final FitTrackerApp mApplication;
+    private final DaoSession mDaoSession;
 
-    public AppModule(FitTrackerApp application) {
+    public AppModule(FitTrackerApp application, DaoSession daoSession) {
         mApplication = application;
-    }
-
-    @Provides
-    @Singleton
-    UserData provideUserData() {
-        return new UserData(mApplication);
+        mDaoSession = daoSession;
     }
 
     @Provides
@@ -38,13 +37,20 @@ public class AppModule {
 
     @Provides
     @Singleton
-    LocationManager provideLocationManager() {
-        return (LocationManager) mApplication.getSystemService(Context.LOCATION_SERVICE);
+    LocationFetcher provideLocationFetcher() {
+        LocationManager locationManager = (LocationManager) mApplication.
+                getSystemService(Context.LOCATION_SERVICE);
+        return new LocationFetcher(locationManager);
     }
 
     @Provides
     @Singleton
-    LocationFetcher provideLocationFetcher(LocationManager locationManager) {
-        return new LocationFetcher(locationManager);
+    WorkoutRepository provideWorkoutRepository() {
+        return new DbWorkoutStorage(mDaoSession.getWorkoutDao());
+    }
+
+    @Provides
+    WorkoutInteractor provideWorkoutInteractor(WorkoutRepository workoutRepository) {
+        return new WorkoutInteractor(workoutRepository);
     }
 }

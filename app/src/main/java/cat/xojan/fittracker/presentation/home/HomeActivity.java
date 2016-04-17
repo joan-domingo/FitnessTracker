@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
-import javax.inject.Inject;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
@@ -15,7 +13,6 @@ import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.injection.module.HomeModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.history.HistoryFragment;
-import cat.xojan.fittracker.util.LocationFetcher;
 
 public class HomeActivity extends BaseActivity implements HasComponent {
 

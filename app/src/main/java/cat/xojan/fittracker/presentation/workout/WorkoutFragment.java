@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
 
@@ -31,6 +33,8 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     View mMainDataView;
     @Bind(R.id.searching_location)
     View mSearchLocationView;
+    @Bind(R.id.save)
+    Button mSaveButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
         mChrono.setText("00:00:00");
         mMainDataView.setVisibility(View.INVISIBLE);
         mSearchLocationView.setVisibility(View.VISIBLE);
+        mSaveButton.setOnClickListener(new SaveWorkoutClickListener());
 
         return view;
     }
@@ -72,6 +77,7 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     @Override
     public void stopWorkout() {
         mChrono.stop();
+        mSaveButton.setVisibility(View.VISIBLE);
     }
 
     public void updateDistance(String distance) {
@@ -89,6 +95,13 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
             String mm = m < 10 ? "0" + m : m + "";
             String ss = s < 10 ? "0" + s : s + "";
             chronometer.setText(hh + ":" + mm + ":" + ss);
+        }
+    }
+
+    private class SaveWorkoutClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            mPresenter.saveWorkout(new Workout(178L, "workout test", 123123123L, 123123412L, 123123123L, 11111L));
         }
     }
 }

@@ -2,11 +2,14 @@ package cat.xojan.fittracker;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
+import cat.xojan.fittracker.data.db.dao.DaoMaster;
+import cat.xojan.fittracker.data.db.dao.DaoSession;
 import cat.xojan.fittracker.injection.component.AppComponent;
 import cat.xojan.fittracker.injection.component.DaggerAppComponent;
 import cat.xojan.fittracker.injection.module.AppModule;
@@ -14,8 +17,11 @@ import io.fabric.sdk.android.Fabric;
 
 public class FitTrackerApp extends Application {
 
+    private static final String DB_NAME = "fittracker-db";
+
     private AppComponent mComponent;
-    private RefWatcher refWatcher;
+    private RefWatcher mRefWatcher;
+    private DaoSession mDaoSession;
 
     @Override
     public void onCreate() {
@@ -23,17 +29,30 @@ public class FitTrackerApp extends Application {
         Fabric.with(this, new Crashlytics());
         initInjector();
         initLeakDetection();
+        initDatabase();
+    }
+
+    private void initDatabase() {
+        DaoMaster.OpenHelper helper;
+        if (BuildConfig.DEBUG) {
+            helper = new DaoMaster.DevOpenHelper(this, DB_NAME, null);
+        } else {
+            helper = new DbHelper(this, DB_NAME, null);
+        }
+        SQLiteDatabase db = helper.getWritableDatabase();
+        DaoMaster daoMaster = new DaoMaster(db);
+        mDaoSession = daoMaster.newSession();
     }
 
     private void initLeakDetection() {
         if (BuildConfig.DEBUG) {
-            refWatcher = LeakCanary.install(this);
+            mRefWatcher = LeakCanary.install(this);
         }
     }
 
     private void initInjector() {
         mComponent = DaggerAppComponent.builder()
-                .appModule(new AppModule(this))
+                .appModule(new AppModule(this, mDaoSession))
                 .build();
     }
 
@@ -43,6 +62,18 @@ public class FitTrackerApp extends Application {
 
     public static RefWatcher getRefWatcher(Context context) {
         FitTrackerApp application = (FitTrackerApp) context.getApplicationContext();
-        return application.refWatcher;
+        return application.mRefWatcher;
+    }
+
+    private class DbHelper extends DaoMaster.OpenHelper {
+
+        public DbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
+            super(context, name, factory);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        }
     }
 }
