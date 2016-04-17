@@ -1,10 +1,10 @@
 package cat.xojan.fittracker.presentation.workout;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -55,6 +55,12 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         mapFragment.getMapAsync(this);
 
         mAppBar.setExpanded(false);
+        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                mMapPresenter.goToLastLocation(verticalOffset);
+            }
+        });
 
         mButton.setVisibility(View.GONE);
         mButton.setOnClickListener(new StopWorkoutClickListener());
@@ -67,11 +73,18 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         mMapPresenter.destroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!mMapPresenter.hasWorkoutStarted()) {
+            super.onBackPressed();
+        }
+    }
+
     private void initializeInjector() {
         mComponent = DaggerWorkoutComponent.builder()
                 .appComponent(getApplicationComponent())
                 .baseActivityModule(getActivityModule())
-                .workoutModule(new WorkoutModule())
+                .workoutModule(new WorkoutModule(this))
                 .build();
         mComponent.inject(this);
     }
@@ -103,6 +116,7 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         public void onClick(View v) {
             ((WorkoutFragment) getCurrentFragment()).stopWorkout();
             mAppBar.setExpanded(false);
+            mMapPresenter.stop();
         }
     }
 }

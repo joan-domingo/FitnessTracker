@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.util;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -142,5 +143,10 @@ public class Utils {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             return sdf.format(dateInMillis);
         }
+    }
+
+    public static int dpToPixel(int i, Context context) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return (int) (120 * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 }

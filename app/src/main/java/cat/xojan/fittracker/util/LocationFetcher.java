@@ -47,10 +47,6 @@ public class LocationFetcher {
         mListener = listener;
     }
 
-    public void removeListener() {
-        mListener = null;
-    }
-
     @Nullable
     public Location getLocation() {
         return mLocation;

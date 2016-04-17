@@ -1,6 +1,5 @@
 package cat.xojan.fittracker.presentation.workout;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;

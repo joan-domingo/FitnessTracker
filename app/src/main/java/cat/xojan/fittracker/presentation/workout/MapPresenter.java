@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.presentation.workout;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 
@@ -14,19 +15,21 @@ import com.google.maps.android.SphericalUtil;
 
 import javax.inject.Inject;
 
-import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.presentation.BasePresenter;
 import cat.xojan.fittracker.util.LocationFetcher;
 import cat.xojan.fittracker.util.LocationUtils;
+import cat.xojan.fittracker.util.Utils;
 
 /**
  * Map presenter.
  */
 public class MapPresenter implements BasePresenter, LocationFetcher.LocationChangedListener {
 
+    private final Context mContext;
     private Listener mListener;
     private LatLngBounds.Builder mBoundsBuilder;
     private float mWorkoutDistance;
+    private int mPadding;
 
     interface Listener {
         void startWorkout();
@@ -40,9 +43,10 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
     private Location mLocation;
 
     @Inject
-    public MapPresenter(LocationFetcher locationFetcher) {
+    public MapPresenter(LocationFetcher locationFetcher, Context context) {
         mLocationFetcher = locationFetcher;
         mLocationFetcher.setLocationListener(this);
+        mContext = context;
     }
 
     public void init(GoogleMap map, Listener listener) {
@@ -58,9 +62,16 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
         LatLng latLng = LocationUtils.locationToLatLng(location);
         mBoundsBuilder.include(latLng);
         if (mBoundsBuilder != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 0));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), mPadding));
         } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM));
+        }
+    }
+
+    public void goToLastLocation(int padding) {
+        mPadding = - padding / 2;
+        if (mLocation != null) {
+            goToLocation(mLocation);
         }
     }
 
@@ -76,9 +87,12 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
 
     @Override
     public void destroy() {
-        mLocationFetcher.stop();
-        mLocationFetcher.removeListener();
         mListener = null;
+    }
+
+    public void stop() {
+        mLocationFetcher.stop();
+        addLastMarker(LocationUtils.locationToLatLng(mLocation));
     }
 
     @Override
@@ -105,9 +119,19 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
         goToLocation(location);
     }
 
+    public boolean hasWorkoutStarted() {
+        return mLocation != null;
+    }
+
     private void addFirstMarker(LatLng position) {
         addMapMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                .position(position));
+    }
+
+    private void addLastMarker(LatLng position) {
+        addMapMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                 .position(position));
     }
 
@@ -117,7 +141,7 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
 
     private void initMap() {
         mMap.clear();
-        mMap.setPadding(40, 40, 40, 40);
+        mMap.setPadding(40, 40, 40, Utils.dpToPixel(100, mContext));
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
