@@ -15,11 +15,12 @@ import de.greenrobot.daogenerator.ToMany;
 public class DbGenerator {
 
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(1, BuildConfig.APPLICATION_ID);
+        Schema schema = new Schema(1, BuildConfig.APPLICATION_ID + ".data.entity");
+        schema.setDefaultJavaPackageDao(BuildConfig.APPLICATION_ID + ".data.db.dao");
 
         addWorkout(schema);
 
-        new DaoGenerator().generateAll(schema, "");
+        new DaoGenerator().generateAll(schema, "app/src/main/java/");
     }
 
     private static void addWorkout(Schema schema) {
