@@ -24,6 +24,8 @@ import rx.schedulers.Schedulers;
  */
 public class WorkoutPresenter implements BasePresenter {
 
+    private static final String TAG = WorkoutPresenter.class.getSimpleName();
+
     private final WorkoutInteractor mWorkoutInteractor;
     private Listener mListener;
     private long mStartTime;
@@ -81,17 +83,19 @@ public class WorkoutPresenter implements BasePresenter {
         return Calendar.getInstance().getTimeInMillis();
     }
 
-    @RxLogSubscriber
-    public class SaveWorkoutSubscriber extends Subscriber<Void> {
+    /**
+     * Save Workout subscriber.
+     */
+    private class SaveWorkoutSubscriber extends Subscriber<Void> {
 
         @Override
         public void onCompleted() {
-            Log.i("joan", "workout saved");
+            Log.i(TAG, "Workout saved successfully");
         }
 
         @Override
         public void onError(Throwable e) {
-
+            e.printStackTrace();
         }
 
         @Override

@@ -74,9 +74,9 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
 
     @Override
     public void onBackPressed() {
-        if (!mMapPresenter.hasWorkoutStarted()) {
+        //if (!mMapPresenter.hasWorkoutStarted()) {
             super.onBackPressed();
-        }
+        //}
     }
 
     private void initializeInjector() {

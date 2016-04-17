@@ -1,5 +1,7 @@
 package cat.xojan.fittracker.domain.interactor;
 
+import com.fernandocejas.frodo.annotation.RxLogObservable;
+
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.data.entity.Workout;
@@ -19,13 +21,13 @@ public class WorkoutInteractor {
         this.mRepository = mRepository;
     }
 
+    @RxLogObservable(RxLogObservable.Scope.STREAM)
     public Observable<Void> saveWorkout(final Workout workout) {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
                 try {
                     mRepository.saveWorkout(workout);
-                    subscriber.onNext(null);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

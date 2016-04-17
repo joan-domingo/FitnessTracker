@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -101,7 +103,8 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     private class SaveWorkoutClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            mPresenter.saveWorkout(new Workout(178L, "workout test", 123123123L, 123123412L, 123123123L, 11111L));
+            mPresenter.saveWorkout(new Workout(Calendar.getInstance().getTimeInMillis(),
+                    "workout test", 123123123L, 123123412L, 123123123L, 11111L));
         }
     }
 }
