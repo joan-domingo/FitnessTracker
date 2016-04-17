@@ -1,7 +1,9 @@
 package cat.xojan.fittracker.injection.module;
 
 import cat.xojan.fittracker.domain.FitnessDataInteractor;
+import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.injection.PerActivity;
+import cat.xojan.fittracker.presentation.history.HistoryPresenter;
 import cat.xojan.fittracker.presentation.home.HomePresenter;
 import dagger.Module;
 import dagger.Provides;
@@ -15,13 +17,13 @@ public class HomeModule {
 
     @Provides
     @PerActivity
-    FitnessDataInteractor provideFitnessDataInteractor() {
-        return new FitnessDataInteractor(null/*new GoogleFitStorage()*/);
+    HomePresenter provideHomePresenter() {
+        return new HomePresenter();
     }
 
     @Provides
     @PerActivity
-    HomePresenter provideStartUpPresenter() {
-        return new HomePresenter();
+    HistoryPresenter provideHistoryPresenter(WorkoutInteractor workoutInteractor) {
+        return new HistoryPresenter(workoutInteractor);
     }
 }

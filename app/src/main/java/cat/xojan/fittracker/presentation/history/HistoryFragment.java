@@ -12,17 +12,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
 import cat.xojan.fittracker.presentation.sessiondetails.SessionDetailsActivity;
 
 /**
- * Created by Joan on 03/02/2016.
+ * Shows the workout history in a recycler view.
  */
 public class HistoryFragment extends BaseFragment implements
-        HistoryAdapter.RecyclerViewClickListener {
+        HistoryAdapter.RecyclerViewClickListener,
+        HistoryPresenter.Listener {
+
+    @Inject
+    HistoryPresenter mPresenter;
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -32,6 +41,7 @@ public class HistoryFragment extends BaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getComponent(HomeComponent.class).inject(this);
+        mPresenter.setListener(this);
     }
 
     @Nullable
@@ -51,9 +61,7 @@ public class HistoryFragment extends BaseFragment implements
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter (see also next example)
-        mAdapter = new HistoryAdapter(null/*mUserData.getFitnessSessions()*/, this);
-        mRecyclerView.setAdapter(mAdapter);
+        mPresenter.loadWorkouts();
 
         return view;
     }
@@ -77,5 +85,17 @@ public class HistoryFragment extends BaseFragment implements
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(getActivity(), p1, p2);
         startActivity(intent, options.toBundle());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.destroy();
+    }
+
+    @Override
+    public void onWorkoutsLoaded(List<Workout> workouts) {
+        mAdapter = new HistoryAdapter(workouts, this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 }

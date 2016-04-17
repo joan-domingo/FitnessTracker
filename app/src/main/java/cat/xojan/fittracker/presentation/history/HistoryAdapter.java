@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.domain.Session;
 
 /**
@@ -17,7 +18,7 @@ import cat.xojan.fittracker.domain.Session;
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
     private static RecyclerViewClickListener mClickListener;
-    private final List<Session> mSessions;
+    private final List<Workout> mWorkouts;
 
     public void destroy() {
         mClickListener = null;
@@ -43,8 +44,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         }
     }
 
-    public HistoryAdapter(List<Session> sessions, RecyclerViewClickListener clickListener) {
-        mSessions = sessions;
+    public HistoryAdapter(List<Workout> sessions, RecyclerViewClickListener clickListener) {
+        mWorkouts = sessions;
         mClickListener = clickListener;
     }
 
@@ -64,20 +65,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public void onBindViewHolder(HistoryAdapter.ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTitle.setText(mSessions.get(position).getName());
+        holder.mTitle.setText(mWorkouts.get(position).getText());
 
-        String activity = mSessions.get(position).getActivity();
-        if (activity != null) {
-            holder.mActivity.setText(activity.toUpperCase().substring(0, 1));
-        }
+        //String activity = mWorkouts.get(position).getActivity();
+        //if (activity != null) {
+        //    holder.mActivity.setText(activity.toUpperCase().substring(0, 1));
+        //}
 
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        //return mSessions.size();
-        return 0;
+        return mWorkouts.size();
     }
 
     /*package*/ interface RecyclerViewClickListener {
