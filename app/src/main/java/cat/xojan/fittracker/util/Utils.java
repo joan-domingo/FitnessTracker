@@ -113,8 +113,7 @@ public class Utils {
             return secondsToTime((long) secondsPerMile);
     }
 
-    public static String getRightDistance(float value, Context context) {
-        double distance = value;
+    public static String getRightDistance(double distance, Context context) {
         String measureUnit = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
                 Context.MODE_PRIVATE)
                 .getString(SharedPreferencesStorage.PREFERENCE_MEASURE_UNIT, "");

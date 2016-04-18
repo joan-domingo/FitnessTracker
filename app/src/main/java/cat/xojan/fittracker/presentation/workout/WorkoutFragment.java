@@ -10,19 +10,18 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
-import java.util.Calendar;
-
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.data.entity.Workout;
+import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
+import cat.xojan.fittracker.util.Utils;
 
 
-public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Listener {
+public class WorkoutFragment extends BaseFragment {
 
     @Inject
     WorkoutPresenter mPresenter;
@@ -30,13 +29,15 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     @Bind(R.id.chronometer)
     Chronometer mChrono;
     @Bind(R.id.distance)
-    TextView mDistance;
+    TextView mDistanceView;
     @Bind(R.id.workout_main_data)
     View mMainDataView;
     @Bind(R.id.searching_location)
     View mSearchLocationView;
     @Bind(R.id.save)
     Button mSaveButton;
+    private double mDistance;
+    private String mActivityType;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +51,6 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.workout_fragment, container, false);
         ButterKnife.bind(this, view);
-        mPresenter.setListener(this);
 
         mChrono.setText("00:00:00");
         mMainDataView.setVisibility(View.INVISIBLE);
@@ -66,24 +66,26 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
         mPresenter.destroy();
     }
 
-    @Override
-    public void startWorkout() {
+    public void startWorkout(String activityType) {
+        mActivityType = activityType;
         mChrono.setOnChronometerTickListener(new ChronometerTickListener());
         mChrono.setBase(SystemClock.elapsedRealtime());
         mChrono.start();
 
         mMainDataView.setVisibility(View.VISIBLE);
         mSearchLocationView.setVisibility(View.GONE);
+        mPresenter.startWorkout();
     }
 
-    @Override
     public void stopWorkout() {
         mChrono.stop();
         mSaveButton.setVisibility(View.VISIBLE);
+        mPresenter.stopWorkout();
     }
 
-    public void updateDistance(String distance) {
-        mDistance.setText(distance);
+    public void updateDistance(double distance) {
+        mDistance = distance;
+        mDistanceView.setText(Utils.getRightDistance(distance, getActivity()));
     }
 
     private class ChronometerTickListener implements Chronometer.OnChronometerTickListener {
@@ -103,8 +105,7 @@ public class WorkoutFragment extends BaseFragment implements WorkoutPresenter.Li
     private class SaveWorkoutClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            mPresenter.saveWorkout(new Workout(Calendar.getInstance().getTimeInMillis(),
-                    "workout test", 123123123L, 123123412L, 123123123L, 11111L));
+            mPresenter.saveWorkout((long) mDistance, mActivityType);
         }
     }
 }

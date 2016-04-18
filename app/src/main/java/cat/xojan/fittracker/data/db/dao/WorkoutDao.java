@@ -24,11 +24,12 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Text = new Property(1, String.class, "text", false, "TEXT");
+        public final static Property Title = new Property(1, String.class, "title", false, "TITLE");
         public final static Property WorkoutTime = new Property(2, Long.class, "workoutTime", false, "WORKOUT_TIME");
         public final static Property StartTime = new Property(3, Long.class, "startTime", false, "START_TIME");
         public final static Property EndTime = new Property(4, Long.class, "endTime", false, "END_TIME");
         public final static Property Distance = new Property(5, Long.class, "distance", false, "DISTANCE");
+        public final static Property Type = new Property(6, String.class, "type", false, "TYPE");
     };
 
     private DaoSession daoSession;
@@ -48,11 +49,12 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"WORKOUT\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"TEXT\" TEXT," + // 1: text
+                "\"TITLE\" TEXT," + // 1: title
                 "\"WORKOUT_TIME\" INTEGER," + // 2: workoutTime
                 "\"START_TIME\" INTEGER," + // 3: startTime
                 "\"END_TIME\" INTEGER," + // 4: endTime
-                "\"DISTANCE\" INTEGER);"); // 5: distance
+                "\"DISTANCE\" INTEGER," + // 5: distance
+                "\"TYPE\" TEXT);"); // 6: type
     }
 
     /** Drops the underlying database table. */
@@ -71,9 +73,9 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
             stmt.bindLong(1, id);
         }
  
-        String text = entity.getText();
-        if (text != null) {
-            stmt.bindString(2, text);
+        String title = entity.getTitle();
+        if (title != null) {
+            stmt.bindString(2, title);
         }
  
         Long workoutTime = entity.getWorkoutTime();
@@ -95,6 +97,11 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
         if (distance != null) {
             stmt.bindLong(6, distance);
         }
+ 
+        String type = entity.getType();
+        if (type != null) {
+            stmt.bindString(7, type);
+        }
     }
 
     @Override
@@ -114,11 +121,12 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
     public Workout readEntity(Cursor cursor, int offset) {
         Workout entity = new Workout( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // text
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // title
             cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // workoutTime
             cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // startTime
             cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // endTime
-            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5) // distance
+            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // distance
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // type
         );
         return entity;
     }
@@ -127,11 +135,12 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
     @Override
     public void readEntity(Cursor cursor, Workout entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setText(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setTitle(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setWorkoutTime(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
         entity.setStartTime(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
         entity.setEndTime(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
         entity.setDistance(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
+        entity.setType(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
      }
     
     /** @inheritdoc */

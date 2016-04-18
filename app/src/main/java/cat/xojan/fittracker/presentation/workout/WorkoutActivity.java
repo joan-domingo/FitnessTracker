@@ -37,6 +37,7 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     FloatingActionButton mButton;
 
     private WorkoutComponent mComponent;
+    private ActivityType mActivityType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,8 +47,8 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         initializeInjector();
         ButterKnife.bind(this);
 
-        ActivityType activityType = (ActivityType) getIntent().getExtras().get(FITNESS_ACTIVITY);
-        setTitle(activityType.name().toLowerCase());
+        mActivityType = (ActivityType) getIntent().getExtras().get(FITNESS_ACTIVITY);
+        setTitle(mActivityType.name().toLowerCase());
 
         addFragment(R.id.fragment_container, new WorkoutFragment());
         MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map));
@@ -101,12 +102,12 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     @Override
     public void startWorkout() {
         mAppBar.setExpanded(true);
-        ((WorkoutFragment) getCurrentFragment()).startWorkout();
+        ((WorkoutFragment) getCurrentFragment()).startWorkout(mActivityType.name());
         mButton.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onDistanceChanged(String distance) {
+    public void onDistanceChanged(double distance) {
         ((WorkoutFragment) getCurrentFragment()).updateDistance(distance);
     }
 

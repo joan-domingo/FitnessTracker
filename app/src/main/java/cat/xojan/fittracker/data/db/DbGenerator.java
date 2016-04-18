@@ -26,13 +26,14 @@ public class DbGenerator {
     private static void addWorkout(Schema schema) {
         Entity workout = schema.addEntity("Workout");
         workout.addIdProperty();
-        workout.addStringProperty("text");
+        workout.addStringProperty("title");
         workout.addLongProperty("workoutTime");
         workout.addLongProperty("startTime");
         workout.addLongProperty("endTime");
         workout.addLongProperty("distance");
+        workout.addStringProperty("type");
 
-        Entity track = schema.addEntity("Track");
+        Entity track = schema.addEntity("Location");
         track.setTableName("LOCATIONS");
         track.addIdProperty();
         track.addDoubleProperty("longitude");

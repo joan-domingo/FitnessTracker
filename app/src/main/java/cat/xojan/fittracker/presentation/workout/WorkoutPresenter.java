@@ -2,18 +2,13 @@ package cat.xojan.fittracker.presentation.workout;
 
 import android.util.Log;
 
-import com.fernandocejas.frodo.annotation.RxLogSubscriber;
-
 import java.util.Calendar;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.data.entity.Workout;
-import cat.xojan.fittracker.domain.Session;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.presentation.BasePresenter;
-import cat.xojan.fittracker.presentation.startup.FitnessDataListener;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -27,7 +22,6 @@ public class WorkoutPresenter implements BasePresenter {
     private static final String TAG = WorkoutPresenter.class.getSimpleName();
 
     private final WorkoutInteractor mWorkoutInteractor;
-    private Listener mListener;
     private long mStartTime;
     private long mEndTime;
     private Subscription mSubscription;
@@ -35,15 +29,6 @@ public class WorkoutPresenter implements BasePresenter {
     @Inject
     public WorkoutPresenter(WorkoutInteractor workoutInteractor) {
         mWorkoutInteractor = workoutInteractor;
-    }
-
-    interface Listener {
-        void startWorkout();
-        void stopWorkout();
-    }
-
-    public void setListener(Listener listener) {
-        mListener = listener;
     }
 
     @Override
@@ -58,27 +43,33 @@ public class WorkoutPresenter implements BasePresenter {
 
     @Override
     public void destroy() {
-        mListener = null;
         if (mSubscription != null) {
             mSubscription.unsubscribe();
         }
     }
 
-    public void saveWorkout(Workout workout) {
+    public void saveWorkout(long distance, String activityType) {
+        Workout workout = new Workout(
+                Calendar.getInstance().getTimeInMillis(),
+                "workout test",
+                mEndTime - mStartTime,
+                mStartTime,
+                mEndTime,
+                distance,
+                activityType);
+
         mSubscription = mWorkoutInteractor.saveWorkout(workout)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new SaveWorkoutSubscriber());
     }
 
-    private void stopWorkout() {
+    public void stopWorkout() {
         mEndTime = getCurrentTime();
-        mListener.stopWorkout();
     }
 
-    private void startWorkout() {
+    public void startWorkout() {
         mStartTime = getCurrentTime();
-        mListener.startWorkout();
     }
 
     private long getCurrentTime() {

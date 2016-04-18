@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.presentation.history;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,16 @@ import java.util.List;
 
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.data.entity.Workout;
-import cat.xojan.fittracker.domain.Session;
+import cat.xojan.fittracker.util.Utils;
 
 /**
- * Created by Joan on 04/02/2016.
+ * Workout history adapter.
  */
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
     private static RecyclerViewClickListener mClickListener;
     private final List<Workout> mWorkouts;
+    private final Context mContext;
 
     public void destroy() {
         mClickListener = null;
@@ -31,10 +33,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         // each data item is just a string in this case
         public TextView mTitle;
         public TextView mActivity;
+        public TextView mDistance;
+        public TextView mTime;
+
         public ViewHolder(View v) {
             super(v);
             mTitle = (TextView) v.findViewById(R.id.text);
             mActivity = (TextView) v.findViewById(R.id.activity);
+            mDistance = (TextView) v.findViewById(R.id.distance);
+            mTime = (TextView) v.findViewById(R.id.time);
             v.setOnClickListener(this);
         }
 
@@ -44,9 +51,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         }
     }
 
-    public HistoryAdapter(List<Workout> sessions, RecyclerViewClickListener clickListener) {
+    public HistoryAdapter(List<Workout> sessions, RecyclerViewClickListener listener,
+                          Context context) {
         mWorkouts = sessions;
-        mClickListener = clickListener;
+        mClickListener = listener;
+        mContext = context;
     }
 
     // Create new views (invoked by the layout manager)
@@ -63,15 +72,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(HistoryAdapter.ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.mTitle.setText(mWorkouts.get(position).getText());
+        Workout workout = mWorkouts.get(position);
 
-        //String activity = mWorkouts.get(position).getActivity();
-        //if (activity != null) {
-        //    holder.mActivity.setText(activity.toUpperCase().substring(0, 1));
-        //}
-
+        holder.mTitle.setText(workout.getTitle());
+        holder.mDistance.setText(Utils.getRightDistance(workout.getDistance(), mContext));
+        holder.mTime.setText(Utils.millisToTime(workout.getWorkoutTime()));
+        holder.mActivity.setText(workout.getType().toUpperCase().substring(0, 1));
     }
 
     // Return the size of your dataset (invoked by the layout manager)

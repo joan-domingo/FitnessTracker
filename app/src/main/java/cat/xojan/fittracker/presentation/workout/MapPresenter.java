@@ -28,12 +28,12 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
     private final Context mContext;
     private Listener mListener;
     private LatLngBounds.Builder mBoundsBuilder;
-    private float mWorkoutDistance;
+    private double mWorkoutDistance;
     private int mPadding;
 
     interface Listener {
         void startWorkout();
-        void onDistanceChanged(String distance);
+        void onDistanceChanged(double distance);
     }
 
     public static final float MAP_ZOOM = 13;
@@ -114,7 +114,7 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
 
             mWorkoutDistance = mWorkoutDistance + (float) SphericalUtil
                     .computeDistanceBetween(oldPosition, currentPosition); //return meters
-            mListener.onDistanceChanged(String.format("%.2f", mWorkoutDistance / 1000));
+            mListener.onDistanceChanged(mWorkoutDistance);
         }
         goToLocation(location);
     }

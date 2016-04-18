@@ -99,7 +99,7 @@ public class HistoryFragment extends BaseFragment implements
 
     @Override
     public void onWorkoutsLoaded(List<Workout> workouts) {
-        mAdapter = new HistoryAdapter(workouts, this);
+        mAdapter = new HistoryAdapter(workouts, this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
 }
