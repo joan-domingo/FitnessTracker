@@ -3,7 +3,7 @@ android:color="?android:colorControlHighlight">
 <item>
     <shape android:shape="rectangle">
         <corners android:radius="2dp" />
-        <solid android:color="@color/button_grey" />
+        <solid android:color="@color/grey_icon" />
     </shape>
 </item>
 </ripple>

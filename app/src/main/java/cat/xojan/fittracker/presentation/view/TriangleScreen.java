@@ -170,16 +170,16 @@ public class TriangleScreen extends View {
                 Preconditions.checkNotNull(mListener);
                 if (mRegionRunning.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isRunningPressed = false;
-                    mListener.onClick(ActivityType.RUNNING);
+                    mListener.onClick(ActivityType.Running);
                 } else if (mRegionWalking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isWalkingPressed = false;
-                    mListener.onClick(ActivityType.WALKING);
+                    mListener.onClick(ActivityType.Walking);
                 } else if (mRegionBiking.contains(Math.round(event.getX()), Math.round(event.getY()))) {
                     isBikingPressed = false;
-                    mListener.onClick(ActivityType.BIKING);
+                    mListener.onClick(ActivityType.Biking);
                 } else {
                     isOtherPressed = false;
-                    mListener.onClick(ActivityType.OTHER);
+                    mListener.onClick(ActivityType.Other);
                 }
                 break;
         }

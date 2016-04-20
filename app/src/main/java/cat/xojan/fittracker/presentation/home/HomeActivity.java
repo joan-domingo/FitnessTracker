@@ -33,6 +33,13 @@ public class HomeActivity extends BaseActivity implements HasComponent {
 
         setupViewPager(mViewPager);
         mTabLayout.setupWithViewPager(mViewPager);
+        setupTabIcons();
+    }
+
+    private void setupTabIcons() {
+        mTabLayout.getTabAt(0).setIcon(R.drawable.ic_directions_run_black_24dp);
+        mTabLayout.getTabAt(1).setIcon(R.drawable.ic_list_black_24dp);
+        mTabLayout.getTabAt(2).setIcon(R.drawable.ic_settings_black_24dp);
     }
 
     private void initializeInjector() {

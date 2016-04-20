@@ -88,6 +88,7 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
     @Override
     public void destroy() {
         mListener = null;
+        mLocationFetcher.stop();
     }
 
     public void stop() {

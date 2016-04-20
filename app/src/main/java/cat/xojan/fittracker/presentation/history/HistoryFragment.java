@@ -34,7 +34,6 @@ public class HistoryFragment extends BaseFragment implements
     HistoryPresenter mPresenter;
 
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
     private HistoryAdapter mAdapter;
 
     @Override
@@ -58,7 +57,7 @@ public class HistoryFragment extends BaseFragment implements
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         return view;
