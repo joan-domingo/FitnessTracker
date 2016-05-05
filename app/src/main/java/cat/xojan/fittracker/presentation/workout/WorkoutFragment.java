@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
 import cat.xojan.fittracker.util.Utils;
@@ -85,7 +84,7 @@ public class WorkoutFragment extends BaseFragment {
 
     public void updateDistance(double distance) {
         mDistance = distance;
-        mDistanceView.setText(Utils.getRightDistance(distance, getActivity()));
+        //TODO mDistanceView.setText(Utils.formatDistance(distance, getActivity()));
     }
 
     private class ChronometerTickListener implements Chronometer.OnChronometerTickListener {

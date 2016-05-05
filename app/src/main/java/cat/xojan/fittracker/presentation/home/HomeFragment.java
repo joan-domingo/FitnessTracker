@@ -26,8 +26,8 @@ public class HomeFragment extends BaseFragment implements
     Navigator mNavigator;
     @Inject
     HomePresenter mPresenter;
-    @Bind(R.id.triangle_view)
-    TriangleScreen mTriangleView;
+    /*@Bind(R.id.triangle_view)
+    TriangleScreen mTriangleView;*/
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTriangleView.setFitnessActivityClickListener(this);
+        //mTriangleView.setFitnessActivityClickListener(this);
     }
 
     @Override

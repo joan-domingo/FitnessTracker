@@ -18,9 +18,11 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
+import cat.xojan.fittracker.presentation.home.HomePresenter;
 import cat.xojan.fittracker.presentation.sessiondetails.SessionDetailsActivity;
 
 /**
@@ -28,10 +30,14 @@ import cat.xojan.fittracker.presentation.sessiondetails.SessionDetailsActivity;
  */
 public class HistoryFragment extends BaseFragment implements
         HistoryAdapter.RecyclerViewClickListener,
-        HistoryPresenter.Listener {
+        HistoryPresenter.Listener,
+        HomePresenter.UnitChangeListener {
 
     @Inject
     HistoryPresenter mPresenter;
+
+    @Inject
+    HomePresenter mHomePresenter;
 
     private RecyclerView mRecyclerView;
     private HistoryAdapter mAdapter;
@@ -41,6 +47,7 @@ public class HistoryFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         this.getComponent(HomeComponent.class).inject(this);
         mPresenter.setListener(this);
+        mHomePresenter.listenToDistanceUnitUpdates(this);
     }
 
     @Nullable
@@ -97,8 +104,14 @@ public class HistoryFragment extends BaseFragment implements
     }
 
     @Override
-    public void onWorkoutsLoaded(List<Workout> workouts) {
-        mAdapter = new HistoryAdapter(workouts, this, getActivity());
+    public void onWorkoutsLoaded(List<Workout> workouts, DistanceUnit distanceUnit) {
+        mAdapter = new HistoryAdapter(workouts, this, getActivity(), distanceUnit);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void updateDistanceUnit(DistanceUnit distanceUnit) {
+        mAdapter.updateDistanceUnit(distanceUnit);
+        mAdapter.notifyDataSetChanged();
     }
 }

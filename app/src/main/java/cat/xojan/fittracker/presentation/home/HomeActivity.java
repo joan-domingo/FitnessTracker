@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
@@ -15,6 +17,9 @@ import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.history.HistoryFragment;
 
 public class HomeActivity extends BaseActivity implements HasComponent {
+
+    @Inject
+    HomePresenter mPresenter;
 
     @Bind(R.id.tabs)
     TabLayout mTabLayout;
@@ -37,7 +42,7 @@ public class HomeActivity extends BaseActivity implements HasComponent {
     }
 
     private void setupTabIcons() {
-        mTabLayout.getTabAt(0).setIcon(R.drawable.ic_directions_run_black_24dp);
+        mTabLayout.getTabAt(0).setIcon(R.drawable.ic_run_grey);
         mTabLayout.getTabAt(1).setIcon(R.drawable.ic_list_black_24dp);
         mTabLayout.getTabAt(2).setIcon(R.drawable.ic_settings_black_24dp);
     }
@@ -60,7 +65,7 @@ public class HomeActivity extends BaseActivity implements HasComponent {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new HomeFragment(), "WORKOUT");
         adapter.addFragment(new HistoryFragment(), "HISTORY");
-        adapter.addFragment(new HomeFragment(), "SETTINGS");
+        adapter.addFragment(new SettingsFragment(), "SETTINGS");
         viewPager.setAdapter(adapter);
     }
 
@@ -72,5 +77,11 @@ public class HomeActivity extends BaseActivity implements HasComponent {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.destroy();
     }
 }

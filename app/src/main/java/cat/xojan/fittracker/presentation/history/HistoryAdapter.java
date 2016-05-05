@@ -5,12 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.entity.Workout;
+import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.util.Utils;
 
 /**
@@ -21,6 +24,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     private static RecyclerViewClickListener mClickListener;
     private final List<Workout> mWorkouts;
     private final Context mContext;
+    private DistanceUnit mDistanceUnit;
 
     public void destroy() {
         mClickListener = null;
@@ -32,14 +36,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         public TextView mTitle;
-        public TextView mActivity;
+        public ImageView mActivity;
         public TextView mDistance;
         public TextView mTime;
 
         public ViewHolder(View v) {
             super(v);
             mTitle = (TextView) v.findViewById(R.id.text);
-            mActivity = (TextView) v.findViewById(R.id.activity);
+            mActivity = (ImageView) v.findViewById(R.id.activity);
             mDistance = (TextView) v.findViewById(R.id.distance);
             mTime = (TextView) v.findViewById(R.id.time);
             v.setOnClickListener(this);
@@ -52,10 +56,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     public HistoryAdapter(List<Workout> sessions, RecyclerViewClickListener listener,
-                          Context context) {
+                          Context context, DistanceUnit distanceUnit) {
         mWorkouts = sessions;
         mClickListener = listener;
         mContext = context;
+        mDistanceUnit = distanceUnit;
     }
 
     // Create new views (invoked by the layout manager)
@@ -75,9 +80,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         Workout workout = mWorkouts.get(position);
 
         holder.mTitle.setText(workout.getTitle());
-        holder.mDistance.setText(Utils.getRightDistance(workout.getDistance(), mContext));
+        holder.mDistance.setText(Utils.formatDistance(workout.getDistance(), mDistanceUnit));
         holder.mTime.setText(Utils.millisToTime(workout.getWorkoutTime()));
-        holder.mActivity.setText(workout.getType().toUpperCase().substring(0, 1));
+        holder.mActivity.setBackground(mContext.getResources()
+                .getDrawable(ActivityType.toDrawable(workout.getType())));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -88,5 +94,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     /*package*/ interface RecyclerViewClickListener {
         void onItemClick(int position, View v);
+    }
+
+    public void updateDistanceUnit(DistanceUnit distanceUnit) {
+        mDistanceUnit = distanceUnit;
     }
 }

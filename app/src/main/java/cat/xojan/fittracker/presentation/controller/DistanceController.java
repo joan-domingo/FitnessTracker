@@ -11,8 +11,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
-import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
-
 public class DistanceController {
 
     public static final String DISTANCE_MEASURE_KM = "Km";
@@ -21,7 +19,6 @@ public class DistanceController {
     private final Context mContext;
     private final GoogleMap mMap;
     private final LocationManager mLocationManger;
-    private final UnitDataPresenter mUnitDataPresenter;
 
     private float mSegmentDistance;
     private float mSessionDistance;
@@ -30,12 +27,10 @@ public class DistanceController {
     private float mAuxDistance = 0;
     private TextView mDistanceView;
 
-    public DistanceController(Context context, GoogleMap map, LocationManager locationManager,
-                              UnitDataPresenter unitDataPresenter) {
+    public DistanceController(Context context, GoogleMap map, LocationManager locationManager) {
         mContext = context;
         mMap = map;
         mLocationManger = locationManager;
-        mUnitDataPresenter = unitDataPresenter;
 
         mSegmentDistance = mSessionDistance = 0;
         mUnitCounter = 1;
@@ -49,7 +44,7 @@ public class DistanceController {
     }
 
     private void updateDistanceView() {
-        String measureUnit = mUnitDataPresenter.getMeasureUnit(mContext);
+        String measureUnit = "";// mUnitDataPresenter.getMeasureUnit(mContext);
 
         float distance = mSegmentDistance + mAuxDistance;
 

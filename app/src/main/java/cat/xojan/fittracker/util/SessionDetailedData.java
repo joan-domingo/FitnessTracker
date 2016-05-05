@@ -10,28 +10,24 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.presentation.controller.DataPoint;
 import cat.xojan.fittracker.presentation.controller.DistanceController;
-import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
 
 public class SessionDetailedData {
 
-    private final UnitDataPresenter mUnitDataPresenter;
     private LinearLayout intervalView;
     private double mTotalDistance;
     private Context mContext;
 
-    public SessionDetailedData(Context context, UnitDataPresenter unitDataPresenter) {
+    public SessionDetailedData(Context context) {
         mContext = context;
         mTotalDistance = 0;
         intervalView = new LinearLayout(mContext);
-        mUnitDataPresenter = unitDataPresenter;
     }
 
     public LinearLayout getIntervalView() {
@@ -76,7 +72,6 @@ public class SessionDetailedData {
             double lastDistance = 0;
             int unitCounter = 1;
             long startTime = 0;
-            String measureUnit = mUnitDataPresenter.getMeasureUnit(mContext);
 
             /*for (DataPoint dp : mLocationDataPoints) {
                 if (dp.getStartTime(TimeUnit.MILLISECONDS) >= mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS) &&
@@ -122,7 +117,7 @@ public class SessionDetailedData {
             double totalDistance = getTotalDistance(unitCounter - 1, lastDistance, mContext);
             mTotalDistance = mTotalDistance + totalDistance;
             TableRow valuesRow = new TableRow(mContext);
-            valuesRow.addView(createValue(mContext, Utils.getRightDistance((float) totalDistance, mContext)));
+            valuesRow.addView(createValue(mContext, Utils.formatDistance((float) totalDistance, mContext)));
             valuesRow.addView(createValue(mContext, Utils.getTimeDifference(mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS),
                     mSegmentDataPoints.get(i).getStartTime(TimeUnit.MILLISECONDS))));
             double speed = totalDistance / ((mSegmentDataPoints.get(i).getEndTime(TimeUnit.MILLISECONDS) -
@@ -141,7 +136,7 @@ public class SessionDetailedData {
     }
 
     private double getTotalDistance(int unitCounter, double lastDistance, Context context) {
-        String measureUnit = mUnitDataPresenter.getMeasureUnit(context);
+        String measureUnit = "";//mUnitDataPresenter.getMeasureUnit(context);
         if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             return ((1609.344 * unitCounter) + lastDistance);
         } else {
@@ -153,7 +148,7 @@ public class SessionDetailedData {
         float seconds = endTime - startTime;
         seconds = seconds / 1000;
 
-        String measureUnit = mUnitDataPresenter.getMeasureUnit(context);
+        String measureUnit = "";//mUnitDataPresenter.getMeasureUnit(context);
         double speed;
         if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             speed = 1609.344 / seconds;
@@ -177,7 +172,7 @@ public class SessionDetailedData {
         double speed = distance / seconds;
 
         TableRow row = new TableRow(context);
-        row.addView(createValue(context, Utils.getRightDistance((float) distance, context)));
+        row.addView(createValue(context, Utils.formatDistance((float) distance, DistanceUnit.KILOMETER)));
         row.addView(createValue(context, Utils.getTimeDifference(endTime, startTime)));
         row.addView(createValue(context, Utils.getRightPace((float) speed, context)));
         row.addView(createValue(context, Utils.getRightSpeed((float) speed, context)));

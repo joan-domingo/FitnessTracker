@@ -7,5 +7,7 @@
     <dimen name="button_elevation">2dp</dimen>
     <dimen name="button_press_elevation">4dp</dimen>
     <dimen name="workout_text_size">36sp</dimen>
+    <dimen name="activiy_button_size">120dp</dimen>
+    <dimen name="general_padding">8dp</dimen>
 
 </resources>

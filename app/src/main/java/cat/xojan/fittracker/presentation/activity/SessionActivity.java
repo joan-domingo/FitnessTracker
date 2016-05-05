@@ -18,22 +18,18 @@ import com.google.android.gms.maps.MapFragment;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.domain.Session;
 import cat.xojan.fittracker.domain.SessionReadResult;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.controller.DataPoint;
 import cat.xojan.fittracker.presentation.controller.DataSet;
 import cat.xojan.fittracker.presentation.listener.UiContentUpdater;
-import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
-import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
 import cat.xojan.fittracker.util.SessionDetailedData;
-import cat.xojan.fittracker.util.SessionMapData;
 import cat.xojan.fittracker.util.Utils;
 import rx.Observable;
 import rx.Subscriber;
@@ -46,11 +42,6 @@ public class SessionActivity extends BaseActivity
     private static final String TAG = SessionActivity.class.getSimpleName();
 
     @Bind(R.id.fragment_session_toolbar) Toolbar toolbar;
-
-    @Inject
-    UnitDataPresenter mUnitDataPresenter;
-    @Inject
-    SessionPresenter mSessionPresenter;
 
     private Session mSession;
     private MenuItem mDeleteButton;
@@ -163,8 +154,7 @@ public class SessionActivity extends BaseActivity
 
                     @Override
                     public void onNext(SessionActivity sessionActivity) {
-                        SessionDetailedData detailedData = new SessionDetailedData(sessionActivity,
-                                mUnitDataPresenter);
+                        SessionDetailedData detailedData = new SessionDetailedData(sessionActivity);
                         //detailedData.readDetailedData(mLocationDataPoints, mSegmentDataPoints);
                         intervalView = detailedData.getIntervalView();
                         totalDistance = detailedData.getTotalDistance();
@@ -185,7 +175,7 @@ public class SessionActivity extends BaseActivity
         }
         //distance
         ((TextView) findViewById(R.id.fragment_session_total_distance))
-                .setText(Utils.getRightDistance((float) totalDistance, SessionActivity.this));
+                .setText(Utils.formatDistance((float) totalDistance, DistanceUnit.KILOMETER));
         //name
         ((TextView) findViewById(R.id.fragment_session_name))
                 .setText(mSession.getName());

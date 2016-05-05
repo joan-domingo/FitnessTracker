@@ -1,11 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <cat.xojan.fittracker.presentation.view.TriangleScreen
-        android:id="@+id/triangle_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/walk"
+            android:layout_width="@dimen/activiy_button_size"
+            android:layout_height="@dimen/activiy_button_size"
+            android:background="@drawable/walk_button_view"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/run"
+            android:layout_width="@dimen/activiy_button_size"
+            android:layout_height="@dimen/activiy_button_size"
+            android:background="@drawable/run_button_view"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/bike"
+            android:layout_width="@dimen/activiy_button_size"
+            android:layout_height="@dimen/activiy_button_size"
+            android:background="@drawable/bike_button_view"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

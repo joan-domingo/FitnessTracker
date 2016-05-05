@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/general_padding">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/distance"/>
+
+    <RadioGroup
+        android:id="@+id/distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/kilometers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/kilometres"/>
+
+        <RadioButton
+            android:id="@+id/miles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/miles"/>
+
+    </RadioGroup>
+
+</LinearLayout>

@@ -8,24 +8,16 @@ public enum ActivityType {
     Biking,
     Other;
 
-    private ActivityType icon;
-
-    public static int getDrawable(String activity) {
-        /*if (activity.equals(RUNNING.fitnessActivity)) {
-            return R.drawable.ic_running30;
-        } else if (activity.equals(WALKING.fitnessActivity)) {
-            return R.drawable.ic_walking3;
-        } else if (activity.equals(BIKING.fitnessActivity)) {
-            return R.drawable.ic_biking2;
-        }*/
-
-        return R.drawable.ic_walking3;
-    }
-
-    public int getIcon() {
-        if (this.equals(Running)) {
-            return R.drawable.ic_running30;
+    public static int toDrawable(String type) {
+        switch (type) {
+            case "Running":
+                return R.drawable.run_button_view;
+            case "Biking":
+                return R.drawable.bike_button_view;
+            case "Waling":
+                return R.drawable.walk_button_view;
+            default:
+                return R.drawable.run_button_view;
         }
-        return R.drawable.ic_walking3;
     }
 }

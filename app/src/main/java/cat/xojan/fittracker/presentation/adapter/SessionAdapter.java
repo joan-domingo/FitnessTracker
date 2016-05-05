@@ -1,12 +1,8 @@
 package cat.xojan.fittracker.presentation.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.renderscript.Element;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +18,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.domain.Session;
 import cat.xojan.fittracker.domain.SessionReadResult;
-import cat.xojan.fittracker.presentation.controller.DataPoint;
-import cat.xojan.fittracker.presentation.controller.DataSet;
 import cat.xojan.fittracker.util.Utils;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolder> {
@@ -109,7 +104,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
         holder.mDescription.setText(mSession.get(position).getDescription());
         holder.mActivity.setImageDrawable(getActivityDrawable(mSession.get(position).getActivity()));
         holder.mSummary.setText(Utils.getTimeDifference(mSession.get(position).getEndTime(TimeUnit.MILLISECONDS),
-                    mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " / " + Utils.getRightDistance(mDistance.get(position), mContext));
+                    mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)) + " / " + Utils.formatDistance(mDistance.get(position), DistanceUnit.KILOMETER));
         holder.mDay.setText(Utils.millisToDayComplete(mSession.get(position).getStartTime(TimeUnit.MILLISECONDS)));
 
         if (mSession.get(position).getAppPackageName().equals(BuildConfig.APPLICATION_ID)) {
@@ -126,7 +121,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHold
     }
 
     private Drawable getActivityDrawable(String activity) {
-        int drawable = ActivityType.getDrawable(activity);
+        int drawable = ActivityType.toDrawable(activity);
         return mContext.getResources().getDrawable(drawable);
     }
 

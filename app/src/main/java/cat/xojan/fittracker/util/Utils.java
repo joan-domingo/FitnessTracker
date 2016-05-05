@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
 import cat.xojan.fittracker.presentation.controller.DistanceController;
 
@@ -16,6 +17,8 @@ public class Utils {
     private static final String DATE_FORMAT_DMY = "dmy";
     private static final String DATE_FORMAT_MDY = "mdy";
     private static final String DATE_FORMAT_YMD = "ymd";
+    private static final String MILES = "mi";
+    private static final String KILOMETERS = "km";
 
     public static String millisToTime(long millis) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -40,7 +43,7 @@ public class Utils {
     public static String getRightSpeed(float value, Context context) {
        String measureUnit = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
                Context.MODE_PRIVATE)
-                .getString(SharedPreferencesStorage.PREFERENCE_MEASURE_UNIT, "");
+                .getString(SharedPreferencesStorage.PREFERENCE_DISTANCE_UNIT, "");
 
         if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             return String.format("%.2f", Utils.ms2Mph(value)) + " " + context.getString(R.string.mph);
@@ -84,7 +87,7 @@ public class Utils {
     public static String getRightPace(float value, Context context) {
         String measureUnit = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
                 Context.MODE_PRIVATE)
-                .getString(SharedPreferencesStorage.PREFERENCE_MEASURE_UNIT, "");
+                .getString(SharedPreferencesStorage.PREFERENCE_DISTANCE_UNIT, "");
 
         if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
             return Utils.speedToPaceInMi(value) + " " + context.getString(R.string.pmi);
@@ -113,17 +116,14 @@ public class Utils {
             return secondsToTime((long) secondsPerMile);
     }
 
-    public static String getRightDistance(double distance, Context context) {
-        String measureUnit = context.getSharedPreferences(SharedPreferencesStorage.SHARED_PREFERENCES,
-                Context.MODE_PRIVATE)
-                .getString(SharedPreferencesStorage.PREFERENCE_MEASURE_UNIT, "");
-
-        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
-            distance = distance / 1609.344;
-            return String.format("%.2f", distance) + " " + context.getString(R.string.mi);
-        } else {
-            distance = distance / 1000;
-            return String.format("%.2f", distance) + " " + context.getString(R.string.km);
+    public static String formatDistance(double distance, DistanceUnit distanceUnit) {
+        switch (distanceUnit) {
+            case MILE:
+                distance = distance / 1609.344;
+                return String.format("%.2f", distance) + " " + MILES;
+            default:
+                distance = distance / 1000;
+                return String.format("%.2f", distance) + " " + KILOMETERS;
         }
     }
 

@@ -21,10 +21,6 @@ import cat.xojan.fittracker.presentation.BaseActivity;
  */
 public class StartupActivity extends BaseActivity {
 
-    private static final String TAG = BaseActivity.class.getSimpleName();
-
-    @Inject
-    StartupPresenter mPresenter;
     @Inject
     Navigator mNavigator;
 
@@ -55,7 +51,6 @@ public class StartupActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        mPresenter.destroy();
         super.onDestroy();
         ButterKnife.unbind(this);
     }

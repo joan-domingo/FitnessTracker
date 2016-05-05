@@ -8,6 +8,9 @@ import javax.inject.Singleton;
 import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.data.db.dao.DaoSession;
 import cat.xojan.fittracker.data.repository.DbWorkoutStorage;
+import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
+import cat.xojan.fittracker.domain.PreferencesRepository;
+import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.domain.repository.WorkoutRepository;
 import cat.xojan.fittracker.navigation.Navigator;
@@ -52,5 +55,16 @@ public class AppModule {
     @Provides
     WorkoutInteractor provideWorkoutInteractor(WorkoutRepository workoutRepository) {
         return new WorkoutInteractor(workoutRepository);
+    }
+
+    @Provides
+    UnitDataInteractor provideUnitDataInteractor(PreferencesRepository preferencesRepository) {
+        return new UnitDataInteractor(preferencesRepository);
+    }
+
+    @Provides
+    @Singleton
+    PreferencesRepository providePreferencesRepository() {
+        return new SharedPreferencesStorage(mApplication.getBaseContext());
     }
 }

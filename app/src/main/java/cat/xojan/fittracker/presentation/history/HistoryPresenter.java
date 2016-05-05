@@ -2,12 +2,16 @@ package cat.xojan.fittracker.presentation.history;
 
 import java.util.List;
 
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.entity.Workout;
+import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.presentation.BasePresenter;
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -15,16 +19,19 @@ import rx.schedulers.Schedulers;
  */
 public class HistoryPresenter implements BasePresenter {
 
-    interface Listener {
-        void onWorkoutsLoaded(List<Workout> workouts);
-    }
-
     private final WorkoutInteractor mWorkoutInteractor;
     private Subscription mSubscription;
     private Listener mListener;
+    private final UnitDataInteractor mUnitDataInteractor;
 
-    public HistoryPresenter(WorkoutInteractor workoutInteractor) {
+    interface Listener {
+        void onWorkoutsLoaded(List<Workout> workouts, DistanceUnit distanceUnit);
+    }
+
+    public HistoryPresenter(WorkoutInteractor workoutInteractor,
+                            UnitDataInteractor unitDataInteractor) {
         mWorkoutInteractor = workoutInteractor;
+        mUnitDataInteractor = unitDataInteractor;
     }
 
     @Override
@@ -73,8 +80,15 @@ public class HistoryPresenter implements BasePresenter {
         }
 
         @Override
-        public void onNext(List<Workout> workouts) {
-            mListener.onWorkoutsLoaded(workouts);
+        public void onNext(final List<Workout> workouts) {
+            mUnitDataInteractor.getDistanceUnit()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<DistanceUnit>() {
+                        @Override
+                        public void call(DistanceUnit distanceUnit) {
+                            mListener.onWorkoutsLoaded(workouts, distanceUnit);
+                        }
+                    });
         }
     }
 }

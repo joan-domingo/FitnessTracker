@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -23,17 +20,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.domain.ActivityType;
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.presentation.BaseFragment;
 import cat.xojan.fittracker.presentation.activity.WorkoutActivity;
 import cat.xojan.fittracker.presentation.controller.DistanceController;
@@ -41,14 +34,10 @@ import cat.xojan.fittracker.presentation.controller.FitnessController;
 import cat.xojan.fittracker.presentation.controller.MapController;
 import cat.xojan.fittracker.presentation.controller.TimeController;
 import cat.xojan.fittracker.presentation.listener.OnSessionInsertListener;
-import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
-import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
 import cat.xojan.fittracker.util.SessionDetailedData;
-import cat.xojan.fittracker.util.SessionMapData;
 import cat.xojan.fittracker.util.Utils;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ResultFragment extends BaseFragment implements OnSessionInsertListener {
@@ -65,10 +54,6 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
     TimeController timeController;
     @Inject
     Context context;
-    @Inject
-    SessionPresenter mSessionPresenter;
-    @Inject
-    UnitDataPresenter mUnitDataPresenter;
 
     @Bind(R.id.result_description) EditText mDescription;
     @Bind(R.id.result_name) EditText mName;
@@ -157,8 +142,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
 
                     @Override
                     public void onNext(Context context) {
-                        SessionDetailedData detailedData = new SessionDetailedData(context,
-                                mUnitDataPresenter);
+                        SessionDetailedData detailedData = new SessionDetailedData(context);
                         /*detailedData.readDetailedData(fitController.getLocationDataPoints(),
                                 fitController.getSegmentDataPoints());*/
                         intervalView = detailedData.getIntervalView();
@@ -185,7 +169,7 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
         ((TextView) view.findViewById(R.id.fragment_result_end))
                 .setText(Utils.millisToTime(timeController.getSessionEndTime()));
         ((TextView) view.findViewById(R.id.fragment_result_total_distance))
-                .setText(Utils.getRightDistance((float) totalDistance, getActivity()));
+                .setText(Utils.formatDistance((float) totalDistance, DistanceUnit.KILOMETER));
 
         ((TextView) view.findViewById(R.id.fragment_result_total_pace))
                 .setText(Utils.getRightPace(speed, getActivity()));

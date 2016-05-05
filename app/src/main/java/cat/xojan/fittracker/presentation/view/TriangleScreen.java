@@ -65,9 +65,9 @@ public class TriangleScreen extends View {
         mP1 = new Point();
         mP2 = new Point();
         mP3 = new Point();
-        mRunningBitmap = BitmapFactory.decodeResource(res, R.drawable.ic_running30);
-        mCyclingBitmap = BitmapFactory.decodeResource(res, R.drawable.ic_biking2);
-        mWalkingBitmap = BitmapFactory.decodeResource(res, R.drawable.ic_walking3);
+        mRunningBitmap = BitmapFactory.decodeResource(res, R.drawable.ic_run_grey);
+        mCyclingBitmap = BitmapFactory.decodeResource(res, R.drawable.ic_bike);
+        mWalkingBitmap = BitmapFactory.decodeResource(res, R.drawable.ic_walk);
     }
 
     @Override

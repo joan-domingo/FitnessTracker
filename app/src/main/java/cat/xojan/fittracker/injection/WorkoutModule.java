@@ -11,18 +11,12 @@ import com.google.android.gms.maps.MapFragment;
 import javax.inject.Singleton;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.injection.module.AppModule;
-import cat.xojan.fittracker.presentation.activity.WorkoutActivity;
 import cat.xojan.fittracker.presentation.controller.DistanceController;
 import cat.xojan.fittracker.presentation.controller.FitnessController;
 import cat.xojan.fittracker.presentation.controller.MapController;
 import cat.xojan.fittracker.presentation.controller.NotificationController;
 import cat.xojan.fittracker.presentation.controller.SpeedController;
 import cat.xojan.fittracker.presentation.controller.TimeController;
-import cat.xojan.fittracker.presentation.fragment.ResultFragment;
-import cat.xojan.fittracker.presentation.fragment.WorkoutMapFragment;
-import cat.xojan.fittracker.presentation.presenter.SessionPresenter;
-import cat.xojan.fittracker.presentation.presenter.UnitDataPresenter;
 import dagger.Module;
 import dagger.Provides;
 
@@ -70,9 +64,8 @@ public class WorkoutModule {
     @Provides
     @Singleton
     public DistanceController provideDistanceController(GoogleMap map,
-                                                        LocationManager locationManager,
-                                                        UnitDataPresenter unitDataPresenter) {
-        return new DistanceController(mActivity, map, locationManager, unitDataPresenter);
+                                                        LocationManager locationManager) {
+        return new DistanceController(mActivity, map, locationManager);
     }
 
     @Provides @Singleton
