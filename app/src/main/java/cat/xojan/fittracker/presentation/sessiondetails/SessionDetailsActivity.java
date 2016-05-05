@@ -9,6 +9,12 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -28,7 +34,8 @@ import cat.xojan.fittracker.presentation.BaseActivity;
  */
 public class SessionDetailsActivity extends BaseActivity implements
         HasComponent,
-        SessionDetailsPresenter.ViewListener {
+        SessionDetailsPresenter.ViewListener,
+        OnMapReadyCallback {
 
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_ACTIVITY = "extra_activity";
@@ -44,6 +51,7 @@ public class SessionDetailsActivity extends BaseActivity implements
 
     private SessionDetailsComponent mComponent;
     private Workout mWorkout;
+    private List<Location> mLocations;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +68,9 @@ public class SessionDetailsActivity extends BaseActivity implements
 
         mPresenter.listenToUpdates(this);
         mPresenter.loadSessionData(extras.getLong(EXTRA_ID));
+
+        MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map));
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -77,7 +88,7 @@ public class SessionDetailsActivity extends BaseActivity implements
                 supportFinishAfterTransition();
                 return true;
             case R.id.action_delete:
-                deleteSession();
+                mPresenter.deleteSession(mWorkout);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -91,18 +102,12 @@ public class SessionDetailsActivity extends BaseActivity implements
     @Override
     public void updateData(Workout workout) {
         mWorkout = workout;
-        for (Location location : workout.getLocations()) {
-            Log.i("joan", location.toString());
-        }
+        mLocations = workout.getLocations();
     }
 
     @Override
     public void onWorkoutDeleted() {
         finish();
-    }
-
-    private void deleteSession() {
-        mPresenter.deleteSession(mWorkout);
     }
 
     private void initializeInjector() {
@@ -112,5 +117,15 @@ public class SessionDetailsActivity extends BaseActivity implements
                 .sessionDetailsModule(new SessionDetailsModule())
                 .build();
         mComponent.inject(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.clear();
+        map.setPadding(40, 80, 40, 0);
+        map.setMyLocationEnabled(false);
+        map.getUiSettings().setZoomControlsEnabled(false);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
+        mPresenter.paintMap(map, mLocations);
     }
 }

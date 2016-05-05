@@ -140,7 +140,7 @@ public class WorkoutPresenter implements BasePresenter {
                 @Override
                 public cat.xojan.fittracker.data.entity.Location apply(Location input) {
                     return new cat.xojan.fittracker.data.entity.Location(
-                            Calendar.getInstance().getTimeInMillis(),
+                            (long) (Calendar.getInstance().getTimeInMillis() + Math.random()),
                             input.getLongitude(),
                             input.getLatitude(),
                             new Date(),

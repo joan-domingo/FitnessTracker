@@ -1,5 +1,18 @@
 package cat.xojan.fittracker.presentation.sessiondetails;
 
+import android.graphics.Color;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.List;
+
+import cat.xojan.fittracker.data.entity.Location;
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
@@ -15,6 +28,7 @@ public class SessionDetailsPresenter implements BasePresenter {
     private final UnitDataInteractor mUnitDataInteractor;
     private final WorkoutInteractor mWorkoutInteractor;
     private ViewListener mListener;
+    private LatLngBounds.Builder mBoundsBuilder;
 
     interface ViewListener {
         void updateData(Workout workout);
@@ -26,6 +40,7 @@ public class SessionDetailsPresenter implements BasePresenter {
                                    WorkoutInteractor workoutInteractor) {
         mUnitDataInteractor = unitDataInteractor;
         mWorkoutInteractor = workoutInteractor;
+        mBoundsBuilder = new LatLngBounds.Builder();
     }
 
     @Override
@@ -67,5 +82,55 @@ public class SessionDetailsPresenter implements BasePresenter {
                         mListener.onWorkoutDeleted();
                     }
                 });
+    }
+
+    public void paintMap(GoogleMap map, List<Location> locations) {
+        if (locations.size() != 0) {
+            if (locations.size() == 1) {
+                addStartMarker(locations.get(0), map);
+                addPositionToBoundsBuilder(locations.get(0));
+            } else {
+                addStartMarker(locations.get(0), map);
+                addPositionToBoundsBuilder(locations.get(0));
+                Location oldLocation = locations.get(0);
+                for (int i = 1; i < locations.size(); i++) {
+                    addPolyline(oldLocation, locations.get(i), map);
+                    oldLocation = locations.get(i);
+                    addPositionToBoundsBuilder(locations.get(i));
+                }
+                addFinishMarker(locations.get(locations.size() - 1), map);
+            }
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 0));
+        }
+    }
+
+    private void addPositionToBoundsBuilder(Location location) {
+        LatLng position = new LatLng(location.getLattitude(), location.getLongitude());
+        mBoundsBuilder.include(position);
+    }
+
+    private void addFinishMarker(Location location, GoogleMap map) {
+        LatLng position = new LatLng(location.getLattitude(), location.getLongitude());
+        map.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                .position(position));
+    }
+
+    private void addPolyline(Location oldLocation, Location newLocation, GoogleMap map) {
+        LatLng oldPosition = new LatLng(oldLocation.getLattitude(), oldLocation.getLongitude());
+        LatLng newPosition = new LatLng(newLocation.getLattitude(), newLocation.getLongitude());
+        map.addPolyline(new PolylineOptions()
+                .geodesic(true)
+                .add(oldPosition)
+                .add(newPosition)
+                .width(6)
+                .color(Color.BLACK));
+    }
+
+    private void addStartMarker(Location location, GoogleMap map) {
+        LatLng position = new LatLng(location.getLattitude(), location.getLongitude());
+        map.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                .position(position));
     }
 }
