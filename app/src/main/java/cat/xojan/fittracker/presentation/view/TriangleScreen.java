@@ -17,7 +17,7 @@ import android.view.View;
 import com.fernandocejas.frodo.core.checks.Preconditions;
 
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.domain.ActivityType;
+import cat.xojan.fittracker.data.entity.ActivityType;
 
 public class TriangleScreen extends View {
 

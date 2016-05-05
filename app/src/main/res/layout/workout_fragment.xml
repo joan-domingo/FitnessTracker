@@ -55,7 +55,9 @@
         android:id="@+id/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SAVE"
+        android:text="@string/save"
+        android:background="@color/button_green"
+        android:layout_margin="@dimen/general_padding"
         android:visibility="gone"/>
 
 </LinearLayout>

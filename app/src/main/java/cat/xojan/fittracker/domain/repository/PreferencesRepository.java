@@ -1,4 +1,4 @@
-package cat.xojan.fittracker.domain;
+package cat.xojan.fittracker.domain.repository;
 
 import cat.xojan.fittracker.data.entity.DistanceUnit;
 

@@ -1,6 +1,5 @@
 package cat.xojan.fittracker.presentation.fragment;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -10,14 +9,10 @@ import android.widget.DatePicker;
 
 import java.util.Calendar;
 
-import cat.xojan.fittracker.presentation.listener.DateSelectedListener;
-
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
     private static final String PARAMETER_DATE = "date";
-
-    private DateSelectedListener mListener;
 
     public static DialogFragment newInstance(long time) {
         DatePickerFragment customDatePickerFragment = new DatePickerFragment();
@@ -25,17 +20,6 @@ public class DatePickerFragment extends DialogFragment
         bundle.putLong(PARAMETER_DATE, time);
         customDatePickerFragment.setArguments(bundle);
         return customDatePickerFragment;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (DateSelectedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement DateSelectedListener");
-        }
     }
 
     @NonNull
@@ -55,6 +39,5 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
-        mListener.onDateSelected(calendar.getTimeInMillis());
     }
 }

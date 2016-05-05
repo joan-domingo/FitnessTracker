@@ -1,23 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_delete"
         android:title="@string/action_delete"
-        android:icon="@drawable/ic_delete_white_48dp"
-        app:showAsAction="always" />
-
-    <item android:id="@+id/action_attributions"
-        android:title="@string/attributions"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_music"
-        android:title="@string/music"
-        android:icon="@drawable/ic_my_library_music_white_48dp"
+        android:icon="@drawable/delete"
         app:showAsAction="always" />
 </menu>

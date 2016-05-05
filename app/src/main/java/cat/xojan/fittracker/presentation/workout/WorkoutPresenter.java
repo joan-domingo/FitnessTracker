@@ -1,17 +1,21 @@
 package cat.xojan.fittracker.presentation.workout;
 
-import android.util.Log;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
 import javax.inject.Inject;
 
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.entity.Workout;
+import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.presentation.BasePresenter;
+import cat.xojan.fittracker.util.Utils;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -19,16 +23,23 @@ import rx.schedulers.Schedulers;
  */
 public class WorkoutPresenter implements BasePresenter {
 
-    private static final String TAG = WorkoutPresenter.class.getSimpleName();
-
     private final WorkoutInteractor mWorkoutInteractor;
+    private final UnitDataInteractor mUnitDataInteractor;
     private long mStartTime;
     private long mEndTime;
     private Subscription mSubscription;
+    private WorkoutPresenterListener mListener;
+
+    interface WorkoutPresenterListener {
+        void finishWorkout();
+    }
+
 
     @Inject
-    public WorkoutPresenter(WorkoutInteractor workoutInteractor) {
+    public WorkoutPresenter(WorkoutInteractor workoutInteractor,
+                            UnitDataInteractor unitDataInteractor) {
         mWorkoutInteractor = workoutInteractor;
+        mUnitDataInteractor = unitDataInteractor;
     }
 
     @Override
@@ -46,6 +57,11 @@ public class WorkoutPresenter implements BasePresenter {
         if (mSubscription != null) {
             mSubscription.unsubscribe();
         }
+        mListener = null;
+    }
+
+    public void setupListener(WorkoutPresenterListener listener) {
+        mListener = listener;
     }
 
     public void saveWorkout(long distance, String activityType) {
@@ -76,6 +92,17 @@ public class WorkoutPresenter implements BasePresenter {
         return Calendar.getInstance().getTimeInMillis();
     }
 
+    public void updateDistanceView(final double distance, final TextView distanceView) {
+        mUnitDataInteractor.getDistanceUnit()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<DistanceUnit>() {
+                    @Override
+                    public void call(DistanceUnit distanceUnit) {
+                        distanceView.setText(Utils.formatDistance(distance, distanceUnit));
+                    }
+                });
+    }
+
     /**
      * Save Workout subscriber.
      */
@@ -83,7 +110,7 @@ public class WorkoutPresenter implements BasePresenter {
 
         @Override
         public void onCompleted() {
-            Log.i(TAG, "Workout saved successfully");
+            mListener.finishWorkout();
         }
 
         @Override

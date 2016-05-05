@@ -53,4 +53,36 @@ public class WorkoutInteractor {
             }
         });
     }
+
+    @RxLogObservable(RxLogObservable.Scope.STREAM)
+    public Observable<Workout> loadWorkout(final long workoutId) {
+        return Observable.create(new Observable.OnSubscribe<Workout>() {
+            @Override
+            public void call(Subscriber<? super Workout> subscriber) {
+                try {
+                    Workout workout = mRepository.loadWorkout(workoutId);
+                    subscriber.onNext(workout);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @RxLogObservable(RxLogObservable.Scope.STREAM)
+    public Observable<Void> deleteWorkout(final Workout workout) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    mRepository.removeWorkout(workout);
+                    subscriber.onNext(null);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
 }

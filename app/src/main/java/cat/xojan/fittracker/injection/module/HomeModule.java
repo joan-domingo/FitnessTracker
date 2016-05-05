@@ -1,6 +1,5 @@
 package cat.xojan.fittracker.injection.module;
 
-import cat.xojan.fittracker.domain.FitnessDataInteractor;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.injection.PerActivity;

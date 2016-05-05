@@ -1,7 +1,9 @@
 package cat.xojan.fittracker.domain.interactor;
 
+import com.fernandocejas.frodo.annotation.RxLogObservable;
+
 import cat.xojan.fittracker.data.entity.DistanceUnit;
-import cat.xojan.fittracker.domain.PreferencesRepository;
+import cat.xojan.fittracker.domain.repository.PreferencesRepository;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -16,6 +18,7 @@ public class UnitDataInteractor {
         mUnitDataRepository = firstRunRepository;
     }
 
+    @RxLogObservable(RxLogObservable.Scope.STREAM)
     public Observable<DistanceUnit> getDistanceUnit() {
         return Observable.create(new Observable.OnSubscribe<DistanceUnit>() {
             @Override
@@ -31,6 +34,7 @@ public class UnitDataInteractor {
         });
     }
 
+    @RxLogObservable(RxLogObservable.Scope.STREAM)
     public Observable<DistanceUnit> setDistanceUnit(final DistanceUnit distanceUnit) {
         return Observable.create(new Observable.OnSubscribe<DistanceUnit>() {
             @Override

@@ -2,7 +2,7 @@ package cat.xojan.fittracker.injection.component;
 
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.domain.PreferencesRepository;
+import cat.xojan.fittracker.domain.repository.PreferencesRepository;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.domain.repository.WorkoutRepository;

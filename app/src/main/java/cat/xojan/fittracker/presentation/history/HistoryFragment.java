@@ -89,6 +89,7 @@ public class HistoryFragment extends BaseFragment implements
         ImageView sessionActivity = (ImageView) v.findViewById(R.id.activity);
 
         Intent intent = new Intent(getActivity(), SessionDetailsActivity.class);
+        intent.putExtra(SessionDetailsActivity.EXTRA_ID, (long) title.getTag());
         intent.putExtra(SessionDetailsActivity.EXTRA_TITLE, title.getText());
         intent.putExtra(SessionDetailsActivity.EXTRA_ACTIVITY, sessionActivity.getTag().toString());
         Pair<View, String> p1 = Pair.create((View)title, "title");

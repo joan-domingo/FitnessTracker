@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.domain.ActivityType;
+import cat.xojan.fittracker.data.entity.ActivityType;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.navigation.Navigator;
 import cat.xojan.fittracker.presentation.BaseFragment;

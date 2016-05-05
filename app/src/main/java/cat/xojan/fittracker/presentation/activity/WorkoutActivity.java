@@ -14,13 +14,9 @@ import javax.inject.Inject;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.controller.FitnessController;
-import cat.xojan.fittracker.presentation.fragment.WorkoutMapFragment;
-import cat.xojan.fittracker.presentation.listener.LocationUpdateListener;
-import cat.xojan.fittracker.presentation.listener.RemoveLocationUpdateListener;
 
 public class WorkoutActivity extends BaseActivity
-        implements LocationListener,
-        RemoveLocationUpdateListener {
+        implements LocationListener{
     private static final String TAG = WorkoutActivity.class.getSimpleName();
 
     // The minimum distance to change Updates in meters
@@ -36,7 +32,6 @@ public class WorkoutActivity extends BaseActivity
     @Inject
     FitnessController mFitnessController;
 
-    private LocationUpdateListener mLocationUpdateListener;
     private boolean mIsFirstLocation;
 
     @Override
@@ -75,9 +70,6 @@ public class WorkoutActivity extends BaseActivity
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
             mIsFirstLocation = false;
-            notifyFirstLocationToFragment(location);
-        } else {
-            notifyUpdateLocationToFragment(location);
         }
     }
 
@@ -105,22 +97,6 @@ public class WorkoutActivity extends BaseActivity
 
     private void setUpLocationListener() {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-    }
-
-    private void notifyFirstLocationToFragment(Location location) {
-        mLocationUpdateListener =
-                (LocationUpdateListener) getSupportFragmentManager()
-                .findFragmentByTag(WorkoutMapFragment.WORKOUT_FRAGMENT_TAG);
-        mLocationUpdateListener.onFirstLocationUpdate(location);
-    }
-
-    private void notifyUpdateLocationToFragment(Location location) {
-        mLocationUpdateListener.onLocationUpdate(location);
-    }
-
-    @Override
-    public void notifyRemoveLocationUpdate() {
-        mLocationManager.removeUpdates(this);
     }
 
     public GoogleApiClient getFitnessClient() {

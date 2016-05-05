@@ -6,7 +6,7 @@ import android.content.Intent;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import cat.xojan.fittracker.domain.ActivityType;
+import cat.xojan.fittracker.data.entity.ActivityType;
 import cat.xojan.fittracker.presentation.home.HomeActivity;
 import cat.xojan.fittracker.presentation.startup.StartupActivity;
 import cat.xojan.fittracker.presentation.workout.WorkoutActivity;

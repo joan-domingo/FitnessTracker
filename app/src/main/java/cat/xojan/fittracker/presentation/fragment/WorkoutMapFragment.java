@@ -1,7 +1,5 @@
 package cat.xojan.fittracker.presentation.fragment;
 
-import android.app.Activity;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -27,10 +25,8 @@ import cat.xojan.fittracker.presentation.controller.MapController;
 import cat.xojan.fittracker.presentation.controller.NotificationController;
 import cat.xojan.fittracker.presentation.controller.SpeedController;
 import cat.xojan.fittracker.presentation.controller.TimeController;
-import cat.xojan.fittracker.presentation.listener.LocationUpdateListener;
-import cat.xojan.fittracker.presentation.listener.RemoveLocationUpdateListener;
 
-public class WorkoutMapFragment extends BaseFragment implements LocationUpdateListener{
+public class WorkoutMapFragment extends BaseFragment {
 
     public static final String WORKOUT_FRAGMENT_TAG = "workoutFragment";
 
@@ -65,8 +61,6 @@ public class WorkoutMapFragment extends BaseFragment implements LocationUpdateLi
     LinearLayout lapPauseBar;
     @Bind(R.id.resume_finish_bar)
     LinearLayout resumeFinishBar;
-
-    private RemoveLocationUpdateListener mListener;
 
     @OnClick(R.id.workout_button_start)
     public void onClickStart(Button startButton) {
@@ -113,8 +107,6 @@ public class WorkoutMapFragment extends BaseFragment implements LocationUpdateLi
     @OnClick(R.id.workout_button_finish)
     public void onClickFinish(Button finishButton) {
         notController.dismissNotification();
-        //remove location listener
-        mListener.notifyRemoveLocationUpdate();
         //change buttons visibility
         resumeFinishBar.setVisibility(View.GONE);
         //show results
@@ -135,17 +127,6 @@ public class WorkoutMapFragment extends BaseFragment implements LocationUpdateLi
     }
 
     private static View view;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (RemoveLocationUpdateListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement RemoveLocationUpdateListener");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -178,25 +159,12 @@ public class WorkoutMapFragment extends BaseFragment implements LocationUpdateLi
         speedController.init(paceView, speedView);
     }
 
-    @Override
-    public void onFirstLocationUpdate(Location location) {
-        startBar.setVisibility(View.VISIBLE);
-        gpsBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onLocationUpdate(Location location) {
-        mapController.updateTrack(location);
-        mapController.updateMap(location.getLatitude(), location.getLongitude());
-    }
-
     private void setUpView() {
         toolbar.setVisibility(View.GONE);
         gpsBar.setVisibility(View.VISIBLE);
     }
 
     private void exit() {
-        mListener.notifyRemoveLocationUpdate();
         mapController.initMap();
         notController.dismissNotification();
         getActivity().finish();

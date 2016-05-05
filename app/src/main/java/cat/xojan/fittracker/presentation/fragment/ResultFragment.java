@@ -33,14 +33,13 @@ import cat.xojan.fittracker.presentation.controller.DistanceController;
 import cat.xojan.fittracker.presentation.controller.FitnessController;
 import cat.xojan.fittracker.presentation.controller.MapController;
 import cat.xojan.fittracker.presentation.controller.TimeController;
-import cat.xojan.fittracker.presentation.listener.OnSessionInsertListener;
 import cat.xojan.fittracker.util.SessionDetailedData;
 import cat.xojan.fittracker.util.Utils;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
-public class ResultFragment extends BaseFragment implements OnSessionInsertListener {
+public class ResultFragment extends BaseFragment {
 
     public static final String TAG = BaseFragment.class.getSimpleName();
 
@@ -257,11 +256,5 @@ public class ResultFragment extends BaseFragment implements OnSessionInsertListe
                         }
                     });
         });*/
-    }
-
-    @Override
-    public void insertCompleted() {
-        showProgressDialog(false);
-        getActivity().finish();
     }
 }

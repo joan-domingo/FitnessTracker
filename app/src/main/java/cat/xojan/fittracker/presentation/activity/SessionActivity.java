@@ -10,40 +10,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.data.entity.DistanceUnit;
-import cat.xojan.fittracker.domain.Session;
-import cat.xojan.fittracker.domain.SessionReadResult;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.presentation.controller.DataPoint;
 import cat.xojan.fittracker.presentation.controller.DataSet;
-import cat.xojan.fittracker.presentation.listener.UiContentUpdater;
 import cat.xojan.fittracker.util.SessionDetailedData;
-import cat.xojan.fittracker.util.Utils;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SessionActivity extends BaseActivity
-        implements UiContentUpdater{
+public class SessionActivity extends BaseActivity {
 
     private static final String TAG = SessionActivity.class.getSimpleName();
 
     @Bind(R.id.fragment_session_toolbar) Toolbar toolbar;
 
-    private Session mSession;
     private MenuItem mDeleteButton;
     private List<DataSet> mDataSets;
     private List<DataPoint> mLocationDataPoints;
@@ -75,12 +65,6 @@ public class SessionActivity extends BaseActivity
 
         mDeleteButton = menu.findItem(R.id.action_delete);
         mDeleteButton.setVisible(false);
-        MenuItem music = menu.findItem(R.id.action_music);
-        music.setVisible(false);
-        MenuItem settings = menu.findItem(R.id.action_settings);
-        settings.setVisible(false);
-        MenuItem attributions = menu.findItem(R.id.action_attributions);
-        attributions.setVisible(false);
 
         return true;
     }
@@ -173,7 +157,7 @@ public class SessionActivity extends BaseActivity
                 //totalDistance = totalDistance + dp.getValue(Field.FIELD_DISTANCE).asFloat();
             }
         }
-        //distance
+        /*distance
         ((TextView) findViewById(R.id.fragment_session_total_distance))
                 .setText(Utils.formatDistance((float) totalDistance, DistanceUnit.KILOMETER));
         //name
@@ -210,7 +194,7 @@ public class SessionActivity extends BaseActivity
             ((TextView) findViewById(R.id.fragment_session_total_speed)).setText(Utils.getRightSpeed(0, SessionActivity.this));
             //pace
             ((TextView) findViewById(R.id.fragment_session_total_pace)).setText(Utils.getRightPace(0, SessionActivity.this));
-        }
+        }*/
         dismissProgress();
         if (mLocationDataPoints != null && mLocationDataPoints.size() > 0) {
             fillMap(true);
@@ -286,20 +270,6 @@ public class SessionActivity extends BaseActivity
         } else {
             if (mapFragment != null && mapFragment.getView() != null)
                 mapFragment.getView().setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void setSessionData(SessionReadResult sessionReadResult) {
-        if (sessionReadResult != null && sessionReadResult.getSessions().size() > 0) {
-            mDataSets = sessionReadResult.getDataSet(mSession);
-
-            if (mSession.getAppPackageName().equals(BuildConfig.APPLICATION_ID)) {
-                mDeleteButton.setVisible(true);
-            }
-
-            fillViewContent();
-            dismissProgress();
         }
     }
 }

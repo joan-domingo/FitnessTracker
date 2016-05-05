@@ -3,12 +3,8 @@ package cat.xojan.fittracker.data.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.ResourceBundle;
-
 import cat.xojan.fittracker.data.entity.DistanceUnit;
-import cat.xojan.fittracker.domain.PreferencesRepository;
+import cat.xojan.fittracker.domain.repository.PreferencesRepository;
 
 public class SharedPreferencesStorage implements PreferencesRepository {
 

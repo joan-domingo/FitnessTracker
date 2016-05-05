@@ -13,7 +13,7 @@ import java.util.List;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.entity.Workout;
-import cat.xojan.fittracker.domain.ActivityType;
+import cat.xojan.fittracker.data.entity.ActivityType;
 import cat.xojan.fittracker.util.Utils;
 
 /**
@@ -80,6 +80,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         Workout workout = mWorkouts.get(position);
 
         holder.mTitle.setText(workout.getTitle());
+        holder.mTitle.setTag(workout.getId());
         holder.mDistance.setText(Utils.formatDistance(workout.getDistance(), mDistanceUnit));
         holder.mTime.setText(Utils.millisToTime(workout.getWorkoutTime()));
         holder.mActivity.setBackground(mContext.getResources()

@@ -50,24 +50,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
-                Intent settingsIntent = new Intent(this, PreferenceActivity.class);
-                startActivity(settingsIntent);
-                break;
             case android.R.id.home:
                 getSupportFragmentManager().popBackStack();
-                break;
-            case R.id.action_attributions:
-                Intent attributionIntent = new Intent(this, AttributionActivity.class);
-                startActivity(attributionIntent);
-                break;
-            case R.id.action_music:
-                long eventtime = SystemClock.uptimeMillis();
-                Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-                KeyEvent downEvent = new KeyEvent(eventtime, eventtime, KeyEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, 0);
-                downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
-                sendOrderedBroadcast(downIntent, null);
                 break;
         }
 

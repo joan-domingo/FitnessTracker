@@ -17,10 +17,10 @@ import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.presentation.BaseFragment;
-import cat.xojan.fittracker.util.Utils;
 
 
-public class WorkoutFragment extends BaseFragment {
+public class WorkoutFragment extends BaseFragment implements
+        WorkoutPresenter.WorkoutPresenterListener {
 
     @Inject
     WorkoutPresenter mPresenter;
@@ -42,6 +42,7 @@ public class WorkoutFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getComponent(WorkoutComponent.class).inject(this);
+        mPresenter.setupListener(this);
     }
 
     @Nullable
@@ -84,7 +85,12 @@ public class WorkoutFragment extends BaseFragment {
 
     public void updateDistance(double distance) {
         mDistance = distance;
-        //TODO mDistanceView.setText(Utils.formatDistance(distance, getActivity()));
+        mPresenter.updateDistanceView(distance, mDistanceView);
+    }
+
+    @Override
+    public void finishWorkout() {
+        getActivity().finish();
     }
 
     private class ChronometerTickListener implements Chronometer.OnChronometerTickListener {

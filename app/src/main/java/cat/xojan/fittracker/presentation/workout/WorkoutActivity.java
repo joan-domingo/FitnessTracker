@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
-import cat.xojan.fittracker.domain.ActivityType;
+import cat.xojan.fittracker.data.entity.ActivityType;
 import cat.xojan.fittracker.injection.HasComponent;
 import cat.xojan.fittracker.injection.component.DaggerWorkoutComponent;
 import cat.xojan.fittracker.injection.component.WorkoutComponent;

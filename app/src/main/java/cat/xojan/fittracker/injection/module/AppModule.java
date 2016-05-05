@@ -9,7 +9,7 @@ import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.data.db.dao.DaoSession;
 import cat.xojan.fittracker.data.repository.DbWorkoutStorage;
 import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
-import cat.xojan.fittracker.domain.PreferencesRepository;
+import cat.xojan.fittracker.domain.repository.PreferencesRepository;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.domain.repository.WorkoutRepository;

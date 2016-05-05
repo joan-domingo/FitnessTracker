@@ -2,6 +2,7 @@ package cat.xojan.fittracker.injection.module;
 
 import android.app.Activity;
 
+import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.injection.PerActivity;
 import cat.xojan.fittracker.presentation.workout.MapPresenter;
@@ -21,8 +22,9 @@ public class WorkoutModule {
 
     @Provides
     @PerActivity
-    WorkoutPresenter provideWorkoutPresenter(WorkoutInteractor workoutInteractor) {
-        return new WorkoutPresenter(workoutInteractor);
+    WorkoutPresenter provideWorkoutPresenter(WorkoutInteractor workoutInteractor,
+                                             UnitDataInteractor unitDataInteractor) {
+        return new WorkoutPresenter(workoutInteractor, unitDataInteractor);
     }
 
     @Provides
