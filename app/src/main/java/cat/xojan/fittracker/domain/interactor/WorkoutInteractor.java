@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import cat.xojan.fittracker.data.entity.Location;
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.domain.repository.WorkoutRepository;
 import rx.Observable;
@@ -24,12 +25,13 @@ public class WorkoutInteractor {
     }
 
     @RxLogObservable(RxLogObservable.Scope.STREAM)
-    public Observable<Void> saveWorkout(final Workout workout) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
+    public Observable<Workout> saveWorkout(final Workout workout) {
+        return Observable.create(new Observable.OnSubscribe<Workout>() {
             @Override
-            public void call(Subscriber<? super Void> subscriber) {
+            public void call(Subscriber<? super Workout> subscriber) {
                 try {
                     mRepository.saveWorkout(workout);
+                    subscriber.onNext(workout);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -77,6 +79,22 @@ public class WorkoutInteractor {
             public void call(Subscriber<? super Void> subscriber) {
                 try {
                     mRepository.removeWorkout(workout);
+                    subscriber.onNext(null);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @RxLogObservable(RxLogObservable.Scope.STREAM)
+    public Observable<Void> saveWorkoutLocations(final List<Location> locations) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    mRepository.saveLocations(locations);
                     subscriber.onNext(null);
                     subscriber.onCompleted();
                 } catch (Exception e) {

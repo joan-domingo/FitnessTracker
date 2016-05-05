@@ -2,6 +2,7 @@ package cat.xojan.fittracker.domain.repository;
 
 import java.util.List;
 
+import cat.xojan.fittracker.data.entity.Location;
 import cat.xojan.fittracker.data.entity.Workout;
 
 /**
@@ -27,4 +28,9 @@ public interface WorkoutRepository {
      * Remove the specified {@link Workout}.
      */
     void removeWorkout(Workout workout);
+
+    /**
+     * Store workout {@link Location}.
+     */
+    void saveLocations(List<Location> locations);
 }

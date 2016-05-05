@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.presentation.workout;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -35,8 +38,10 @@ public class WorkoutFragment extends BaseFragment implements
     View mSearchLocationView;
     @Bind(R.id.save)
     Button mSaveButton;
+
     private double mDistance;
     private String mActivityType;
+    private List<Location> mLocationList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,10 +82,11 @@ public class WorkoutFragment extends BaseFragment implements
         mPresenter.startWorkout();
     }
 
-    public void stopWorkout() {
+    public void stopWorkout(List<Location> locationList) {
         mChrono.stop();
         mSaveButton.setVisibility(View.VISIBLE);
         mPresenter.stopWorkout();
+        mLocationList = locationList;
     }
 
     public void updateDistance(double distance) {
@@ -110,7 +116,7 @@ public class WorkoutFragment extends BaseFragment implements
     private class SaveWorkoutClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            mPresenter.saveWorkout((long) mDistance, mActivityType);
+            mPresenter.saveWorkout((long) mDistance, mActivityType, mLocationList);
         }
     }
 }

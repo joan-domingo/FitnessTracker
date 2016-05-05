@@ -1,7 +1,5 @@
 package cat.xojan.fittracker.presentation.sessiondetails;
 
-import android.view.View;
-
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;

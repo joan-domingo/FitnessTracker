@@ -13,6 +13,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import cat.xojan.fittracker.presentation.BasePresenter;
@@ -26,6 +29,7 @@ import cat.xojan.fittracker.util.Utils;
 public class MapPresenter implements BasePresenter, LocationFetcher.LocationChangedListener {
 
     private final Context mContext;
+    private final List<Location> mLocationList;
     private Listener mListener;
     private LatLngBounds.Builder mBoundsBuilder;
     private double mWorkoutDistance;
@@ -47,6 +51,7 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
         mLocationFetcher = locationFetcher;
         mLocationFetcher.setLocationListener(this);
         mContext = context;
+        mLocationList = new ArrayList<Location>();
     }
 
     public void init(GoogleMap map, Listener listener) {
@@ -91,13 +96,15 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
         mLocationFetcher.stop();
     }
 
-    public void stop() {
+    public List<Location> stop() {
         mLocationFetcher.stop();
         addLastMarker(LocationUtils.locationToLatLng(mLocation));
+        return mLocationList;
     }
 
     @Override
     public void onLocationChanged(Location location) {
+        mLocationList.add(location);
         LatLng currentPosition = LocationUtils.locationToLatLng(location);
         if (mLocation == null) {
             mListener.startWorkout();
@@ -118,10 +125,6 @@ public class MapPresenter implements BasePresenter, LocationFetcher.LocationChan
             mListener.onDistanceChanged(mWorkoutDistance);
         }
         goToLocation(location);
-    }
-
-    public boolean hasWorkoutStarted() {
-        return mLocation != null;
     }
 
     private void addFirstMarker(LatLng position) {

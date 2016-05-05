@@ -1,5 +1,6 @@
 package cat.xojan.fittracker.presentation.workout;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -9,6 +10,8 @@ import android.view.View;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -114,9 +117,9 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     private class StopWorkoutClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            ((WorkoutFragment) getCurrentFragment()).stopWorkout();
+            List<Location> locationList = mMapPresenter.stop();
+            ((WorkoutFragment) getCurrentFragment()).stopWorkout(locationList);
             mAppBar.setExpanded(false);
-            mMapPresenter.stop();
         }
     }
 }

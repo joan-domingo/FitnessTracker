@@ -2,6 +2,7 @@ package cat.xojan.fittracker.presentation.sessiondetails;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.data.entity.ActivityType;
+import cat.xojan.fittracker.data.entity.Location;
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.injection.HasComponent;
 import cat.xojan.fittracker.injection.component.DaggerSessionDetailsComponent;
@@ -89,6 +91,9 @@ public class SessionDetailsActivity extends BaseActivity implements
     @Override
     public void updateData(Workout workout) {
         mWorkout = workout;
+        for (Location location : workout.getLocations()) {
+            Log.i("joan", location.toString());
+        }
     }
 
     @Override
