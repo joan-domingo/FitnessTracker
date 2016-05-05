@@ -53,7 +53,6 @@
                     android:id="@+id/date_range_start"
                     android:layout_width="88dp"
                     android:layout_height="36dp"
-                    android:stateListAnimator="@anim/anim"
                     android:fontFamily="sans-serif"
                     android:textSize="14sp"
                     style="@style/RaisedGrey"/>
@@ -80,7 +79,6 @@
                     android:layout_height="36dp"
                     android:fontFamily="sans-serif"
                     android:textSize="14sp"
-                    android:stateListAnimator="@anim/anim"
                     style="@style/RaisedGrey"/>
 
             </LinearLayout>
@@ -111,7 +109,6 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/ripple"
-        android:stateListAnimator="@anim/anim"
         android:src="@drawable/ic_plus_white_48dp"
         android:elevation="8dp" />
 

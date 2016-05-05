@@ -2,25 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="@dimen/general_padding">
 
-    <TextView
+    <ImageView
         android:id="@+id/activity"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:gravity="center"
         android:transitionName="activity"
-        android:textSize="26sp"
-        android:textColor="@color/white"
-        android:background="@drawable/round_view"/>
+        android:background="@drawable/run_button_view"/>
 
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:transitionName="title"
-        android:text=""
-        android:textSize="30dp"
+        android:textSize="32sp"
         android:layout_marginLeft="16dp"/>
 
 </LinearLayout>

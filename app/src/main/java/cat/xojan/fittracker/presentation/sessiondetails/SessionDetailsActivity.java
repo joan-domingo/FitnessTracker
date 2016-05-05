@@ -4,14 +4,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cat.xojan.fittracker.R;
+import cat.xojan.fittracker.domain.ActivityType;
 
 /**
- * Created by Joan on 05/02/2016.
+ * Workout details.
  */
 public class SessionDetailsActivity extends AppCompatActivity {
 
@@ -21,7 +23,7 @@ public class SessionDetailsActivity extends AppCompatActivity {
     @Bind(R.id.text)
     TextView mTitle;
     @Bind(R.id.activity)
-    TextView mFitnessActivity;
+    ImageView mFitnessActivity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +33,8 @@ public class SessionDetailsActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         mTitle.setText(extras.getString(EXTRA_TITLE));
-        mFitnessActivity.setText(extras.getString(EXTRA_ACTIVITY));
+        mFitnessActivity.setBackground(getResources()
+                .getDrawable(ActivityType.toDrawable(extras.getString(EXTRA_ACTIVITY))));
     }
 
     @Override

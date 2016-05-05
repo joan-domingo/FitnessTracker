@@ -157,7 +157,6 @@
                     android:layout_weight="1"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
-                    android:stateListAnimator="@anim/anim"
                     android:text="@string/exit"
                     style="@style/RaisedRed" />
 
@@ -178,7 +177,6 @@
                     android:layout_weight="2"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
-                    android:stateListAnimator="@anim/anim"
                     android:text="@string/start"
                     style="@style/RaisedGreen" />
 
@@ -188,7 +186,6 @@
                     android:layout_weight="1"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
-                    android:stateListAnimator="@anim/anim"
                     android:text="@string/exit"
                     style="@style/RaisedRed" />
 
@@ -209,7 +206,6 @@
                     android:layout_weight="1"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
-                    android:stateListAnimator="@anim/anim"
                     android:text="@string/lap"
                     style="@style/RaisedGreen" />
 
@@ -219,7 +215,6 @@
                     android:layout_weight="1"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
-                    android:stateListAnimator="@anim/anim"
                     android:text="@string/pause"
                     style="@style/RaisedGrey" />
 
@@ -240,7 +235,6 @@
                     android:layout_weight="1"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
-                    android:stateListAnimator="@anim/anim"
                     android:text="@string/resume"
                     style="@style/RaisedGreen" />
 
@@ -250,7 +244,6 @@
                     android:layout_weight="1"
                     android:layout_height="36dp"
                     android:minWidth="88dp"
-                    android:stateListAnimator="@anim/anim"
                     android:text="@string/finish"
                     style="@style/RaisedRed" />
 

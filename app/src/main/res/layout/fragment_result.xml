@@ -256,7 +256,6 @@
             android:layout_weight="1"
             android:layout_height="36dp"
             android:minWidth="88dp"
-            android:stateListAnimator="@anim/anim"
             android:text="@string/save"
             style="@style/RaisedGreen" />
 
@@ -266,7 +265,6 @@
             android:layout_weight="1"
             android:layout_height="36dp"
             android:minWidth="88dp"
-            android:stateListAnimator="@anim/anim"
             android:text="@string/exit"
             style="@style/RaisedRed" />
 

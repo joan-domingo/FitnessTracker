@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -85,11 +86,11 @@ public class HistoryFragment extends BaseFragment implements
     @Override
     public void onItemClick(int position, View v) {
         TextView title = (TextView) v.findViewById(R.id.text);
-        TextView sessionActivity = (TextView) v.findViewById(R.id.activity);
+        ImageView sessionActivity = (ImageView) v.findViewById(R.id.activity);
 
         Intent intent = new Intent(getActivity(), SessionDetailsActivity.class);
         intent.putExtra(SessionDetailsActivity.EXTRA_TITLE, title.getText());
-        intent.putExtra(SessionDetailsActivity.EXTRA_ACTIVITY, sessionActivity.getText());
+        intent.putExtra(SessionDetailsActivity.EXTRA_ACTIVITY, sessionActivity.getTag().toString());
         Pair<View, String> p1 = Pair.create((View)title, "title");
         Pair<View, String> p2 = Pair.create((View)sessionActivity, "activity");
         ActivityOptionsCompat options = ActivityOptionsCompat.

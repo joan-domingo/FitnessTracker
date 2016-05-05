@@ -18,7 +18,7 @@ public class UserSettingFragment extends PreferenceFragment
         super.onCreate(savedInstanceState);
 
         //Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.settings);
+        //addPreferencesFromResource(R.xml.settings);
     }
 
     @Override

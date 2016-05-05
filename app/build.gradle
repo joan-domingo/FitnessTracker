@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "cat.xojan.fittracker"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 24
         versionName "2.0.0"

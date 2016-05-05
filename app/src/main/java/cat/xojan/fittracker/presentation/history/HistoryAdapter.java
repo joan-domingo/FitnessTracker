@@ -84,6 +84,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.mTime.setText(Utils.millisToTime(workout.getWorkoutTime()));
         holder.mActivity.setBackground(mContext.getResources()
                 .getDrawable(ActivityType.toDrawable(workout.getType())));
+        holder.mActivity.setTag(workout.getType());
     }
 
     // Return the size of your dataset (invoked by the layout manager)

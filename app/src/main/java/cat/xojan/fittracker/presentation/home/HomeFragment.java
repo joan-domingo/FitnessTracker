@@ -8,26 +8,36 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.domain.ActivityType;
 import cat.xojan.fittracker.injection.component.HomeComponent;
 import cat.xojan.fittracker.navigation.Navigator;
 import cat.xojan.fittracker.presentation.BaseFragment;
-import cat.xojan.fittracker.presentation.view.TriangleScreen;
 
-import static cat.xojan.fittracker.presentation.view.TriangleScreen.*;
-
-public class HomeFragment extends BaseFragment implements
-        FitnessActivityClickListener {
+public class HomeFragment extends BaseFragment {
 
     @Inject
     Navigator mNavigator;
+
     @Inject
     HomePresenter mPresenter;
-    /*@Bind(R.id.triangle_view)
-    TriangleScreen mTriangleView;*/
+
+    @OnClick(R.id.walk)
+    void walk() {
+        mNavigator.navigateToWorkoutActivity(getActivity(), ActivityType.Walking);
+    }
+
+    @OnClick(R.id.run)
+    void run() {
+        mNavigator.navigateToWorkoutActivity(getActivity(), ActivityType.Running);
+    }
+
+    @OnClick(R.id.bike)
+    void bike() {
+        mNavigator.navigateToWorkoutActivity(getActivity(), ActivityType.Biking);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +56,6 @@ public class HomeFragment extends BaseFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //mTriangleView.setFitnessActivityClickListener(this);
     }
 
     @Override
@@ -58,10 +67,5 @@ public class HomeFragment extends BaseFragment implements
     @Override public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public void onClick(ActivityType activityType) {
-        mNavigator.navigateToWorkoutActivity(getActivity(), activityType);
     }
 }
