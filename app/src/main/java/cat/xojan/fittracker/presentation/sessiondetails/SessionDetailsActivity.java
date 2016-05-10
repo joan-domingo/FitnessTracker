@@ -2,7 +2,6 @@ package cat.xojan.fittracker.presentation.sessiondetails;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -103,6 +102,7 @@ public class SessionDetailsActivity extends BaseActivity implements
     public void updateData(Workout workout) {
         mWorkout = workout;
         mLocations = workout.getLocations();
+        displayWorkoutData(workout);
     }
 
     @Override
@@ -127,5 +127,8 @@ public class SessionDetailsActivity extends BaseActivity implements
         map.getUiSettings().setZoomControlsEnabled(false);
         map.getUiSettings().setMyLocationButtonEnabled(false);
         mPresenter.paintMap(map, mLocations);
+    }
+
+    private void displayWorkoutData(Workout workout) {
     }
 }

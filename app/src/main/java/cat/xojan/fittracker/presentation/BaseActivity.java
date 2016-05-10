@@ -87,11 +87,4 @@ public abstract class BaseActivity extends AppCompatActivity {
         fragmentTransaction.replace(containerViewId, fragment);
         fragmentTransaction.commit();
     }
-
-    /**
-     * Return displayed fragment.
-     */
-    protected Fragment getCurrentFragment() {
-        return getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-    }
 }

@@ -3,13 +3,13 @@ package cat.xojan.fittracker.presentation.workout;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.List;
 
@@ -26,7 +26,8 @@ import cat.xojan.fittracker.injection.module.WorkoutModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 
 
-public class WorkoutActivity extends BaseActivity implements HasComponent,
+public class WorkoutActivity extends BaseActivity implements
+        HasComponent,
         OnMapReadyCallback,
         MapPresenter.Listener{
 
@@ -34,10 +35,12 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
 
     @Inject
     MapPresenter mMapPresenter;
-    @Bind(R.id.appbar)
-    AppBarLayout mAppBar;
-    @Bind(R.id.fab)
-    FloatingActionButton mButton;
+    @Bind(R.id.main_toolbar)
+    Toolbar mToolbar;
+    //@Bind(R.id.fab)
+    //FloatingActionButton mButton;
+    @Bind(R.id.sliding_layout)
+    SlidingUpPanelLayout mLayout;
 
     private WorkoutComponent mComponent;
     private ActivityType mActivityType;
@@ -46,6 +49,7 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
+        setSupportActionBar(mToolbar);
 
         initializeInjector();
         ButterKnife.bind(this);
@@ -53,20 +57,10 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
         mActivityType = (ActivityType) getIntent().getExtras().get(FITNESS_ACTIVITY);
         setTitle(mActivityType.name().toLowerCase());
 
-        addFragment(R.id.fragment_container, new WorkoutFragment());
         MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map));
         mapFragment.getMapAsync(this);
 
-        mAppBar.setExpanded(false);
-        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                mMapPresenter.goToLastLocation(verticalOffset);
-            }
-        });
-
-        mButton.setVisibility(View.GONE);
-        mButton.setOnClickListener(new StopWorkoutClickListener());
+        mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
     }
 
     @Override
@@ -78,9 +72,13 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
 
     @Override
     public void onBackPressed() {
-        //if (!mMapPresenter.hasWorkoutStarted()) {
+        if (mLayout != null &&
+                (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED
+                        || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
+            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
             super.onBackPressed();
-        //}
+        }
     }
 
     private void initializeInjector() {
@@ -104,22 +102,21 @@ public class WorkoutActivity extends BaseActivity implements HasComponent,
 
     @Override
     public void startWorkout() {
-        mAppBar.setExpanded(true);
-        ((WorkoutFragment) getCurrentFragment()).startWorkout(mActivityType.name());
-        mButton.setVisibility(View.VISIBLE);
+
     }
 
     @Override
     public void onDistanceChanged(double distance) {
-        ((WorkoutFragment) getCurrentFragment()).updateDistance(distance);
+
     }
 
     private class StopWorkoutClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             List<Location> locationList = mMapPresenter.stop();
-            ((WorkoutFragment) getCurrentFragment()).stopWorkout(locationList);
-            mAppBar.setExpanded(false);
+            //((WorkoutFragment) getCurrentFragment()).stopWorkout(locationList);
+            //mAppBar.setExpanded(false);
         }
     }
+
 }

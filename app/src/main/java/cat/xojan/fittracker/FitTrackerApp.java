@@ -3,6 +3,7 @@ package cat.xojan.fittracker;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
@@ -22,6 +23,12 @@ public class FitTrackerApp extends Application {
     private AppComponent mComponent;
     private RefWatcher mRefWatcher;
     private DaoSession mDaoSession;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(base);
+    }
 
     @Override
     public void onCreate() {
