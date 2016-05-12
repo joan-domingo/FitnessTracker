@@ -7,7 +7,7 @@
     <string name="resume">Resume</string>
     <string name="finish">Finish</string>
     <string name="start" translatable="false">Start</string>
-    <string name="waiting_gps">WAITING FOR GPS</string>
+    <string name="waiting_gps">Acquiring GPS</string>
     <string name="exit">Exit</string>
     <string name="save">Save</string>
     <string name="choose_activity">Choose Activity</string>

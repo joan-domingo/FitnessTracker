@@ -102,7 +102,7 @@ public class WorkoutActivity extends BaseActivity implements
 
     @Override
     public void startWorkout() {
-
+        mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
     }
 
     @Override

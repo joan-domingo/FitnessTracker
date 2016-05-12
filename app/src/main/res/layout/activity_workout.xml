@@ -1,6 +1,5 @@
 <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -47,29 +46,62 @@
         android:focusable="false"
         android:id="@+id/dragView">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:orientation="horizontal">
+            android:layout_height="68dp">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="0dp"
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textSize="14sp"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"/>
+                android:gravity="center"
+                android:layout_toStartOf="@+id/button"
+                android:textSize="@dimen/workout_text_size"
+                android:fontFamily="sans-serif"/>
 
             <Button
-                android:id="@+id/follow"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="14sp"
-                android:gravity="center_vertical|right"
-                android:paddingRight="10dp"
-                android:paddingLeft="10dp"/>
+                android:id="@+id/button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/activity_button_view"/>
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/workout_text_size"
+                android:text="0.00km"
+                android:layout_toEndOf="@+id/button"
+                android:fontFamily="sans-serif"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/searching_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/waiting_gps"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
     </LinearLayout>
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>
