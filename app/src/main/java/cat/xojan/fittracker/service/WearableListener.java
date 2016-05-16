@@ -3,26 +3,11 @@ package cat.xojan.fittracker.service;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
-import javax.sql.DataSource;
-
-import cat.xojan.fittracker.BuildConfig;
-import cat.xojan.fittracker.presentation.controller.DataSet;
 import cat.xojan.fittracker.presentation.home.HomeActivity;
 
 public class WearableListener extends WearableListenerService {

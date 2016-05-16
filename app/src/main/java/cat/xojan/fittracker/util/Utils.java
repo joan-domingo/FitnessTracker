@@ -10,7 +10,6 @@ import java.util.Locale;
 import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.repository.SharedPreferencesStorage;
-import cat.xojan.fittracker.presentation.controller.DistanceController;
 
 public class Utils {
 
@@ -45,7 +44,7 @@ public class Utils {
                Context.MODE_PRIVATE)
                 .getString(SharedPreferencesStorage.PREFERENCE_DISTANCE_UNIT, "");
 
-        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
+        if (measureUnit.equals(DistanceUnit.MILE)) {
             return String.format("%.2f", Utils.ms2Mph(value)) + " " + context.getString(R.string.mph);
         } else {
             return String.format("%.2f", Utils.ms2KmH(value)) + " " + context.getString(R.string.kph);
@@ -89,7 +88,7 @@ public class Utils {
                 Context.MODE_PRIVATE)
                 .getString(SharedPreferencesStorage.PREFERENCE_DISTANCE_UNIT, "");
 
-        if (measureUnit.equals(DistanceController.DISTANCE_MEASURE_MILE)) {
+        if (measureUnit.equals(DistanceUnit.MILE)) {
             return Utils.speedToPaceInMi(value) + " " + context.getString(R.string.pmi);
         } else {
             return Utils.speedToPaceInKm(value) + " " + context.getString(R.string.pkm);

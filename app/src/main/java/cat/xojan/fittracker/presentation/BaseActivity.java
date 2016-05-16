@@ -1,14 +1,11 @@
 package cat.xojan.fittracker.presentation;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import javax.inject.Inject;
@@ -18,8 +15,6 @@ import cat.xojan.fittracker.R;
 import cat.xojan.fittracker.injection.component.AppComponent;
 import cat.xojan.fittracker.injection.module.BaseActivityModule;
 import cat.xojan.fittracker.navigation.Navigator;
-import cat.xojan.fittracker.presentation.menu.AttributionActivity;
-import cat.xojan.fittracker.presentation.menu.PreferenceActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
 

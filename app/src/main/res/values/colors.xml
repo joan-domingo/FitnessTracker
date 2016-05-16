@@ -14,13 +14,7 @@
     <color name="lime">#B2FF59</color>
     <color name="lime_dark">#6dcc00</color>
 
-    <color name="toolbar_text_color">#ffffff</color>
-    <color name="light_grey">#F8F8F8</color>
-    <color name="grey">#E8E8E8</color>
     <color name="grey_icon">#78909C</color>
-    <color name="button_green">#4CAF50</color>
-    <color name="black">#000000</color>
-    <color name="dark_gray">#333333</color>
     <color name="detail_data">#666666</color>
 
     <!-- colors speed map polyline -->
