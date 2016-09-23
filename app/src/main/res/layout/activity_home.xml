@@ -19,7 +19,6 @@
         app:tabMode="fixed"
         app:tabGravity="fill"
         android:layout_alignParentBottom="true"
-        android:background="@color/common_action_bar_splitter"
         android:paddingBottom="1dp"/>
 
 </RelativeLayout>

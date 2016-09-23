@@ -1,6 +1,7 @@
 package cat.xojan.fittracker.presentation.sessiondetails;
 
 import android.graphics.Color;
+import android.location.Location;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -12,7 +13,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
-import cat.xojan.fittracker.data.entity.Location;
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
@@ -31,6 +31,7 @@ public class SessionDetailsPresenter implements BasePresenter {
     private LatLngBounds.Builder mBoundsBuilder;
 
     interface ViewListener {
+
         void updateData(Workout workout);
 
         void onWorkoutDeleted();
@@ -105,20 +106,20 @@ public class SessionDetailsPresenter implements BasePresenter {
     }
 
     private void addPositionToBoundsBuilder(Location location) {
-        LatLng position = new LatLng(location.getLattitude(), location.getLongitude());
+        LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
         mBoundsBuilder.include(position);
     }
 
     private void addFinishMarker(Location location, GoogleMap map) {
-        LatLng position = new LatLng(location.getLattitude(), location.getLongitude());
+        LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
         map.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                 .position(position));
     }
 
     private void addPolyline(Location oldLocation, Location newLocation, GoogleMap map) {
-        LatLng oldPosition = new LatLng(oldLocation.getLattitude(), oldLocation.getLongitude());
-        LatLng newPosition = new LatLng(newLocation.getLattitude(), newLocation.getLongitude());
+        LatLng oldPosition = new LatLng(oldLocation.getLatitude(), oldLocation.getLongitude());
+        LatLng newPosition = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
         map.addPolyline(new PolylineOptions()
                 .geodesic(true)
                 .add(oldPosition)
@@ -128,7 +129,7 @@ public class SessionDetailsPresenter implements BasePresenter {
     }
 
     private void addStartMarker(Location location, GoogleMap map) {
-        LatLng position = new LatLng(location.getLattitude(), location.getLongitude());
+        LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
         map.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 .position(position));

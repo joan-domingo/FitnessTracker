@@ -27,4 +27,6 @@
     <color name="poly_super_slow">#ffd70d00</color>
     <color name="poly_slowest">#ff9f0800</color>
 
+    <color name="transparent_white">#88ffffff</color>
+
 </resources>

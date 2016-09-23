@@ -3,7 +3,6 @@ package cat.xojan.fittracker;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
@@ -27,16 +26,18 @@ public class FitTrackerApp extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        MultiDex.install(base);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
         initDatabase();
         initInjector();
-        initLeakDetection();
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        } else {
+            initLeakDetection();
+        }
     }
 
     private void initDatabase() {
@@ -52,9 +53,7 @@ public class FitTrackerApp extends Application {
     }
 
     private void initLeakDetection() {
-        if (BuildConfig.DEBUG) {
             mRefWatcher = LeakCanary.install(this);
-        }
     }
 
     private void initInjector() {

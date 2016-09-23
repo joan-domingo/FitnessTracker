@@ -50,7 +50,9 @@ public class HomePresenter implements BasePresenter {
 
     @Override
     public void destroy() {
-        mDistanceSubscription.unsubscribe();
+        if (mDistanceSubscription != null) {
+            mDistanceSubscription.unsubscribe();
+        }
         mUnitChangeListener = null;
     }
 

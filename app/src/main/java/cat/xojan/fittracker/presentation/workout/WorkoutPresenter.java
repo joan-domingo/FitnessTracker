@@ -3,11 +3,7 @@ package cat.xojan.fittracker.presentation.workout;
 import android.location.Location;
 import android.widget.TextView;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,7 +35,6 @@ public class WorkoutPresenter implements BasePresenter {
     interface WorkoutPresenterListener {
         void finishWorkout();
     }
-
 
     @Inject
     public WorkoutPresenter(WorkoutInteractor workoutInteractor,
@@ -78,12 +73,13 @@ public class WorkoutPresenter implements BasePresenter {
                 mStartTime,
                 mEndTime,
                 distance,
-                activityType);
+                activityType,
+                Utils.locationsToJson(locationList));
 
         mSubscription = mWorkoutInteractor.saveWorkout(workout)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new SaveWorkoutSubscriber(locationList));
+                .subscribe(new SaveWorkoutSubscriber());
     }
 
     public void stopWorkout() {
@@ -114,18 +110,9 @@ public class WorkoutPresenter implements BasePresenter {
      */
     private class SaveWorkoutSubscriber extends Subscriber<Workout> {
 
-        private final List<Location> mInput;
-        private List<cat.xojan.fittracker.data.entity.Location> mOutput;
-
-        public SaveWorkoutSubscriber(List<Location> input) {
-            mInput = input;
-        }
-
         @Override
         public void onCompleted() {
-            mWorkoutInteractor.saveWorkoutLocations(mOutput)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SaveLocationSubscriber());
+            // ignore
         }
 
         @Override
@@ -135,36 +122,7 @@ public class WorkoutPresenter implements BasePresenter {
 
         @Override
         public void onNext(final Workout workout) {
-            mOutput = Lists.transform(mInput, new Function<Location,
-                    cat.xojan.fittracker.data.entity.Location>() {
-                @Override
-                public cat.xojan.fittracker.data.entity.Location apply(Location input) {
-                    return new cat.xojan.fittracker.data.entity.Location(
-                            (long) (Calendar.getInstance().getTimeInMillis() + Math.random()),
-                            input.getLongitude(),
-                            input.getLatitude(),
-                            new Date(),
-                            workout.getId()
-                    );
-                }
-            });
-        }
-    }
-
-    private class SaveLocationSubscriber extends Subscriber<Void> {
-        @Override
-        public void onCompleted() {
             mListener.finishWorkout();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-
-        }
-
-        @Override
-        public void onNext(Void aVoid) {
-
         }
     }
 }

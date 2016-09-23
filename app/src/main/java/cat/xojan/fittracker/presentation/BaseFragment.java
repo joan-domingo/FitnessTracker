@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 
 import com.squareup.leakcanary.RefWatcher;
 
+import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.FitTrackerApp;
 import cat.xojan.fittracker.injection.HasComponent;
 
@@ -12,8 +13,10 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = FitTrackerApp.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+        if (BuildConfig.DEBUG) {
+            RefWatcher refWatcher = FitTrackerApp.getRefWatcher(getActivity());
+            refWatcher.watch(this);
+        }
     }
 
     /**

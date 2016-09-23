@@ -42,7 +42,7 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.getComponent(HomeComponent.class).inject(this);
+        getComponent(HomeComponent.class).inject(this);
     }
 
     @Nullable

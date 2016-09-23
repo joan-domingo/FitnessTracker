@@ -30,9 +30,8 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
         public final static Property EndTime = new Property(4, Long.class, "endTime", false, "END_TIME");
         public final static Property Distance = new Property(5, Long.class, "distance", false, "DISTANCE");
         public final static Property Type = new Property(6, String.class, "type", false, "TYPE");
+        public final static Property Locations = new Property(7, String.class, "locations", false, "LOCATIONS");
     };
-
-    private DaoSession daoSession;
 
 
     public WorkoutDao(DaoConfig config) {
@@ -41,7 +40,6 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
     
     public WorkoutDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
-        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -54,7 +52,8 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
                 "\"START_TIME\" INTEGER," + // 3: startTime
                 "\"END_TIME\" INTEGER," + // 4: endTime
                 "\"DISTANCE\" INTEGER," + // 5: distance
-                "\"TYPE\" TEXT);"); // 6: type
+                "\"TYPE\" TEXT," + // 6: type
+                "\"LOCATIONS\" TEXT);"); // 7: locations
     }
 
     /** Drops the underlying database table. */
@@ -102,12 +101,11 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
         if (type != null) {
             stmt.bindString(7, type);
         }
-    }
-
-    @Override
-    protected void attachEntity(Workout entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
+ 
+        String locations = entity.getLocations();
+        if (locations != null) {
+            stmt.bindString(8, locations);
+        }
     }
 
     /** @inheritdoc */
@@ -126,7 +124,8 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // startTime
             cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // endTime
             cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // distance
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // type
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // type
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7) // locations
         );
         return entity;
     }
@@ -141,6 +140,7 @@ public class WorkoutDao extends AbstractDao<Workout, Long> {
         entity.setEndTime(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
         entity.setDistance(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
         entity.setType(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setLocations(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
      }
     
     /** @inheritdoc */

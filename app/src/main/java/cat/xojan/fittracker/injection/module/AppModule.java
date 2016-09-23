@@ -49,7 +49,7 @@ public class AppModule {
     @Provides
     @Singleton
     WorkoutRepository provideWorkoutRepository() {
-        return new DbWorkoutStorage(mDaoSession.getWorkoutDao(), mDaoSession.getLocationDao());
+        return new DbWorkoutStorage(mDaoSession.getWorkoutDao());
     }
 
     @Provides

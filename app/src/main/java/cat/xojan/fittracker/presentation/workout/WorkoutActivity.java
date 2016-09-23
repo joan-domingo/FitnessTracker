@@ -4,7 +4,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.List;
 
@@ -29,7 +27,6 @@ import cat.xojan.fittracker.injection.component.WorkoutComponent;
 import cat.xojan.fittracker.injection.module.WorkoutModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 
-
 public class WorkoutActivity extends BaseActivity implements
         HasComponent,
         OnMapReadyCallback,
@@ -43,16 +40,14 @@ public class WorkoutActivity extends BaseActivity implements
     @Inject
     WorkoutPresenter mWorkoutPresenter;
 
-    @Bind(R.id.main_toolbar)
-    Toolbar mToolbar;
-    @Bind(R.id.button)
+    @Bind(R.id.action_button)
     Button mButton;
-    @Bind(R.id.sliding_layout)
-    SlidingUpPanelLayout mLayout;
     @Bind(R.id.chronometer)
     Chronometer mChronometer;
     @Bind(R.id.distance)
     TextView mDistanceView;
+    @Bind(R.id.loading_container)
+    View mLoadingView;
 
     private WorkoutComponent mComponent;
     private ActivityType mActivityType;
@@ -63,7 +58,6 @@ public class WorkoutActivity extends BaseActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
-        setSupportActionBar(mToolbar);
 
         initializeInjector();
         ButterKnife.bind(this);
@@ -72,13 +66,14 @@ public class WorkoutActivity extends BaseActivity implements
         setTitle(mActivityType.name().toLowerCase());
 
         mButton.setOnClickListener(new StopWorkoutClickListener());
+        mButton.setVisibility(View.GONE);
         mChronometer.setText("00:00:00");
 
         MapFragment mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map));
         mapFragment.getMapAsync(this);
 
-        mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
         mWorkoutPresenter.setupListener(this);
+        mLoadingView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -87,17 +82,6 @@ public class WorkoutActivity extends BaseActivity implements
         ButterKnife.unbind(this);
         mMapPresenter.destroy();
         mWorkoutPresenter.destroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mLayout != null &&
-                (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED
-                        || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
-            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     private void initializeInjector() {
@@ -121,7 +105,9 @@ public class WorkoutActivity extends BaseActivity implements
 
     @Override
     public void startWorkout() {
-        mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        mButton.setVisibility(View.VISIBLE);
+        mLoadingView.setVisibility(View.GONE);
+
         mChronometer.setOnChronometerTickListener(new ChronometerTickListener());
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.start();
@@ -145,7 +131,8 @@ public class WorkoutActivity extends BaseActivity implements
             mLocationList = mMapPresenter.stop();
             mChronometer.stop();
             mWorkoutPresenter.stopWorkout();
-            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+
+            mWorkoutPresenter.saveWorkout((long) mDistance, mActivityType.name(), mLocationList);
         }
     }
 
@@ -160,13 +147,6 @@ public class WorkoutActivity extends BaseActivity implements
             String mm = m < 10 ? "0" + m : m + "";
             String ss = s < 10 ? "0" + s : s + "";
             chronometer.setText(hh + ":" + mm + ":" + ss);
-        }
-    }
-
-    private class SaveWorkoutClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            mWorkoutPresenter.saveWorkout((long) mDistance, mActivityType.name(), mLocationList);
         }
     }
 }
