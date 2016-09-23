@@ -20,7 +20,7 @@ public class HomePresenter implements BasePresenter {
 
     private final UnitDataInteractor mUnitDataInteractor;
     private Subscription mDistanceSubscription;
-    UnitChangeListener mUnitChangeListener;
+    private UnitChangeListener mUnitChangeListener;
 
     public interface UnitChangeListener {
         /**
@@ -56,7 +56,7 @@ public class HomePresenter implements BasePresenter {
         mUnitChangeListener = null;
     }
 
-    public void getDistanceUnit(final RadioGroup distanceRadioGroup) {
+    void getDistanceUnit(final RadioGroup distanceRadioGroup) {
         mDistanceSubscription = mUnitDataInteractor.getDistanceUnit()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Action1<DistanceUnit>() {

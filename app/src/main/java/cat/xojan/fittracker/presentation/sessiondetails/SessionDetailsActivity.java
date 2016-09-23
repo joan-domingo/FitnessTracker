@@ -29,13 +29,16 @@ import cat.xojan.fittracker.injection.module.SessionDetailsModule;
 import cat.xojan.fittracker.presentation.BaseActivity;
 import cat.xojan.fittracker.util.Utils;
 
+import static com.google.android.gms.maps.GoogleMap.*;
+
 /**
  * Workout details.
  */
 public class SessionDetailsActivity extends BaseActivity implements
         HasComponent,
         SessionDetailsPresenter.ViewListener,
-        OnMapReadyCallback {
+        OnMapReadyCallback,
+        OnMapLoadedCallback{
 
     public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_ACTIVITY = "extra_activity";
@@ -44,14 +47,24 @@ public class SessionDetailsActivity extends BaseActivity implements
     @Inject
     SessionDetailsPresenter mPresenter;
 
-    @Bind(R.id.text)
+    @Bind(R.id.title)
     TextView mTitle;
     @Bind(R.id.activity)
     ImageView mFitnessActivity;
+    @Bind(R.id.time)
+    TextView mTime;
+    @Bind(R.id.distance)
+    TextView mDistance;
+    @Bind(R.id.start)
+    TextView mStart;
+    @Bind(R.id.end)
+    TextView mEnd;
+
 
     private SessionDetailsComponent mComponent;
     private Workout mWorkout;
     private List<Location> mLocations;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,8 +76,8 @@ public class SessionDetailsActivity extends BaseActivity implements
 
         Bundle extras = getIntent().getExtras();
         mTitle.setText(extras.getString(EXTRA_TITLE));
-        mFitnessActivity.setBackground(getResources()
-                .getDrawable(ActivityType.toDrawable(extras.getString(EXTRA_ACTIVITY))));
+        mFitnessActivity.setBackgroundResource(ActivityType.toDrawable(
+                extras.getString(EXTRA_ACTIVITY)));
 
         mPresenter.listenToUpdates(this);
         mPresenter.loadSessionData(extras.getLong(EXTRA_ID));
@@ -83,7 +96,6 @@ public class SessionDetailsActivity extends BaseActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 supportFinishAfterTransition();
                 return true;
@@ -122,14 +134,24 @@ public class SessionDetailsActivity extends BaseActivity implements
 
     @Override
     public void onMapReady(GoogleMap map) {
+        mMap = map;
+        mMap.setOnMapLoadedCallback(this);
         map.clear();
         map.setPadding(40, 80, 40, 0);
         map.setMyLocationEnabled(false);
         map.getUiSettings().setZoomControlsEnabled(false);
         map.getUiSettings().setMyLocationButtonEnabled(false);
-        mPresenter.paintMap(map, mLocations);
+    }
+
+    @Override
+    public void onMapLoaded() {
+        mPresenter.paintMap(mMap, mLocations);
     }
 
     private void displayWorkoutData(Workout workout) {
+        mTime.setText(Utils.millisToTime(workout.getWorkoutTime()));
+        mPresenter.setDistanceTextView(mDistance, workout.getDistance());
+        mStart.setText(Utils.millisToTime(workout.getStartTime()));
+        mEnd.setText(Utils.millisToTime(workout.getEndTime()));
     }
 }

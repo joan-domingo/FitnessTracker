@@ -125,9 +125,18 @@ public class WorkoutActivity extends BaseActivity implements
         finish();
     }
 
+    @Override
+    public void updateActionButton() {
+        mButton.setBackgroundResource(R.drawable.activity_button_view_finish);
+    }
+
     private class StopWorkoutClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            if (mLocationList != null) {
+                finish();
+                return;
+            }
             mLocationList = mMapPresenter.stop();
             mChronometer.stop();
             mWorkoutPresenter.stopWorkout();

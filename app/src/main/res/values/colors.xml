@@ -28,5 +28,6 @@
     <color name="poly_slowest">#ff9f0800</color>
 
     <color name="transparent_white">#88ffffff</color>
+    <color name="black">#000000</color>
 
 </resources>

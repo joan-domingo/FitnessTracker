@@ -2,6 +2,7 @@ package cat.xojan.fittracker.presentation.sessiondetails;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,10 +14,12 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
+import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
 import cat.xojan.fittracker.domain.interactor.WorkoutInteractor;
 import cat.xojan.fittracker.presentation.BasePresenter;
+import cat.xojan.fittracker.util.Utils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
@@ -103,6 +106,17 @@ public class SessionDetailsPresenter implements BasePresenter {
             }
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(mBoundsBuilder.build(), 0));
         }
+    }
+
+    public void setDistanceTextView(final TextView view, final Long distance) {
+        mUnitDataInteractor.getDistanceUnit()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<DistanceUnit>() {
+                    @Override
+                    public void call(DistanceUnit distanceUnit) {
+                        view.setText(Utils.formatDistance(distance, distanceUnit));
+                    }
+                });
     }
 
     private void addPositionToBoundsBuilder(Location location) {

@@ -3,11 +3,14 @@ package cat.xojan.fittracker.presentation.workout;
 import android.location.Location;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import cat.xojan.fittracker.BuildConfig;
 import cat.xojan.fittracker.data.entity.DistanceUnit;
 import cat.xojan.fittracker.data.entity.Workout;
 import cat.xojan.fittracker.domain.interactor.UnitDataInteractor;
@@ -34,6 +37,8 @@ public class WorkoutPresenter implements BasePresenter {
 
     interface WorkoutPresenterListener {
         void finishWorkout();
+
+        void updateActionButton();
     }
 
     @Inject
@@ -61,14 +66,14 @@ public class WorkoutPresenter implements BasePresenter {
         mListener = null;
     }
 
-    public void setupListener(WorkoutPresenterListener listener) {
+    void setupListener(WorkoutPresenterListener listener) {
         mListener = listener;
     }
 
-    public void saveWorkout(long distance, String activityType, List<Location> locationList) {
+    void saveWorkout(long distance, String activityType, List<Location> locationList) {
         Workout workout = new Workout(
                 Calendar.getInstance().getTimeInMillis(),
-                "workout test",
+                activityType.toUpperCase() + " " + Utils.millisToDate(mStartTime),
                 mEndTime - mStartTime,
                 mStartTime,
                 mEndTime,
@@ -82,11 +87,11 @@ public class WorkoutPresenter implements BasePresenter {
                 .subscribe(new SaveWorkoutSubscriber());
     }
 
-    public void stopWorkout() {
+    void stopWorkout() {
         mEndTime = getCurrentTime();
     }
 
-    public void startWorkout() {
+    void startWorkout() {
         mStartTime = getCurrentTime();
     }
 
@@ -94,7 +99,7 @@ public class WorkoutPresenter implements BasePresenter {
         return Calendar.getInstance().getTimeInMillis();
     }
 
-    public void updateDistanceView(final double distance, final TextView distanceView) {
+    void updateDistanceView(final double distance, final TextView distanceView) {
         mUnitDataInteractor.getDistanceUnit()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<DistanceUnit>() {
@@ -118,11 +123,15 @@ public class WorkoutPresenter implements BasePresenter {
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
+            if (!BuildConfig.DEBUG) {
+                Crashlytics.logException(e);
+            }
+            mListener.finishWorkout();
         }
 
         @Override
         public void onNext(final Workout workout) {
-            mListener.finishWorkout();
+            mListener.updateActionButton();
         }
     }
 }

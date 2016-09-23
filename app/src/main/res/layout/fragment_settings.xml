@@ -8,7 +8,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/distance"/>
+        android:text="@string/distance"
+        android:layout_marginBottom="8dp"/>
 
     <RadioGroup
         android:id="@+id/distance"
@@ -19,7 +20,8 @@
             android:id="@+id/kilometers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/kilometres"/>
+            android:text="@string/kilometres"
+            android:layout_marginBottom="4dp"/>
 
         <RadioButton
             android:id="@+id/miles"
